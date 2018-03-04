@@ -13,9 +13,12 @@ as.config(function ($routeProvider) {
         .when('/posts', {
             templateUrl: 'html/posts/posts.html',
             controller: 'PostsController'
-        })
-        .when('/posts/new', {
+        }).when('/posts/new', {
             templateUrl: 'html/posts/new.html',
             controller: 'NewPostController'
+        })
+        .when('/posts/:id', {
+            templateUrl: 'html/posts/details.html',
+            controller: 'DetailsController'
         });
 });

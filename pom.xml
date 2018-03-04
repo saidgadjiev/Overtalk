@@ -7,6 +7,18 @@
     <groupId>ru.saidgadjiev.overtalk</groupId>
     <artifactId>overtalk</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
 
@@ -24,8 +36,26 @@
 
         <dependency>
             <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>2.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
             <version>3.3.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.saidgadjiev.orm.next</groupId>
+            <artifactId>orm</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.196</version>
         </dependency>
 
     </dependencies>

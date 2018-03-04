@@ -5,7 +5,7 @@
       <configuration />
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
@@ -16,7 +16,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="orm-1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="org.thymeleaf:thymeleaf:Release" level="project" />
     <orderEntry type="library" name="org.thymeleaf:thymeleaf-spring4:Release" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-web:1.5.9.RELEASE" level="project" />
@@ -51,7 +50,10 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:4.3.13.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:4.3.13.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.webjars:angularjs:1.3.14" level="project" />
+    <orderEntry type="library" name="Maven: org.webjars:jquery:2.1.3" level="project" />
     <orderEntry type="library" name="Maven: org.webjars:bootstrap:3.3.6" level="project" />
-    <orderEntry type="library" name="Maven: org.webjars:jquery:1.11.1" level="project" />
+    <orderEntry type="library" name="Maven: ru.saidgadjiev.orm.next:orm:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: ru.saidgadjiev.orm.next:up-cache:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.h2database:h2:1.4.196" level="project" />
   </component>
 </module>

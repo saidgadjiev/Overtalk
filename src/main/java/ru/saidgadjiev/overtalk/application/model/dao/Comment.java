@@ -1,10 +1,12 @@
-package ru.saidgadjiev.overtalk.application.model;
+package ru.saidgadjiev.overtalk.application.model.dao;
 
 import ru.saidgadjiev.orm.next.core.field.DBField;
 import ru.saidgadjiev.orm.next.core.field.DataType;
 import ru.saidgadjiev.orm.next.core.field.Getter;
 import ru.saidgadjiev.orm.next.core.field.Setter;
 import ru.saidgadjiev.orm.next.core.table.DBTable;
+
+import java.util.Date;
 
 /**
  * Created by said on 12.02.2018.
@@ -21,6 +23,16 @@ public class Comment {
     @Setter(name = "setContent")
     @DBField(dataType = DataType.STRING)
     private String content;
+
+    @Getter(name = "getPost")
+    @Setter(name = "setPost")
+    @DBField(foreign = true)
+    private Post post;
+
+    @Getter(name = "getCreatedDate")
+    @Setter(name = "setCreatedDate")
+    @DBField(dataType = DataType.DATE)
+    private Date createdDate = new Date();
 
     public Comment() {
     }
@@ -44,5 +56,21 @@ public class Comment {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 }

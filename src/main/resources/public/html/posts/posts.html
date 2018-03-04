@@ -1,1 +1,18 @@
+<div class="page-header">
+    Посты
+</div>
 <button class="btn btn-success btn-block" ng-click="add()">Новый пост</button>
+<div class="row">
+    <div class="col-md-12">
+        <div ng-repeat="post in posts|orderBy:createdDate">
+            <h4>{{post.title}}</h4>
+            <p>{{post.content}}</p>
+            <div>
+                <a href="#/posts/{{post.id}}">
+                    <span class="glyphicon glyphicon-comment"></span>
+                </a>
+                {{post.createdDate|date:'short'}}
+            </div>
+        </div>
+    </div>
+</div>
