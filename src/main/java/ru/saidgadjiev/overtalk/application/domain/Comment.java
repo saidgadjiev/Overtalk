@@ -1,4 +1,4 @@
-package ru.saidgadjiev.overtalk.application.model.dao;
+package ru.saidgadjiev.overtalk.application.domain;
 
 import ru.saidgadjiev.orm.next.core.field.DBField;
 import ru.saidgadjiev.orm.next.core.field.DataType;

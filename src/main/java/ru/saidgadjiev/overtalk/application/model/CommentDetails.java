@@ -1,4 +1,4 @@
-package ru.saidgadjiev.overtalk.application.model.web;
+package ru.saidgadjiev.overtalk.application.model;
 
 import java.util.Date;
 
@@ -10,8 +10,6 @@ public class CommentDetails {
     private int id;
 
     private String content;
-
-    private Date createdDate;
 
     public int getId() {
         return id;
@@ -27,13 +25,5 @@ public class CommentDetails {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
     }
 }

@@ -8,11 +8,7 @@ as.controller('NewPostController', function ($scope, $http, $location) {
         $scope.submitted = true;
 
         if (isValid) {
-            console.log("Data:");
-            console.log($scope.newPost);
             $http.post('api/post/', $scope.newPost).success(function (data) {
-                console.log("Response post: {'api/post'}:");
-                console.log(data);
                 $location.path('/posts');
             });
         }
@@ -22,41 +18,64 @@ as.controller('NewPostController', function ($scope, $http, $location) {
     }
 });
 
-as.controller('LoginController', function ($scope, $location) {
+as.controller('LoginController', function ($scope, $location, $log) {
     $scope.login = function () {
-        $location.path('/posts');
+        $log.log('Logged in');
     };
 });
 
-as.controller('PostsController', function ($scope, $http, $location) {
-    (function () {
-        $http.get('api/post').success(function (data) {
-            console.log("Response get: {'api/post'}:");
-            console.log(data);
-            $scope.posts = data;
+as.controller('PostsController', function ($scope, $http, $location, $log) {
+    $scope.currentPage = 1;
+    $scope.itemsPerPage = 20;
+
+    var loadPosts = function () {
+        $http.get('api/post?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
+            $log.log(data);
+            $scope.totalItems = data.totalElements;
+            $scope.posts = data.content;
         })
-    })();
+    };
+
+    loadPosts();
 
     $scope.add = function () {
         $location.path('/posts/new');
     };
 
     $scope.comments = function (postId) {
-        console.log('comments(' + postId + ')')
-    }
-});
-
-as.controller('DetailsController', function ($scope, $http, $routeParams, $location) {
-    var load = function () {
-        $http.get('api/post/' + $routeParams.id + "/comments").success(function (data) {
-            console.log("Response get: {'api/post/" + $routeParams.id + "/comments'}:");
-            console.log(data);
-            $scope.comments = data;
-            $scope.post = data.post;
-        })
     };
 
-    load();
+    $scope.pageChanged = function() {
+        $log.log('Page changed to: ' + $scope.currentPage);
+        loadPosts();
+    };
+});
+
+as.controller('DetailsController', function ($scope, $http, $routeParams, $location, $q, $log) {
+    $scope.currentPage = 1;
+    $scope.itemsPerPage = 20;
+
+    var actionUrl = 'api/post/',
+        loadComments = function () {
+            $http.get(actionUrl + $routeParams.id + '/comments?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
+                $scope.comments = data.content;
+                $scope.totalItems = data.totalElements;
+            })
+        },
+        firstLoad = function () {
+            $q.all([
+                $http.get(actionUrl + $routeParams.id),
+                $http.get(actionUrl + $routeParams.id + '/comments?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage)
+            ]).then(function (result) {
+                $log.log(result);
+                $scope.post = result[0].data;
+                $scope.comments = result[1].data.content;
+                $scope.totalItems = result[1].data.totalElements;
+            });
+        };
+
+    firstLoad();
+    $scope.newComment = {};
 
     $scope.addComment = function () {
         $('#commentDialog').modal('show');
@@ -66,14 +85,16 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
         $scope.submitted = true;
 
         if (isValid) {
-            console.log("Data:");
-            console.log($scope.newComment);
             $http.post('api/post/' + $routeParams.id + '/comments', $scope.newComment).success(function (data) {
-                console.log("Response get: {'api/post/" + $routeParams.id + "/comments'}:");
-                console.log(data);
-                load();
                 $('#commentDialog').modal('hide');
+                $scope.newComment = {};
+                $scope.submitted = false;
+                loadComments();
             });
         }
+    };
+
+    $scope.loadPage = function () {
+
     }
 });

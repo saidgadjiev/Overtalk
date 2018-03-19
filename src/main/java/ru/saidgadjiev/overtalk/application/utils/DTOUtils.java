@@ -1,39 +1,44 @@
 package ru.saidgadjiev.overtalk.application.utils;
 
-import ru.saidgadjiev.overtalk.application.model.dao.Comment;
-import ru.saidgadjiev.overtalk.application.model.dao.Post;
-import ru.saidgadjiev.overtalk.application.model.web.CommentDetails;
-import ru.saidgadjiev.overtalk.application.model.web.PostDetails;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
+import ru.saidgadjiev.overtalk.application.domain.Comment;
+import ru.saidgadjiev.overtalk.application.domain.Post;
+import ru.saidgadjiev.overtalk.application.model.CommentDetails;
+import ru.saidgadjiev.overtalk.application.model.PostDetails;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by said on 04.03.2018.
  */
 public class DTOUtils {
 
-    private DTOUtils() {}
+    private static final ModelMapper INSTANCE = new ModelMapper();
 
-    public static PostDetails convert(Post post) {
-        PostDetails postDetails = new PostDetails();
-
-        postDetails.setId(post.getId());
-        postDetails.setTitle(post.getTitle());
-        postDetails.setContent(post.getContent());
-        postDetails.setCreatedDate(post.getCreatedDate());
-
-        for (Comment comment: post.getComments()) {
-            postDetails.getComments().add(convert(comment));
-        }
-
-        return postDetails;
+    static {
+        INSTANCE.addMappings(new PropertyMap<PostDetails, Post>() {
+            @Override
+            protected void configure() {
+                skip().setCreatedDate(null);
+            }
+        });
     }
 
-    public static CommentDetails convert(Comment comment) {
-        CommentDetails commentDetails = new CommentDetails();
+    private DTOUtils() {}
 
-        commentDetails.setId(comment.getId());
-        commentDetails.setContent(comment.getContent());
-        commentDetails.setCreatedDate(comment.getCreatedDate());
+    public static<S, D> List<D> convert(List<S> objects, Class<D> targetClass) {
+        List<D> result = new ArrayList<>();
 
-        return commentDetails;
+        for (S object: objects) {
+            result.add(INSTANCE.map(object, targetClass));
+        }
+
+        return result;
+    }
+
+    public static<S, D> D convert(S object, Class<D> targetClass) {
+        return INSTANCE.map(object, targetClass);
     }
 }

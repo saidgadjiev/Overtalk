@@ -1,8 +1,7 @@
-package ru.saidgadjiev.overtalk.application.model.dao;
+package ru.saidgadjiev.overtalk.application.domain;
 
 import ru.saidgadjiev.orm.next.core.field.*;
 import ru.saidgadjiev.orm.next.core.table.DBTable;
-import ru.saidgadjiev.overtalk.application.model.dao.Comment;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,7 +34,9 @@ public class Post {
     @DBField(dataType = DataType.DATE, notNull = true)
     private Date createdDate = new Date();
 
-    @ForeignCollectionField(foreignFieldName = "post")
+    @Getter(name = "getComments")
+    @Setter(name = "setComments")
+    @ForeignCollectionField(foreignFieldName = "post", fetchType = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
     public int getId() {
@@ -81,9 +82,9 @@ public class Post {
     @Override
     public String toString() {
         return "Post{" +
-                "id=" + id +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
+                ", createdDate='" + createdDate + "'\'" +
                 '}';
     }
 }

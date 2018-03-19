@@ -1,6 +1,6 @@
 package ru.saidgadjiev.overtalk.application.configuration;
 
-import org.h2.jdbcx.JdbcDataSource;
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -12,8 +12,11 @@ import ru.saidgadjiev.orm.next.core.db.H2DatabaseType;
 import ru.saidgadjiev.orm.next.core.logger.LoggerFactory;
 import ru.saidgadjiev.orm.next.core.support.PolledConnectionSource;
 import ru.saidgadjiev.orm.next.core.utils.TableUtils;
-import ru.saidgadjiev.overtalk.application.model.dao.Comment;
-import ru.saidgadjiev.overtalk.application.model.dao.Post;
+import ru.saidgadjiev.overtalk.application.dao.CommentDao;
+import ru.saidgadjiev.overtalk.application.dao.PostDao;
+import ru.saidgadjiev.overtalk.application.domain.Comment;
+import ru.saidgadjiev.overtalk.application.domain.Post;
+import ru.saidgadjiev.overtalk.application.service.BlogService;
 
 import java.sql.SQLException;
 
@@ -27,9 +30,11 @@ public class OrmNextConfiguration {
     @Scope(scopeName = "singleton")
     public SessionManager sessionManager() throws SQLException {
         System.setProperty(LoggerFactory.LOG_ENABLED_PROPERTY, "true");
-        JdbcDataSource dataSource = new JdbcDataSource();
+        MysqlDataSource dataSource = new MysqlDataSource();
 
-        dataSource.setURL("jdbc:h2:mem:h2testdb;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1");
+        dataSource.setUser("root");
+        dataSource.setPassword("said1995");
+        dataSource.setURL("jdbc:mysql://localhost:3306/overtalk");
         SessionManager sessionManager = new BaseSessionManagerImpl(new PolledConnectionSource(dataSource, new H2DatabaseType()));
 
         sessionManager.setObjectCache(new LRUObjectCache(16), Post.class, Comment.class);
@@ -40,13 +45,13 @@ public class OrmNextConfiguration {
     }
 
     @Bean
-    public Session<Post, Integer> postSession() throws SQLException {
-        return sessionManager().forClass(Post.class);
-    }
+    public BlogService blogService() throws SQLException {
+        Session<Post, Integer> postSession = sessionManager().forClass(Post.class);
+        PostDao postDao = new PostDao(postSession);
+        Session<Comment, Integer> commentSession = sessionManager().forClass(Comment.class);
+        CommentDao commentDao = new CommentDao(commentSession);
 
-    @Bean
-    public Session<Comment, Integer> commentSession() throws SQLException {
-        return sessionManager().forClass(Comment.class);
+        return new BlogService(postDao, commentDao);
     }
 
 }

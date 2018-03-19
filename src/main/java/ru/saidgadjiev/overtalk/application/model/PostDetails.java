@@ -1,4 +1,4 @@
-package ru.saidgadjiev.overtalk.application.model.web;
+package ru.saidgadjiev.overtalk.application.model;
 
 import java.util.Date;
 import java.util.List;
@@ -13,8 +13,6 @@ public class PostDetails {
     private String title;
 
     private String content;
-
-    private List<CommentDetails> comments;
 
     private Date createdDate;
 
@@ -50,11 +48,11 @@ public class PostDetails {
         this.createdDate = createdDate;
     }
 
-    public List<CommentDetails> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentDetails> comments) {
-        this.comments = comments;
+    @Override
+    public String toString() {
+        return "PostDetails{" +
+                "title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                '}';
     }
 }

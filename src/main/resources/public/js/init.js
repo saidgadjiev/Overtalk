@@ -1,10 +1,14 @@
-var as = angular.module('OverTalkApp', ['ngRoute', 'OverTalkApp.controllers']);
+var as = angular.module('OverTalkApp', ['ngRoute', 'ui.bootstrap', 'OverTalkApp.controllers']);
 
 as.config(function ($routeProvider) {
     $routeProvider
         .when('/', {
             templateUrl: 'html/login.html',
             controller: 'LoginController'
+        })
+        .when('/main', {
+            templateUrl: 'html/main.html',
+            publicAccess: true
         })
         .when('/login', {
             templateUrl: 'html/login.html',

@@ -1,15 +1,12 @@
 package ru.saidgadjiev.overtalk.application.dao;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import ru.saidgadjiev.orm.next.core.criteria.impl.SelectStatement;
 import ru.saidgadjiev.orm.next.core.dao.Session;
-import ru.saidgadjiev.overtalk.application.model.dao.Post;
-import ru.saidgadjiev.overtalk.application.model.web.PostDetails;
-import ru.saidgadjiev.overtalk.application.model_service.PostService;
-import ru.saidgadjiev.overtalk.application.utils.DTOUtils;
+import ru.saidgadjiev.orm.next.core.stament_executor.GenericResults;
+import ru.saidgadjiev.overtalk.application.domain.Post;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,35 +14,46 @@ import java.util.List;
  */
 public class PostDao {
 
-
     private Session<Post, Integer> session;
 
-    private static final Logger LOGGER = Logger.getLogger(PostService.class);
+    private static final Logger LOGGER = Logger.getLogger(PostDao.class);
 
-    @Autowired
-    public PostService(Session<Post, Integer> session) {
+    public PostDao(Session<Post, Integer> session) {
         this.session = session;
     }
 
     public void create(Post post) throws SQLException {
+        LOGGER.debug("create(): " + post.toString());
         session.create(post);
-        LOGGER.debug("Create post: " + post.toString());
     }
 
-    public List<PostDetails> getAll() throws SQLException {
-        List<Post> posts = session.queryForAll();
-        List<PostDetails> postDetails = new ArrayList<>();
+    public List<Post> getAll(int limit, long offset) throws SQLException {
+        LOGGER.debug("getAll()");
+        SelectStatement<Post> selectStatement = new SelectStatement<>(Post.class);
 
-        for (Post post: posts) {
-            postDetails.add(DTOUtils.convert(post));
+        selectStatement.limit(limit).offset((int) offset);
+        try (GenericResults<Post> genericResults = session.query(selectStatement)) {
+            List<Post> posts = genericResults.getResults();
+
+            LOGGER.debug(posts.toString());
+
+            return posts;
+        } catch (Exception ex) {
+            throw new SQLException(ex);
         }
-
-        return postDetails;
     }
 
-    public PostDetails getById(int id) throws SQLException {
+    public Post getById(int id) throws SQLException {
+        LOGGER.debug("getById(): " + id);
         Post post = session.queryForId(id);
 
-        return DTOUtils.convert(post);
+        LOGGER.debug(post.toString());
+        return post;
+    }
+
+    public long countOff() throws SQLException {
+        LOGGER.debug("countOffByPostId()");
+
+        return session.countOff();
     }
 }
