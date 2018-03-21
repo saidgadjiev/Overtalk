@@ -1,7 +1,6 @@
 package ru.saidgadjiev.overtalk.application;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
-import org.apache.commons.lang.RandomStringUtils;
 import ru.saidgadjiev.orm.next.core.dao.BaseSessionManagerImpl;
 import ru.saidgadjiev.orm.next.core.dao.Session;
 import ru.saidgadjiev.orm.next.core.dao.SessionManager;

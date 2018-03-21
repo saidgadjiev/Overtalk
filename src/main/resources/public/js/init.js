@@ -3,15 +3,15 @@ var as = angular.module('OverTalkApp', ['ngRoute', 'ui.bootstrap', 'OverTalkApp.
 as.config(function ($routeProvider) {
     $routeProvider
         .when('/', {
-            templateUrl: 'html/login.html',
+            templateUrl: 'html/signIn.html',
             controller: 'LoginController'
         })
         .when('/main', {
             templateUrl: 'html/main.html',
             publicAccess: true
         })
-        .when('/login', {
-            templateUrl: 'html/login.html',
+        .when('/signIn', {
+            templateUrl: 'html/signIn.html',
             controller: 'LoginController'
         })
         .when('/posts', {
@@ -24,5 +24,8 @@ as.config(function ($routeProvider) {
         .when('/posts/:id', {
             templateUrl: 'html/posts/details.html',
             controller: 'DetailsController'
+        }).when('/signUp', {
+            templateUrl: 'html/signUp.html',
+            controller: 'RegistrationController'
         });
 });

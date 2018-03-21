@@ -19,8 +19,18 @@ as.controller('NewPostController', function ($scope, $http, $location) {
 });
 
 as.controller('LoginController', function ($scope, $location, $log) {
-    $scope.login = function () {
-        $log.log('Logged in');
+    $scope.signIn = function () {
+        $log.log('SignIn');
+    };
+
+    $scope.gotoSignUp = function () {
+        $location.path('/signUp');
+    }
+});
+
+as.controller('RegistrationController', function ($scope, $location, $log) {
+    $scope.signUp = function () {
+        $log.log('SignUp');
     };
 });
 

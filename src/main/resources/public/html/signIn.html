@@ -1,0 +1,13 @@
+<form ng-submit="signIn()" name="loginForm">
+    <div class="form-group">
+        <label for="userName">Логин:</label>
+        <input type="text" class="form-control" id="userName" ng-model="userName">
+    </div>
+    <div class="form-group">
+        <label for="pwd">Пароль:</label>
+        <input type="password" class="form-control" id="pwd" ng-model="password">
+    </div>
+
+    <button type="submit" class="btn btn-success">Войти</button>
+    <button type="button" class="btn btn-primary" ng-click="gotoSignUp()">Регистрация</button>
+</form>
