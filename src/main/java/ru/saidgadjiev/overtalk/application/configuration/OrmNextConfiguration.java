@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import ru.saidgadjiev.orm.next.core.cache.LRUObjectCache;
 import ru.saidgadjiev.orm.next.core.dao.BaseSessionManagerImpl;
-import ru.saidgadjiev.orm.next.core.dao.Session;
 import ru.saidgadjiev.orm.next.core.dao.SessionManager;
 import ru.saidgadjiev.orm.next.core.db.H2DatabaseType;
 import ru.saidgadjiev.orm.next.core.logger.LoggerFactory;
@@ -46,10 +45,8 @@ public class OrmNextConfiguration {
 
     @Bean
     public BlogService blogService() throws SQLException {
-        Session<Post, Integer> postSession = sessionManager().forClass(Post.class);
-        PostDao postDao = new PostDao(postSession);
-        Session<Comment, Integer> commentSession = sessionManager().forClass(Comment.class);
-        CommentDao commentDao = new CommentDao(commentSession);
+        PostDao postDao = new PostDao(sessionManager().forClass(Post.class));
+        CommentDao commentDao = new CommentDao(sessionManager().forClass(Comment.class));
 
         return new BlogService(postDao, commentDao);
     }

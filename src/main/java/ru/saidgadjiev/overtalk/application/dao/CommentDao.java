@@ -19,11 +19,11 @@ import java.util.List;
  */
 public class CommentDao {
 
-    private Session<Comment, Integer> session;
+    private Session session;
 
     private static final Logger LOGGER = Logger.getLogger(CommentDao.class);
 
-    public CommentDao(Session<Comment, Integer> session) {
+    public CommentDao(Session session) {
         this.session = session;
     }
 

@@ -14,9 +14,9 @@ import java.sql.SQLException;
  */
 public class UserDao {
 
-    private Session<UserProfile, Integer> session;
+    private Session session;
 
-    public UserDao(Session<UserProfile, Integer> session) {
+    public UserDao(Session session) {
         this.session = session;
     }
 

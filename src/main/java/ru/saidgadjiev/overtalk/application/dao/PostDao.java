@@ -14,11 +14,11 @@ import java.util.List;
  */
 public class PostDao {
 
-    private Session<Post, Integer> session;
+    private Session session;
 
     private static final Logger LOGGER = Logger.getLogger(PostDao.class);
 
-    public PostDao(Session<Post, Integer> session) {
+    public PostDao(Session session) {
         this.session = session;
     }
 
