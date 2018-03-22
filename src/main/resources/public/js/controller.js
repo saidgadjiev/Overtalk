@@ -18,7 +18,7 @@ as.controller('NewPostController', function ($scope, $http, $location) {
     }
 });
 
-as.controller('LoginController', function ($scope, $location, $log) {
+as.controller('LoginController', function ($scope, $http, $location, $log) {
     $scope.signIn = function () {
         $log.log('SignIn');
     };
@@ -28,9 +28,12 @@ as.controller('LoginController', function ($scope, $location, $log) {
     }
 });
 
-as.controller('RegistrationController', function ($scope, $location, $log) {
+as.controller('RegistrationController', function ($scope, $http, $location, $log) {
     $scope.signUp = function () {
-        $log.log('SignUp');
+        $http.post('api/user/signUp', $scope.user).success(function (data) {
+            $log.log("SignUp");
+            $log.log(data);
+        });
     };
 });
 

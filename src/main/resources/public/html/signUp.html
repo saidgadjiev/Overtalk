@@ -1,20 +1,21 @@
 <form ng-submit="signUp()" name="signUpForm" novalidate>
     <div class="form-group">
         <label for="userName">Логин:</label>
-        <input type="text" class="form-control" id="userName" name="userName" ng-model="userName" ng-required="true">
+        <input type="text" class="form-control" id="userName" name="userName" ng-model="user.userName" ng-required="true">
         <p class="help-block" ng-show="signUpForm.userName.$invalid && signUpForm.userName.$touched">Введите логин!</p>
-        <p class="help-block" ng-show="1 == 1">Такой логин уже существует!</p>
+        <p class="help-block" ng-show="userNameExist">Такой логин уже существует!</p>
     </div>
     <div class="form-group">
         <label for="pwd">Пароль:</label>
-        <input type="password" class="form-control" id="pwd" ng-model="password" ng-required="true">
+        <input type="password" class="form-control" id="pwd" ng-model="user.password" ng-required="true">
         <p class="help-block" ng-show="signUpForm.password.$invalid && signUpForm.password.$touched">Введите пароль!</p>
     </div>
 
     <div class="form-group">
         <label for="confirm_pwd">Повторите пароль:</label>
-        <input type="password" class="form-control" id="confirm_pwd" ng-model="confirmPassword" ng-required="true">
+        <input type="password" class="form-control" id="confirm_pwd" ng-model="user.confirmPassword" ng-required="true">
         <p class="help-block" ng-show="signUpForm.confirmPassword.$invalid && signUpForm.confirmPassword.$touched">Подтвердите пароль!</p>
+        <p class="help-block" ng-show="passwordNotConfirmed">Пароли не совпадают</p>
     </div>
 
     <button type="submit" class="btn btn-success">Зарегестрироваться</button>
