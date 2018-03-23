@@ -3,6 +3,7 @@ package ru.saidgadjiev.overtalk.application.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 import ru.saidgadjiev.overtalk.application.dao.CommentDao;
 import ru.saidgadjiev.overtalk.application.dao.PostDao;
 import ru.saidgadjiev.overtalk.application.domain.Comment;
@@ -17,6 +18,7 @@ import java.util.List;
 /**
  * Created by said on 08.03.2018.
  */
+@Service
 public class BlogService {
 
     private PostDao postDao;

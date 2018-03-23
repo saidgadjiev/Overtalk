@@ -13,9 +13,12 @@ import ru.saidgadjiev.orm.next.core.support.PolledConnectionSource;
 import ru.saidgadjiev.orm.next.core.utils.TableUtils;
 import ru.saidgadjiev.overtalk.application.dao.CommentDao;
 import ru.saidgadjiev.overtalk.application.dao.PostDao;
+import ru.saidgadjiev.overtalk.application.dao.UserDao;
 import ru.saidgadjiev.overtalk.application.domain.Comment;
 import ru.saidgadjiev.overtalk.application.domain.Post;
+import ru.saidgadjiev.overtalk.application.domain.UserProfile;
 import ru.saidgadjiev.overtalk.application.service.BlogService;
+import ru.saidgadjiev.overtalk.application.service.UserService;
 
 import java.sql.SQLException;
 
@@ -51,4 +54,8 @@ public class OrmNextConfiguration {
         return new BlogService(postDao, commentDao);
     }
 
+    @Bean
+    public UserService userService() throws SQLException {
+        return new UserService(new UserDao(sessionManager().forClass(UserProfile.class)));
+    }
 }

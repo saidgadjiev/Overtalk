@@ -1,5 +1,6 @@
 package ru.saidgadjiev.overtalk.application.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,12 @@ public class UserController {
     private UserService userService;
 
     private SecurityService securityService;
+
+    @Autowired
+    public UserController(UserService userService, SecurityService securityService) {
+        this.userService = userService;
+        this.securityService = securityService;
+    }
 
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
     public ResponseEntity<ResponseMessage> signUp(@Valid UserDetails userDetails, BindingResult bindingResult) throws SQLException {
