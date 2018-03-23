@@ -10,6 +10,7 @@ import ru.saidgadjiev.orm.next.core.stament_executor.DatabaseResults;
 import ru.saidgadjiev.orm.next.core.stament_executor.GenericResults;
 import ru.saidgadjiev.orm.next.core.stament_executor.result_mapper.ResultsMapper;
 import ru.saidgadjiev.overtalk.application.domain.Comment;
+import ru.saidgadjiev.overtalk.application.domain.Post;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -33,11 +34,11 @@ public class CommentDao {
     }
 
     public List<Comment> getAll() throws SQLException {
-        return session.queryForAll();
+        return session.queryForAll(Comment.class);
     }
 
     public Comment getById(Integer id) throws SQLException {
-        return session.queryForId(id);
+        return session.queryForId(Comment.class, id);
     }
 
     public List<Comment> getByPostId(Integer id, int limit, int offset) throws SQLException {

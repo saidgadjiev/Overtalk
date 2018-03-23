@@ -1,5 +1,6 @@
 package ru.saidgadjiev.overtalk.application.dao;
 
+import javafx.geometry.Pos;
 import org.apache.log4j.Logger;
 import ru.saidgadjiev.orm.next.core.criteria.impl.SelectStatement;
 import ru.saidgadjiev.orm.next.core.dao.Session;
@@ -45,7 +46,7 @@ public class PostDao {
 
     public Post getById(int id) throws SQLException {
         LOGGER.debug("getById(): " + id);
-        Post post = session.queryForId(id);
+        Post post = session.queryForId(Post.class, id);
 
         LOGGER.debug(post.toString());
         return post;
@@ -54,6 +55,6 @@ public class PostDao {
     public long countOff() throws SQLException {
         LOGGER.debug("countOffByPostId()");
 
-        return session.countOff();
+        return session.countOff(Post.class);
     }
 }

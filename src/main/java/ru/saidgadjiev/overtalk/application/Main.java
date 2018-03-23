@@ -20,15 +20,12 @@ public class Main {
         dataSource.setPassword("said1995");
         dataSource.setURL("jdbc:mysql://localhost:3306/overtalk");
         SessionManager sessionManager = new BaseSessionManagerImpl(new PolledConnectionSource(dataSource, new H2DatabaseType()));
-        Session<UserProfile, Integer> userDao = sessionManager.forClass(UserProfile.class);
+        Session session = sessionManager.getSession();
 
-        userDao.createTable(true);
-        Session<Role, Integer> roleDao = sessionManager.forClass(Role.class);
+        session.createTable(UserProfile.class, true);
+        session.createTable(Role.class, true);
+        session.createTable(UserRoles.class, true);
 
-        roleDao.createTable(true);
-        Session<UserRoles, Integer> userRolesDao = sessionManager.forClass(UserRoles.class);
-
-        userRolesDao.createTable(true);
         /*Session<Post, Integer> postDao = sessionManager.forClass(Post.class);
         Session<Comment, Integer> commentDao = sessionManager.forClass(Comment.class);
         for (int i = 0; i < 100; ++i) {

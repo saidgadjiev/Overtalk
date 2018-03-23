@@ -48,14 +48,14 @@ public class OrmNextConfiguration {
 
     @Bean
     public BlogService blogService() throws SQLException {
-        PostDao postDao = new PostDao(sessionManager().forClass(Post.class));
-        CommentDao commentDao = new CommentDao(sessionManager().forClass(Comment.class));
+        PostDao postDao = new PostDao(sessionManager().getSession());
+        CommentDao commentDao = new CommentDao(sessionManager().getSession());
 
         return new BlogService(postDao, commentDao);
     }
 
     @Bean
     public UserService userService() throws SQLException {
-        return new UserService(new UserDao(sessionManager().forClass(UserProfile.class)));
+        return new UserService(new UserDao(sessionManager().getSession()));
     }
 }
