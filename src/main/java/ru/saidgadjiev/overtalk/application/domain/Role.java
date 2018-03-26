@@ -27,6 +27,13 @@ public class Role {
     @DBField(dataType = DataType.STRING, notNull = true)
     private String name;
 
+    public Role() {
+    }
+
+    public Role(String name) {
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }
