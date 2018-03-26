@@ -36,8 +36,9 @@ public class PGDatabaseType implements DatabaseType {
     @Override
     public String typeToSql(int type, AttributeDefinition attributeDefinition) {
         if (type == 8) {
-
+            return " SERIAL ";
         }
-        return null;
+
+        return "";
     }
 }

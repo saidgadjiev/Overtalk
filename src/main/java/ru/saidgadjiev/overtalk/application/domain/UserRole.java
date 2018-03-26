@@ -20,7 +20,7 @@ public class UserRole {
 
     @Getter(name = "getId")
     @Setter(name = "setId")
-    @DBField(id = true, generated = true, dataType = DataType.INTEGER)
+    @DBField(id = true, generated = true, dataType = 8)
     private Integer id;
 
     @Getter(name = "getUserProfile")

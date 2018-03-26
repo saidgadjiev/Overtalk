@@ -6,8 +6,11 @@ import org.postgresql.ds.PGPoolingDataSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.saidgadjiev.orm.next.core.dao.*;
 import ru.saidgadjiev.orm.next.core.db.H2DatabaseType;
+import ru.saidgadjiev.orm.next.core.field.DataPersisterManager;
+import ru.saidgadjiev.orm.next.core.field.persisters.IntegerDataPersister;
 import ru.saidgadjiev.orm.next.core.support.PolledConnectionSource;
 import ru.saidgadjiev.overtalk.application.dao.PGDatabaseType;
+import ru.saidgadjiev.overtalk.application.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.overtalk.application.dao.UserDao;
 import ru.saidgadjiev.overtalk.application.domain.*;
 import ru.saidgadjiev.overtalk.application.service.UserService;
@@ -27,6 +30,7 @@ public class PrepareForPostgres {
     private static final Logger LOGGER = Logger.getLogger(PrepareForPostgres.class);
 
     public static void main(String[] args) throws Exception {
+        DataPersisterManager.register(8, new SerialTypeDataPersister());
         SessionManager sessionManager = new BaseSessionManagerImpl(new PolledConnectionSource(createDataSource(), new PGDatabaseType()));
         Session session = sessionManager.getCurrentSession();
         createTables(session);
