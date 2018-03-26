@@ -1,6 +1,20 @@
-var as = angular.module('OverTalkApp', ['ngRoute', 'ui.bootstrap', 'OverTalkApp.controllers']);
+var as = angular.module('OverTalkApp', ['ngRoute', 'ui.bootstrap', 'OverTalkApp.controllers', 'OverTalkApp.services']);
 
-as.config(function ($routeProvider) {
+as.constant('USER_ROLES', {
+    admin: 'ROLE_ADMIN',
+    user: 'ROLE_USER'
+});
+
+as.constant('AUTH_EVENTS', {
+    signUpSuccess: 'auth-signUp-success',
+    signInSuccess: 'auth-signIn-success',
+    signInFailed: '',
+    signOutSuccess: 'auth-signOut-success',
+    accessDenied: '403-access-denied',
+    unauthorized: '401-unauthorized'
+});
+
+as.config(function ($routeProvider, $httpProvider) {
     $routeProvider
         .when('/', {
             templateUrl: 'html/signIn.html',
@@ -27,5 +41,34 @@ as.config(function ($routeProvider) {
         }).when('/signUp', {
             templateUrl: 'html/signUp.html',
             controller: 'RegistrationController'
+        }).when('/403', {
+            templateUrl: 'html/403.html',
+            publicAccess: true
+        }).when('/users', {
+            templateUrl: 'html/users.html',
+            controller: 'UsersController'
         });
+    $httpProvider.interceptors.push(function () {
+        return {
+            'response': function (response) {
+                console.log(response);
+
+                return response;
+            },
+            'responseError': function (response) {
+                console.log(response);
+
+                return response;
+            }
+        }
+    });
+});
+
+as.run(function ($rootScope, $location, AUTH_EVENTS) {
+    $rootScope.$on(AUTH_EVENTS.unauthorized, function() {
+        $location.path('/signIn');
+    });
+    $rootScope.$on(AUTH_EVENTS.accessDenied, function() {
+        $location.path('/403');
+    });
 });

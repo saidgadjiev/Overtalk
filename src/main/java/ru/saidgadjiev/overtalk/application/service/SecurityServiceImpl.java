@@ -2,10 +2,8 @@ package ru.saidgadjiev.overtalk.application.service;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -25,11 +23,11 @@ public class SecurityServiceImpl implements SecurityService {
     private UserDetailsServiceImpl userDetailsService;
 
     @Override
-    public String findLoggedInUserName() {
+    public UserDetails findLoggedInUserName() {
         Object userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
 
         if (userDetails instanceof UserDetails) {
-            return ((UserDetails) userDetails).getUsername();
+            return (UserDetails) userDetails;
         }
 
         return null;

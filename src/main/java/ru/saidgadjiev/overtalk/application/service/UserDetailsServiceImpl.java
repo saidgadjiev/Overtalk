@@ -1,5 +1,6 @@
 package ru.saidgadjiev.overtalk.application.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -8,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.saidgadjiev.overtalk.application.domain.UserProfile;
-import ru.saidgadjiev.overtalk.application.domain.UserRoles;
+import ru.saidgadjiev.overtalk.application.domain.UserRole;
 
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private UserService userService;
 
+    @Autowired
     public UserDetailsServiceImpl(UserService userService) {
         this.userService = userService;
     }
@@ -33,8 +35,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             UserProfile userProfile = userService.getByUserName(s);
             Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
-            for (UserRoles userRoles: userProfile.getUserRoles()) {
-                grantedAuthorities.add(new SimpleGrantedAuthority(userRoles.getRole().getName()));
+            for (UserRole userRole : userProfile.getUserRoles()) {
+                grantedAuthorities.add(new SimpleGrantedAuthority(userRole.getRole().getName()));
             }
 
             return new User(

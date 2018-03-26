@@ -9,6 +9,7 @@ import ru.saidgadjiev.orm.next.core.dao.BaseSessionManagerImpl;
 import ru.saidgadjiev.orm.next.core.dao.SessionManager;
 import ru.saidgadjiev.orm.next.core.db.H2DatabaseType;
 import ru.saidgadjiev.orm.next.core.logger.LoggerFactory;
+import ru.saidgadjiev.orm.next.core.support.ConnectionSource;
 import ru.saidgadjiev.orm.next.core.support.PolledConnectionSource;
 import ru.saidgadjiev.orm.next.core.utils.TableUtils;
 import ru.saidgadjiev.overtalk.application.dao.CommentDao;
@@ -20,6 +21,7 @@ import ru.saidgadjiev.overtalk.application.domain.UserProfile;
 import ru.saidgadjiev.overtalk.application.service.BlogService;
 import ru.saidgadjiev.overtalk.application.service.UserService;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 
 /**
@@ -31,13 +33,7 @@ public class OrmNextConfiguration {
     @Bean
     @Scope(scopeName = "singleton")
     public SessionManager sessionManager() throws SQLException {
-        System.setProperty(LoggerFactory.LOG_ENABLED_PROPERTY, "true");
-        MysqlDataSource dataSource = new MysqlDataSource();
-
-        dataSource.setUser("root");
-        dataSource.setPassword("said1995");
-        dataSource.setURL("jdbc:mysql://localhost:3306/overtalk");
-        SessionManager sessionManager = new BaseSessionManagerImpl(new PolledConnectionSource(dataSource, new H2DatabaseType()));
+        SessionManager sessionManager = new BaseSessionManagerImpl(new PolledConnectionSource(dataSource(), new H2DatabaseType()));
 
         sessionManager.setObjectCache(new LRUObjectCache(16), Post.class, Comment.class);
         TableUtils.createTable(sessionManager.getDataSource(), Post.class, true);
@@ -47,15 +43,15 @@ public class OrmNextConfiguration {
     }
 
     @Bean
-    public BlogService blogService() throws SQLException {
-        PostDao postDao = new PostDao(sessionManager().getSession());
-        CommentDao commentDao = new CommentDao(sessionManager().getSession());
+    public DataSource dataSource() {
+        System.setProperty(LoggerFactory.LOG_ENABLED_PROPERTY, "true");
+        MysqlDataSource dataSource = new MysqlDataSource();
 
-        return new BlogService(postDao, commentDao);
+        dataSource.setUser("root");
+        dataSource.setPassword("said1995");
+        dataSource.setURL("jdbc:mysql://localhost:3306/overtalk");
+
+        return dataSource;
     }
 
-    @Bean
-    public UserService userService() throws SQLException {
-        return new UserService(new UserDao(sessionManager().getSession()));
-    }
 }

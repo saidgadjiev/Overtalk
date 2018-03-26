@@ -1,6 +1,26 @@
 var as = angular.module('OverTalkApp.controllers', []);
 
-as.controller('OverTalkController', function ($scope, $location) {
+as.controller('OverTalkController', function ($scope, $http, AUTH_EVENTS, USER_ROLES, AuthService, $location) {
+    $scope.authenticated = AuthService.isAuthenticated();
+
+    $scope.signOut = function () {
+        AuthService.signOut();
+    };
+    $scope.$on(AUTH_EVENTS.signInSuccess, function () {
+        $scope.authenticated = true;
+    });
+    $scope.$on(AUTH_EVENTS.signUpSuccess, function () {
+        $scope.authenticated = true;
+    });
+    $scope.$on(AUTH_EVENTS.signOutSuccess, function () {
+        $scope.authenticated = false;
+        $location.path('/signIn');
+    });
+
+    $scope.isAuthorized = function(authorizedRoles) {
+        return AuthService.isAuthorized(authorizedRoles);
+    };
+    $scope.userRoles = USER_ROLES;
 });
 
 as.controller('NewPostController', function ($scope, $http, $location) {
@@ -18,23 +38,51 @@ as.controller('NewPostController', function ($scope, $http, $location) {
     }
 });
 
-as.controller('LoginController', function ($scope, $http, $location, $log) {
-    $scope.signIn = function () {
-        $log.log('SignIn');
-    };
+as.controller('LoginController', function ($scope, $http, $location, $log, AuthService, AUTH_EVENTS) {
+    if (AuthService.isAuthenticated()) {
+        $location.path('/main');
+    }
+    $scope.signIn = function (isValid) {
+        $scope.submitted = true;
 
+        if (isValid) {
+            AuthService.signIn($scope.user);
+        }
+    };
     $scope.gotoSignUp = function () {
         $location.path('/signUp');
-    }
+    };
+
+    $scope.$on(AUTH_EVENTS.signInSuccess, function(data) {
+        $scope.submitted = false;
+        $location.path('/main');
+    });
+    $scope.$on(AUTH_EVENTS.signInFailed, function(data) {
+        $scope.submitted = false;
+        console.log('sign in failed');
+    });
 });
 
-as.controller('RegistrationController', function ($scope, $http, $location, $log) {
-    $scope.signUp = function () {
-        $http.post('api/user/signUp', $scope.user).success(function (data) {
-            $log.log("SignUp");
-            $log.log(data);
-        });
+as.controller('RegistrationController', function ($scope, $http, $location, $log, AuthService, AUTH_EVENTS) {
+    $scope.checkUsername = function () {
+        $http.get('api/user/exist?userName=' + $scope.newUser.userName).success(function (data) {
+            $scope.userNameExist = data.code === 409;
+        })
     };
+
+    $scope.signUp = function (isValid) {
+        $scope.submitted = true;
+
+        if (isValid) {
+            $scope.submitted = false;
+            AuthService.signUp($scope.newUser);
+        }
+    };
+
+    $scope.$on(AUTH_EVENTS.signUpSuccess, function(data) {
+        $scope.submitted = false;
+        $location.path('/main');
+    })
 });
 
 as.controller('PostsController', function ($scope, $http, $location, $log) {
@@ -106,8 +154,10 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
             });
         }
     };
+});
 
-    $scope.loadPage = function () {
-
+as.controller('UsersController', function ($scope, AuthService, AUTH_EVENTS, USER_ROLES) {
+    if (!AuthService.isAuthorized(USER_ROLES.admin)) {
+        $scope.$emit(AUTH_EVENTS.accessDenied);
     }
 });

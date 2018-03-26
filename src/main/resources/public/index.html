@@ -12,8 +12,12 @@
         <ul class="nav navbar-nav">
             <li class="active"><a href="#/main">Главное</a></li>
             <li><a href="#/posts">Форум</a></li>
+            <li ng-if="isAuthorized(userRoles.admin)"><a href="#/users">Пользователи</a></li>
         </ul>
-        <ul class="nav navbar-nav navbar-right">
+        <ul ng-if="authenticated" class="nav navbar-nav navbar-right">
+            <li><a ng-click="signOut()"><span class="glyphicon glyphicon-log-out"></span> Выйти</a></li>
+        </ul>
+        <ul ng-if="!authenticated" class="nav navbar-nav navbar-right">
             <li><a href="#/signIn"><span class="glyphicon glyphicon-log-in"></span> Войти</a></li>
         </ul>
     </div>
@@ -27,6 +31,7 @@
 <script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="webjars/angular-ui-bootstrap/2.2.0/ui-bootstrap-tpls.min.js"></script>
 <script type="text/javascript" src="js/init.js"></script>
+<script type="text/javascript" src="js/service.js"></script>
 <script type="text/javascript" src="js/controller.js"></script>
 </body>
 </html>

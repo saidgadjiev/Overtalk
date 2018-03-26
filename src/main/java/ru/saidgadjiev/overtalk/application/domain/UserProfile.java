@@ -4,6 +4,7 @@ import ru.saidgadjiev.orm.next.core.field.*;
 import ru.saidgadjiev.orm.next.core.table.DBTable;
 import ru.saidgadjiev.orm.next.core.table.Unique;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -29,13 +30,13 @@ public class UserProfile {
 
     @Getter(name = "getPassword")
     @Setter(name = "setPassword")
-    @DBField(dataType = DataType.STRING)
+    @DBField(dataType = DataType.STRING, notNull = true)
     private String password;
 
     @Getter(name = "getUserRoles")
     @Setter(name = "setUserRoles")
     @ForeignCollectionField(foreignFieldName = "userProfile", fetchType = FetchType.LAZY)
-    private Set<UserRoles> userRoles;
+    private Set<UserRole> userRoles = new HashSet<>();
 
     public Integer getId() {
         return id;
@@ -61,11 +62,11 @@ public class UserProfile {
         this.password = password;
     }
 
-    public Set<UserRoles> getUserRoles() {
+    public Set<UserRole> getUserRoles() {
         return userRoles;
     }
 
-    public void setUserRoles(Set<UserRoles> userRoles) {
+    public void setUserRoles(Set<UserRole> userRoles) {
         this.userRoles = userRoles;
     }
 }
