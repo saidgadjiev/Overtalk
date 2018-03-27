@@ -17,15 +17,15 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
     var authService = {};
 
     authService.signUp = function (user) {
-        return $http.post('api/auth/signUp', user).success(function (data) {
-            $log.debug(data);
-            Session.create(data);
+        return $http.post('api/auth/signUp', user).success(function (response) {
+            $log.debug(response);
+            Session.create(response.content);
             authService.authenticated = true;
             $rootScope.$broadcast(AUTH_EVENTS.signUpSuccess, {
-                content: data
+                content: response
             });
-        }).error(function (data) {
-            $log.error(data);
+
+            return response;
         });
     };
 
@@ -34,28 +34,28 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
     };
 
     authService.signIn = function (user) {
-        return $http.post('api/auth/signIn', user).success(function (data) {
-            $log.debug(data);
-            Session.create(data);
+        return $http.post('api/auth/signIn', user).success(function (response) {
+            $log.debug(response);
+            Session.create(response.content);
             authService.authenticated = true;
             $rootScope.$broadcast(AUTH_EVENTS.signInSuccess, {
-                data: data
+                data: response
             });
-        }).error(function (data) {
-            $log.error(data);
+
+            return response;
         });
     };
 
     authService.signOut = function () {
-        return $http.post('api/auth/signOut').success(function (data) {
-            $log.debug(data);
+        return $http.post('api/auth/signOut').success(function (response) {
+            $log.debug(response);
             Session.invalidate();
             authService.authenticated = false;
             $rootScope.$broadcast(AUTH_EVENTS.signOutSuccess, {
-                content: data
+                content: response
             });
-        }).error(function (data) {
-            $log.error(data);
+
+            return response;
         });
     };
 

@@ -17,7 +17,7 @@ as.controller('OverTalkController', function ($scope, $http, AUTH_EVENTS, USER_R
         $location.path('/signIn');
     });
 
-    $scope.isAuthorized = function(authorizedRoles) {
+    $scope.isAuthorized = function (authorizedRoles) {
         return AuthService.isAuthorized(authorizedRoles);
     };
     $scope.userRoles = USER_ROLES;
@@ -46,21 +46,21 @@ as.controller('LoginController', function ($scope, $http, $location, $log, AuthS
         $scope.submitted = true;
 
         if (isValid) {
-            AuthService.signIn($scope.user);
+            AuthService.signIn($scope.user)
+                .then(function (data) {
+                    $scope.submitted = false;
+                    $scope.userNameOrPasswordError = false;
+                    $location.path('/main');
+                }).catch(function (response) {
+                    if (response.status === 400 && response.data.message === "Username or password wrong") {
+                        $scope.userNameOrPasswordError = true;
+                    }
+            });
         }
     };
     $scope.gotoSignUp = function () {
         $location.path('/signUp');
     };
-
-    $scope.$on(AUTH_EVENTS.signInSuccess, function(data) {
-        $scope.submitted = false;
-        $location.path('/main');
-    });
-    $scope.$on(AUTH_EVENTS.signInFailed, function(data) {
-        $scope.submitted = false;
-        console.log('sign in failed');
-    });
 });
 
 as.controller('RegistrationController', function ($scope, $http, $location, $log, AuthService, AUTH_EVENTS) {
@@ -79,7 +79,7 @@ as.controller('RegistrationController', function ($scope, $http, $location, $log
         }
     };
 
-    $scope.$on(AUTH_EVENTS.signUpSuccess, function(data) {
+    $scope.$on(AUTH_EVENTS.signUpSuccess, function (data) {
         $scope.submitted = false;
         $location.path('/main');
     })
@@ -106,7 +106,7 @@ as.controller('PostsController', function ($scope, $http, $location, $log) {
     $scope.comments = function (postId) {
     };
 
-    $scope.pageChanged = function() {
+    $scope.pageChanged = function () {
         $log.log('Page changed to: ' + $scope.currentPage);
         loadPosts();
     };

@@ -1,6 +1,7 @@
 package ru.saidgadjiev.overtalk.application.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -37,23 +38,23 @@ public class AuthController {
     public ResponseEntity<?> signUp(@RequestBody @Valid UserDetails userDetails, BindingResult bindingResult) throws SQLException {
         if (bindingResult.hasErrors()) {
             bindingResult.getFieldError();
-            return ResponseEntity.ok(new ResponseMessage<>(HttpServletResponse.SC_BAD_REQUEST, ErrorUtils.toErrors(bindingResult)));
+            return ResponseEntity.badRequest().body(new ResponseMessage<>().setContent(ErrorUtils.toErrors(bindingResult)));
         }
         if (userService.isExists(userDetails.getUserName())) {
-            return ResponseEntity.ok(new ResponseMessage<>(HttpServletResponse.SC_CONFLICT));
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         userDetails.setRoles(userService.create(userDetails).stream().map(Role::getName).collect(Collectors.toSet()));
         securityService.login(userDetails.getUserName(), userDetails.getPassword());
 
-        return ResponseEntity.ok(securityService.findLoggedInUserName());
+        return ResponseEntity.ok(new ResponseMessage<>().setContent(securityService.findLoggedInUserName()));
     }
 
     @RequestMapping(value = "/exist", method = RequestMethod.GET)
     public ResponseEntity<?> exist(@RequestParam(value = "userName") String userName) throws SQLException {
         if (userService.isExists(userName)) {
-            return ResponseEntity.ok(new ResponseMessage<>(HttpServletResponse.SC_FOUND));
+            return ResponseEntity.status(HttpStatus.FOUND).build();
         }
 
-        return ResponseEntity.ok(new ResponseMessage<>(HttpServletResponse.SC_NOT_FOUND));
+        return ResponseEntity.notFound().build();
     }
 }

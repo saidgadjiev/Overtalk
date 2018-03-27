@@ -33,12 +33,12 @@ public class PostController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> createPost(@RequestBody @Valid PostDetails postDetails, BindingResult errResult) throws SQLException {
+    public ResponseEntity createPost(@RequestBody @Valid PostDetails postDetails, BindingResult errResult) throws SQLException {
         LOGGER.debug("createPost(Post: " + postDetails.toString() + ")");
 
         blogService.createPost(postDetails);
 
-        return ResponseEntity.ok(new ResponseMessage(200, "post.created"));
+        return ResponseEntity.ok().build();
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -74,6 +74,6 @@ public class PostController {
     public ResponseEntity<ResponseMessage> createCommentOfPost(@PathVariable("id") Integer id, @RequestBody @Valid CommentDetails commentDetails) throws SQLException {
         blogService.createCommentOfPost(id, commentDetails);
 
-        return ResponseEntity.ok(new ResponseMessage(200, "comment.created"));
+        return ResponseEntity.ok().build();
     }
 }

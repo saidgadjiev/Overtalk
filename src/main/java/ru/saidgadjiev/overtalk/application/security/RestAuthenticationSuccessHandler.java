@@ -2,8 +2,10 @@ package ru.saidgadjiev.overtalk.application.security;
 
 import org.apache.log4j.Logger;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import ru.saidgadjiev.overtalk.application.model.ResponseMessage;
 import ru.saidgadjiev.overtalk.application.utils.ResponseUtils;
 
 import javax.servlet.ServletException;
@@ -22,7 +24,8 @@ public class RestAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         LOGGER.debug("Authentication success");
+        User user = (User) authentication.getPrincipal();
 
-        ResponseUtils.sendResponseMessage(response, 200);
+        ResponseUtils.sendResponseMessage(response, 200, new ResponseMessage<>().setContent(user));
     }
 }

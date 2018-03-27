@@ -19,7 +19,7 @@ public class Role {
 
     @Getter(name = "getId")
     @Setter(name = "setId")
-    @DBField(id = true, generated = true, dataType = 8)
+    @DBField(id = true, generated = true, dataType = DataType.INTEGER)
     private Integer id;
 
     @Getter(name = "getName")

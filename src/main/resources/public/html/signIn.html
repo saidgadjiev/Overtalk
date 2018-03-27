@@ -1,13 +1,18 @@
 <form ng-submit="signIn(signInForm.$valid)" name="signInForm" novalidate>
-    <div class="form-group">
+    <div ng-class="{'has-error':userNameOrPasswordError}">
+        <p class="help-block" ng-show="userNameOrPasswordError">Логин или пароль введены неправильно!</p>
+    </div>
+    <div class="form-group" ng-class="{'has-error':signInForm.userName.$invalid && (signInForm.userName.$touched || submitted)}">
         <label for="userName">Логин:</label>
         <input type="text" class="form-control" id="userName" name="userName" ng-model="user.userName">
-        <p class="help-block" ng-show="signInForm.userName.$invalid && (signInForm.userName.$touched || submitted)">Введите логин!</p>
+        <p class="help-block" ng-show="signInForm.userName.$invalid && (signInForm.userName.$touched || submitted)">
+            Введите логин!</p>
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-class="{'has-error':signInForm.password.$invalid && (signInForm.password.$touched || submitted)}">
         <label for="pwd">Пароль:</label>
         <input type="password" class="form-control" id="pwd" name="password" ng-model="user.password">
-        <p class="help-block" ng-show="signInForm.password.$invalid && (signInForm.password.$touched || submitted)">Введите пароль!</p>
+        <p class="help-block" ng-show="signInForm.password.$invalid && (signInForm.password.$touched || submitted)">
+            Введите пароль!</p>
     </div>
 
     <button type="submit" class="btn btn-success">Войти</button>

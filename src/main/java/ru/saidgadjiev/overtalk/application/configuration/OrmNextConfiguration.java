@@ -34,7 +34,7 @@ public class OrmNextConfiguration {
     public SessionManager sessionManager() throws SQLException {
         System.setProperty(LoggerFactory.LOG_ENABLED_PROPERTY, "true");
         DataPersisterManager.register(8, new SerialTypeDataPersister());
-        SessionManager sessionManager = new BaseSessionManagerImpl(postgreConnectionSource());
+        SessionManager sessionManager = new BaseSessionManagerImpl(mysqlConnectionSource());
 
         sessionManager.setObjectCache(new LRUObjectCache(16), Post.class, Comment.class);
         TableUtils.createTable(sessionManager.getDataSource(), Post.class, true);

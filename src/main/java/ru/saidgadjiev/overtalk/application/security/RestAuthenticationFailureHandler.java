@@ -5,6 +5,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
+import ru.saidgadjiev.overtalk.application.model.ResponseMessage;
 import ru.saidgadjiev.overtalk.application.utils.ResponseUtils;
 
 import javax.servlet.ServletException;
@@ -22,6 +23,6 @@ public class RestAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
         LOGGER.debug("Authentication failure");
         LOGGER.error(exception.getMessage(), exception);
 
-        ResponseUtils.sendResponseMessage(response, HttpServletResponse.SC_BAD_REQUEST, "Username or password wrong");
+        ResponseUtils.sendResponseMessage(response, HttpServletResponse.SC_BAD_REQUEST, new ResponseMessage<>().setMessage("Username or password wrong"));
     }
 }

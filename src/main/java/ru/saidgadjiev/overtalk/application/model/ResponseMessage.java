@@ -5,32 +5,27 @@ package ru.saidgadjiev.overtalk.application.model;
  */
 public class ResponseMessage<T> {
 
-    private int code;
+    private String message;
 
     private T content;
-
-    public ResponseMessage(int code, T content) {
-        this.code = code;
-        this.content = content;
-    }
-
-    public ResponseMessage(int code) {
-        this.code = code;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
 
     public T getContent() {
         return content;
     }
 
-    public void setContent(T content) {
+    public ResponseMessage<T> setContent(T content) {
         this.content = content;
+
+        return this;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public ResponseMessage<T> setMessage(String message) {
+        this.message = message;
+
+        return this;
     }
 }
