@@ -51,7 +51,7 @@ public class AuthController {
     @RequestMapping(value = "/exist", method = RequestMethod.GET)
     public ResponseEntity<?> exist(@RequestParam(value = "userName") String userName) throws SQLException {
         if (userService.isExists(userName)) {
-            return ResponseEntity.ok(new ResponseMessage<>(HttpServletResponse.SC_OK));
+            return ResponseEntity.ok(new ResponseMessage<>(HttpServletResponse.SC_FOUND));
         }
 
         return ResponseEntity.ok(new ResponseMessage<>(HttpServletResponse.SC_NOT_FOUND));
