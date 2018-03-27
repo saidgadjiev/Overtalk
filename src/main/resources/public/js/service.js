@@ -18,13 +18,14 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
 
     authService.signUp = function (user) {
         return $http.post('api/auth/signUp', user).success(function (data) {
-            $log.log("SignUp success");
-            $log.log(data);
+            $log.debug(data);
             Session.create(data);
             authService.authenticated = true;
             $rootScope.$broadcast(AUTH_EVENTS.signUpSuccess, {
                 content: data
             });
+        }).error(function (data) {
+            $log.error(data);
         });
     };
 
@@ -34,27 +35,28 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
 
     authService.signIn = function (user) {
         return $http.post('api/auth/signIn', user).success(function (data) {
-            $log.log("SignIn success");
+            $log.debug(data);
             Session.create(data);
             authService.authenticated = true;
             $rootScope.$broadcast(AUTH_EVENTS.signInSuccess, {
                 data: data
             });
         }).error(function (data) {
-            $rootScope.$broadcast(AUTH_EVENTS.signInFailed, {
-                data: data
-            });
-        })
+            $log.error(data);
+        });
     };
 
     authService.signOut = function () {
         return $http.post('api/auth/signOut').success(function (data) {
+            $log.debug(data);
             Session.invalidate();
             authService.authenticated = false;
             $rootScope.$broadcast(AUTH_EVENTS.signOutSuccess, {
                 content: data
             });
-        })
+        }).error(function (data) {
+            $log.error(data);
+        });
     };
 
     authService.isAuthorized = function (role) {

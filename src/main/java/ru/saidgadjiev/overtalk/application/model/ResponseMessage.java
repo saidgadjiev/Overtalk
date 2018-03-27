@@ -7,19 +7,15 @@ public class ResponseMessage<T> {
 
     private int code;
 
-    private String message;
-
     private T content;
 
-    public ResponseMessage(int code, String message, T content) {
+    public ResponseMessage(int code, T content) {
         this.code = code;
-        this.message = message;
         this.content = content;
     }
 
-    public ResponseMessage(int code, String message) {
+    public ResponseMessage(int code) {
         this.code = code;
-        this.message = message;
     }
 
     public int getCode() {
@@ -36,13 +32,5 @@ public class ResponseMessage<T> {
 
     public void setContent(T content) {
         this.content = content;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }

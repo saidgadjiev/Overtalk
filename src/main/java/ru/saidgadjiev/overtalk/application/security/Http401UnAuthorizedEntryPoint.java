@@ -3,7 +3,6 @@ package ru.saidgadjiev.overtalk.application.security;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import ru.saidgadjiev.overtalk.application.utils.ResponseUtils;
 
 import javax.servlet.ServletException;
@@ -20,8 +19,9 @@ public class Http401UnAuthorizedEntryPoint implements AuthenticationEntryPoint {
 
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
-        LOGGER.debug("User unauthorized");
+        LOGGER.debug("Unauthorized");
+        LOGGER.error(authException.getMessage(), authException);
 
-        ResponseUtils.sendError(response, HttpServletResponse.SC_UNAUTHORIZED, "User unauthorized");
+        ResponseUtils.sendResponseMessage(response, HttpServletResponse.SC_UNAUTHORIZED);
     }
 }

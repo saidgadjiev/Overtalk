@@ -24,10 +24,10 @@ public class ResponseUtils {
 
     }
 
-    public static void sendError(HttpServletResponse response, int status, String message) throws IOException {
+    public static void sendResponseMessage(HttpServletResponse response, int status) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        ResponseMessage<String> responseMessage = new ResponseMessage<>(status, message);
+        response.setStatus(status);
+        ResponseMessage<String> responseMessage = new ResponseMessage<>(status);
         PrintWriter writer = response.getWriter();
 
         writer.write(OBJECT_MAPPER.writeValueAsString(responseMessage));
@@ -36,10 +36,10 @@ public class ResponseUtils {
     }
 
 
-    public static void sendResponse(HttpServletResponse response, int status, String message, Object object) throws IOException {
+    public static void sendResponseMessage(HttpServletResponse response, int status, Object object) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        ResponseMessage<?> responseMessage = new ResponseMessage<>(status, message, object);
+        response.setStatus(status);
+        ResponseMessage<?> responseMessage = new ResponseMessage<>(status, object);
         PrintWriter writer = response.getWriter();
 
         writer.write(OBJECT_MAPPER.writeValueAsString(responseMessage));

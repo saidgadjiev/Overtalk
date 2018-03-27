@@ -21,7 +21,7 @@ public class Test {
 
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         User user = new User("said1995", "test1", grantedAuthorities);
-        ResponseMessage<User> responseMessage = new ResponseMessage<User>(200, "user.authenticated", user);
+        ResponseMessage<User> responseMessage = new ResponseMessage<User>(200);
         System.out.println(objectMapper.writeValueAsString(responseMessage));
     }
 }

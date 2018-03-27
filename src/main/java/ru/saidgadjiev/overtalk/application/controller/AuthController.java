@@ -1,7 +1,6 @@
 package ru.saidgadjiev.overtalk.application.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +9,7 @@ import ru.saidgadjiev.overtalk.application.model.ResponseMessage;
 import ru.saidgadjiev.overtalk.application.model.UserDetails;
 import ru.saidgadjiev.overtalk.application.service.SecurityService;
 import ru.saidgadjiev.overtalk.application.service.UserService;
+import ru.saidgadjiev.overtalk.application.utils.ErrorUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -36,10 +36,11 @@ public class AuthController {
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
     public ResponseEntity<?> signUp(@RequestBody @Valid UserDetails userDetails, BindingResult bindingResult) throws SQLException {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
+            bindingResult.getFieldError();
+            return ResponseEntity.ok(new ResponseMessage<>(HttpServletResponse.SC_BAD_REQUEST, ErrorUtils.toErrors(bindingResult)));
         }
         if (userService.isExists(userDetails.getUserName())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.ok(new ResponseMessage<>(HttpServletResponse.SC_CONFLICT));
         }
         userDetails.setRoles(userService.create(userDetails).stream().map(Role::getName).collect(Collectors.toSet()));
         securityService.login(userDetails.getUserName(), userDetails.getPassword());
@@ -50,22 +51,9 @@ public class AuthController {
     @RequestMapping(value = "/exist", method = RequestMethod.GET)
     public ResponseEntity<?> exist(@RequestParam(value = "userName") String userName) throws SQLException {
         if (userService.isExists(userName)) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(new ResponseMessage<>(HttpServletResponse.SC_OK));
         }
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(new ResponseMessage<>(HttpServletResponse.SC_NOT_FOUND));
     }
-
-    @RequestMapping(value = "/signIn", method = RequestMethod.GET)
-    public ResponseEntity<?> signIn(String error, String logout) throws SQLException {
-        if (error != null) {
-            return ResponseEntity.badRequest().build();
-        }
-        if (logout != null) {
-            return ResponseEntity.ok().build();
-        }
-
-        return ResponseEntity.ok().build();
-    }
-
 }

@@ -13,12 +13,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import ru.saidgadjiev.overtalk.application.filter.RequestBodyReaderAuthenticationFilter;
 import ru.saidgadjiev.overtalk.application.security.Http401UnAuthorizedEntryPoint;
 import ru.saidgadjiev.overtalk.application.security.Http403AccessDeniedEntryPoint;
+import ru.saidgadjiev.overtalk.application.security.RestLogoutSuccessHandler;
 import ru.saidgadjiev.overtalk.application.service.UserDetailsServiceImpl;
 
 /**
@@ -33,6 +36,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationSuccessHandler authenticationSuccessHandler;
+
+    @Autowired
+    private AuthenticationFailureHandler authenticationFailureHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -54,6 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .logout()
                     .logoutUrl("/api/auth/signOut")
+                    .logoutSuccessHandler(new RestLogoutSuccessHandler())
                     .permitAll();
     }
 
@@ -83,6 +90,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 = new RequestBodyReaderAuthenticationFilter();
 
         authenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
+        authenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
         authenticationFilter.setAuthenticationManager(provideAuthenticationManager());
         authenticationFilter.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/auth/signIn", "POST"));
 

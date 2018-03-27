@@ -14,6 +14,21 @@ as.constant('AUTH_EVENTS', {
     unauthorized: '401-unauthorized'
 });
 
+as.factory('AuthInterceptor', function ($q) {
+    return {
+        'response': function (response) {
+            console.log(response);
+
+            return response;
+        },
+        'responseError': function (response) {
+            console.log(response);
+
+            return $q.reject(response);
+        }
+    };
+});
+
 as.config(function ($routeProvider, $httpProvider) {
     $routeProvider
         .when('/', {
@@ -32,43 +47,30 @@ as.config(function ($routeProvider, $httpProvider) {
             templateUrl: 'html/posts/posts.html',
             controller: 'PostsController'
         }).when('/posts/new', {
-            templateUrl: 'html/posts/new.html',
-            controller: 'NewPostController'
-        })
+        templateUrl: 'html/posts/new.html',
+        controller: 'NewPostController'
+    })
         .when('/posts/:id', {
             templateUrl: 'html/posts/details.html',
             controller: 'DetailsController'
         }).when('/signUp', {
-            templateUrl: 'html/signUp.html',
-            controller: 'RegistrationController'
-        }).when('/403', {
-            templateUrl: 'html/403.html',
-            publicAccess: true
-        }).when('/users', {
-            templateUrl: 'html/users.html',
-            controller: 'UsersController'
-        });
-    $httpProvider.interceptors.push(function () {
-        return {
-            'response': function (response) {
-                console.log(response);
-
-                return response;
-            },
-            'responseError': function (response) {
-                console.log(response);
-
-                return response;
-            }
-        }
+        templateUrl: 'html/signUp.html',
+        controller: 'RegistrationController'
+    }).when('/403', {
+        templateUrl: 'html/403.html',
+        publicAccess: true
+    }).when('/users', {
+        templateUrl: 'html/users.html',
+        controller: 'UsersController'
     });
+    $httpProvider.interceptors.push('AuthInterceptor');
 });
 
 as.run(function ($rootScope, $location, AUTH_EVENTS) {
-    $rootScope.$on(AUTH_EVENTS.unauthorized, function() {
+    $rootScope.$on(AUTH_EVENTS.unauthorized, function () {
         $location.path('/signIn');
     });
-    $rootScope.$on(AUTH_EVENTS.accessDenied, function() {
+    $rootScope.$on(AUTH_EVENTS.accessDenied, function () {
         $location.path('/403');
     });
 });

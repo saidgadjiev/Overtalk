@@ -19,8 +19,9 @@ public class Http403AccessDeniedEntryPoint implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        LOGGER.debug("User access denied");
+        LOGGER.debug("Access denied");
+        LOGGER.error(accessDeniedException.getMessage(), accessDeniedException);
 
-        ResponseUtils.sendError(response, HttpServletResponse.SC_FORBIDDEN, "User access denied");
+        ResponseUtils.sendResponseMessage(response, HttpServletResponse.SC_FORBIDDEN);
     }
 }
