@@ -38,9 +38,9 @@ as.controller('NewPostController', function ($scope, $http, $location) {
     }
 });
 
-as.controller('LoginController', function ($scope, $http, $location, $log, AuthService, AUTH_EVENTS) {
+as.controller('LoginController', function ($scope, $http, $location, $log, AuthService) {
     if (AuthService.isAuthenticated()) {
-        $location.path('/main');
+        $location.path('/');
     }
     $scope.signIn = function (isValid) {
         $scope.submitted = true;
@@ -50,7 +50,7 @@ as.controller('LoginController', function ($scope, $http, $location, $log, AuthS
                 .then(function (data) {
                     $scope.submitted = false;
                     $scope.userNameOrPasswordError = false;
-                    $location.path('/main');
+                    $location.path('/');
                 }).catch(function (response) {
                     if (response.status === 400 && response.data.message === "Username or password wrong") {
                         $scope.userNameOrPasswordError = true;
@@ -81,7 +81,7 @@ as.controller('RegistrationController', function ($scope, $http, $location, $log
 
     $scope.$on(AUTH_EVENTS.signUpSuccess, function (data) {
         $scope.submitted = false;
-        $location.path('/main');
+        $location.path('/');
     })
 });
 
@@ -156,8 +156,22 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
     };
 });
 
-as.controller('UsersController', function ($scope, AuthService, AUTH_EVENTS, USER_ROLES) {
-    if (!AuthService.isAuthorized(USER_ROLES.admin)) {
-        $scope.$emit(AUTH_EVENTS.accessDenied);
-    }
+as.controller('UsersController', function ($scope, $http, $log) {
+    $scope.currentPage = 1;
+    $scope.itemsPerPage = 20;
+
+    var loadUsers = function () {
+        $http.get('api/users?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
+            $log.log(data);
+            $scope.totalItems = data.content.totalElements;
+            $scope.users = data.content.content;
+        })
+    };
+
+    loadUsers();
+
+    $scope.pageChanged = function () {
+        $log.log('Page changed to: ' + $scope.currentPage);
+        loadUsers();
+    };
 });

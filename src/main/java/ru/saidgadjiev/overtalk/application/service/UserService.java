@@ -1,6 +1,9 @@
 package ru.saidgadjiev.overtalk.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.saidgadjiev.overtalk.application.dao.RoleDao;
@@ -14,6 +17,7 @@ import ru.saidgadjiev.overtalk.application.utils.DTOUtils;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -54,5 +58,12 @@ public class UserService {
 
     public UserProfile getByUserName(String userName) throws SQLException {
         return userDao.getByUserName(userName);
+    }
+
+    public Page<UserDetails> getAll(Pageable pageable) throws SQLException {
+        long totalCount = userDao.countOff();
+        List<UserProfile> userProfiles = userDao.getAll(pageable.getPageSize(), pageable.getOffset());
+
+        return new PageImpl<>(DTOUtils.convert(userProfiles, UserDetails.class), pageable, totalCount);
     }
 }

@@ -12,10 +12,12 @@ import ru.saidgadjiev.orm.next.core.dao.Transaction;
 import ru.saidgadjiev.orm.next.core.stament_executor.DatabaseResults;
 import ru.saidgadjiev.orm.next.core.stament_executor.GenericResults;
 import ru.saidgadjiev.orm.next.core.stament_executor.result_mapper.ResultsMapper;
+import ru.saidgadjiev.overtalk.application.domain.Post;
 import ru.saidgadjiev.overtalk.application.domain.UserProfile;
 import ru.saidgadjiev.overtalk.application.domain.UserRole;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Created by said on 18.03.2018.
@@ -75,5 +77,21 @@ public class UserDao {
                 }
             }) > 0;
         }
+    }
+
+    public List<UserProfile> getAll(int limit, long offset) throws SQLException {
+        Session session = sessionManager.getCurrentSession();
+        SelectStatement<UserProfile> selectStatement = new SelectStatement<>(UserProfile.class);
+
+        selectStatement.limit(limit).offset((int) offset);
+        try (GenericResults<UserProfile> genericResults = session.query(selectStatement)) {
+            return genericResults.getResults();
+        }
+    }
+
+    public long countOff() throws SQLException {
+        Session session = sessionManager.getCurrentSession();
+
+        return session.countOff(UserProfile.class);
     }
 }

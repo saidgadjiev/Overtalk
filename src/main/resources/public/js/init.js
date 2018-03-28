@@ -37,9 +37,6 @@ as.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
 
 as.config(function ($routeProvider, $httpProvider) {
     $routeProvider.when('/', {
-            templateUrl: 'html/signIn.html',
-            controller: 'LoginController'
-    }).when('/main', {
         templateUrl: 'html/main.html',
         publicAccess: true
     }).when('/signIn', {
