@@ -52,7 +52,7 @@ as.controller('LoginController', function ($scope, $http, $location, $log, AuthS
     };
     //Для инициализации bootstrap-show-password
     //bootstrap-show-password
-    //$("#password").password();
+    //$("#passwordShowPass").password();
 
     $scope.signIn = function (isValid) {
         $scope.submitted = true;
@@ -86,6 +86,14 @@ as.controller('RegistrationController', function ($scope, $http, $location, $log
             $scope.inputPasswordType = 'text';
         else
             $scope.inputPasswordType = 'password';
+    };
+    $scope.inputConfirmPasswordType = 'password';
+
+    $scope.hideShowConfirmPassword = function(){
+        if ($scope.inputConfirmPasswordType === 'password')
+            $scope.inputConfirmPasswordType = 'text';
+        else
+            $scope.inputConfirmPasswordType = 'password';
     };
     $scope.signUp = function (isValid) {
         $scope.submitted = true;
