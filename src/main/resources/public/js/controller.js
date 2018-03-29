@@ -42,6 +42,18 @@ as.controller('LoginController', function ($scope, $http, $location, $log, AuthS
     if (AuthService.isAuthenticated()) {
         $location.path('/');
     }
+    $scope.inputPasswordType = 'password';
+
+    $scope.hideShowPassword = function(){
+        if ($scope.inputPasswordType === 'password')
+            $scope.inputPasswordType = 'text';
+        else
+            $scope.inputPasswordType = 'password';
+    };
+    //Для инициализации bootstrap-show-password
+    //bootstrap-show-password
+    //$("#password").password();
+
     $scope.signIn = function (isValid) {
         $scope.submitted = true;
 
@@ -62,11 +74,19 @@ as.controller('LoginController', function ($scope, $http, $location, $log, AuthS
 
 as.controller('RegistrationController', function ($scope, $http, $location, $log, AuthService) {
     $scope.checkUsername = function () {
+        $scope.userNameExist = false;
         $http.get('api/user/exist?userName=' + $scope.newUser.userName).catch(function (response) {
             $scope.userNameExist = response.status === 302;
         });
     };
+    $scope.inputPasswordType = 'password';
 
+    $scope.hideShowPassword = function(){
+        if ($scope.inputPasswordType === 'password')
+            $scope.inputPasswordType = 'text';
+        else
+            $scope.inputPasswordType = 'password';
+    };
     $scope.signUp = function (isValid) {
         $scope.submitted = true;
 
