@@ -33,7 +33,6 @@ public class OrmNextConfiguration {
     @Scope(scopeName = "singleton")
     public SessionManager sessionManager() throws SQLException {
         System.setProperty(LoggerFactory.LOG_ENABLED_PROPERTY, "true");
-        DataPersisterManager.register(8, new SerialTypeDataPersister());
         SessionManager sessionManager = new BaseSessionManagerImpl(mysqlConnectionSource());
 
         sessionManager.setObjectCache(new LRUObjectCache(16), Post.class, Comment.class);
@@ -45,6 +44,7 @@ public class OrmNextConfiguration {
 
     @Bean
     public ConnectionSource postgreConnectionSource() {
+        DataPersisterManager.register(Constants.PK_TYPE, new SerialTypeDataPersister());
         PGPoolingDataSource dataSource = new PGPoolingDataSource();
 
         dataSource.setServerName("localhost");

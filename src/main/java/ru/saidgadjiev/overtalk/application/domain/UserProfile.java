@@ -3,6 +3,7 @@ package ru.saidgadjiev.overtalk.application.domain;
 import ru.saidgadjiev.orm.next.core.field.*;
 import ru.saidgadjiev.orm.next.core.table.DBTable;
 import ru.saidgadjiev.orm.next.core.table.Unique;
+import ru.saidgadjiev.overtalk.application.configuration.Constants;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +21,7 @@ public class UserProfile {
 
     @Getter(name = "getId")
     @Setter(name = "setId")
-    @DBField(id = true, generated = true, dataType = DataType.INTEGER)
+    @DBField(id = true, generated = true, dataType = Constants.PK_TYPE)
     private Integer id;
 
     @Getter(name = "getUserName")

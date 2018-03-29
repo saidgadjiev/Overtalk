@@ -37,7 +37,6 @@ public class AuthController {
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
     public ResponseEntity<?> signUp(@RequestBody @Valid UserDetails userDetails, BindingResult bindingResult) throws SQLException {
         if (bindingResult.hasErrors()) {
-            bindingResult.getFieldError();
             return ResponseEntity.badRequest().body(new ResponseMessage<>().setContent(ErrorUtils.toErrors(bindingResult)));
         }
         if (userService.isExists(userDetails.getUserName())) {
