@@ -1,7 +1,10 @@
 <form ng-submit="signUp(signUpForm.$valid)" name="signUpForm" novalidate>
+    <div ng-class="{'has-error':somethingWentWrong}">
+        <p class="help-block" ng-show="somethingWentWrong">Что то пошло не так!</p>
+    </div>
     <div class="form-group" ng-class="{'has-error':(signUpForm.userName.$invalid && (signUpForm.userName.$touched || submitted)) || userNameExist}">
         <label for="userName">Логин:</label>
-        <input type="text" class="form-control" id="userName" name="userName" ng-model="newUser.userName" ng-keyup="checkUsername()" ng-required="true">
+        <input type="text" class="form-control" id="userName" name="userName" ng-model="newUser.userName" ng-change="checkUsername()" ng-model-options='{ debounce: 1000 }' ng-required="true">
         <p class="help-block" ng-show="signUpForm.userName.$invalid && (signUpForm.userName.$touched || submitted)">Введите логин!</p>
         <p class="help-block" ng-show="userNameExist">Такой логин уже существует!</p>
     </div>

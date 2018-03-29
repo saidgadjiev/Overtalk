@@ -33,7 +33,7 @@ public class OrmNextConfiguration {
     @Scope(scopeName = "singleton")
     public SessionManager sessionManager() throws SQLException {
         System.setProperty(LoggerFactory.LOG_ENABLED_PROPERTY, "true");
-        SessionManager sessionManager = new BaseSessionManagerImpl(mysqlConnectionSource());
+        SessionManager sessionManager = new BaseSessionManagerImpl(postgreConnectionSource());
 
         sessionManager.setObjectCache(new LRUObjectCache(16), Post.class, Comment.class);
         TableUtils.createTable(sessionManager.getDataSource(), Post.class, true);

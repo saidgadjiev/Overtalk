@@ -47,13 +47,4 @@ public class AuthController {
 
         return ResponseEntity.ok(new ResponseMessage<>().setContent(securityService.findLoggedInUserName()));
     }
-
-    @RequestMapping(value = "/exist", method = RequestMethod.GET)
-    public ResponseEntity<?> exist(@RequestParam(value = "userName") String userName) throws SQLException {
-        if (userService.isExists(userName)) {
-            return ResponseEntity.status(HttpStatus.FOUND).build();
-        }
-
-        return ResponseEntity.notFound().build();
-    }
 }
