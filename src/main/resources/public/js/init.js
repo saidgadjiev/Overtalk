@@ -70,6 +70,10 @@ as.config(function ($routeProvider, $httpProvider) {
 });
 
 as.run(function ($rootScope, $location, AUTH_EVENTS) {
+    $(".nav .nav-link").on("click", function(){
+        $(".nav").find(".active").removeClass("active");
+        $(this).addClass("active");
+    });
     $rootScope.$on(AUTH_EVENTS.unauthorized, function () {
         $location.path('/signIn');
     });

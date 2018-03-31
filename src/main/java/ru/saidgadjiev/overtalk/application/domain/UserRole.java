@@ -6,6 +6,7 @@ import ru.saidgadjiev.orm.next.core.field.Getter;
 import ru.saidgadjiev.orm.next.core.field.Setter;
 import ru.saidgadjiev.orm.next.core.table.DBTable;
 import ru.saidgadjiev.orm.next.core.table.Unique;
+import ru.saidgadjiev.overtalk.application.configuration.Constants;
 
 /**
  * Created by said on 18.03.2018.
@@ -20,7 +21,7 @@ public class UserRole {
 
     @Getter(name = "getId")
     @Setter(name = "setId")
-    @DBField(id = true, generated = true, dataType = 8)
+    @DBField(id = true, generated = true, dataType = Constants.PK_TYPE)
     private Integer id;
 
     @Getter(name = "getUserProfile")

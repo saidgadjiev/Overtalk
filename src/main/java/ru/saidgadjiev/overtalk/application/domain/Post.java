@@ -2,6 +2,7 @@ package ru.saidgadjiev.overtalk.application.domain;
 
 import ru.saidgadjiev.orm.next.core.field.*;
 import ru.saidgadjiev.orm.next.core.table.DBTable;
+import ru.saidgadjiev.overtalk.application.configuration.Constants;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,7 +17,7 @@ public class Post {
 
     @Getter(name = "getId")
     @Setter(name = "setId")
-    @DBField(id = true, generated = true, dataType = DataType.INTEGER)
+    @DBField(id = true, generated = true, dataType = Constants.PK_TYPE)
     private int id;
 
     @Getter(name = "getTitle")

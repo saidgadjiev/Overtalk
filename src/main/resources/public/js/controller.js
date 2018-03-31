@@ -42,19 +42,28 @@ as.controller('LoginController', function ($scope, $http, $location, $log, AuthS
     if (AuthService.isAuthenticated()) {
         $location.path('/');
     }
+    $scope.inputPasswordType = 'password';
+
+    $scope.hideShowPassword = function(){
+        if ($scope.inputPasswordType === 'password')
+            $scope.inputPasswordType = 'text';
+        else
+            $scope.inputPasswordType = 'password';
+    };
+    //Для инициализации bootstrap-show-password
+    //bootstrap-show-password
+    //$("#passwordShowPass").password();
+
     $scope.signIn = function (isValid) {
         $scope.submitted = true;
 
         if (isValid) {
             AuthService.signIn($scope.user)
                 .then(function (data) {
-                    $scope.submitted = false;
-                    $scope.userNameOrPasswordError = false;
                     $location.path('/');
                 }).catch(function (response) {
-                    if (response.status === 400 && response.data.message === "Username or password wrong") {
-                        $scope.userNameOrPasswordError = true;
-                    }
+                if (response.status === 400 && response.data.message === "Username or password wrong") {
+                }
             });
         }
     };
@@ -63,26 +72,47 @@ as.controller('LoginController', function ($scope, $http, $location, $log, AuthS
     };
 });
 
-as.controller('RegistrationController', function ($scope, $http, $location, $log, AuthService, AUTH_EVENTS) {
+as.controller('RegistrationController', function ($scope, $http, $location, $log, AuthService) {
     $scope.checkUsername = function () {
-        $http.get('api/user/exist?userName=' + $scope.newUser.userName).success(function (data) {
-            $scope.userNameExist = data.code === 409;
-        })
+        $scope.userNameExist = false;
+        $http.get('api/user/exist?userName=' + $scope.newUser.userName).catch(function (response) {
+            $scope.userNameExist = response.status === 302;
+        });
     };
+    $scope.inputPasswordType = 'password';
 
+    $scope.hideShowPassword = function(){
+        if ($scope.inputPasswordType === 'password')
+            $scope.inputPasswordType = 'text';
+        else
+            $scope.inputPasswordType = 'password';
+    };
+    $scope.inputConfirmPasswordType = 'password';
+
+    $scope.hideShowConfirmPassword = function(){
+        if ($scope.inputConfirmPasswordType === 'password')
+            $scope.inputConfirmPasswordType = 'text';
+        else
+            $scope.inputConfirmPasswordType = 'password';
+    };
     $scope.signUp = function (isValid) {
         $scope.submitted = true;
 
         if (isValid) {
-            $scope.submitted = false;
-            AuthService.signUp($scope.newUser);
+            AuthService.signUp($scope.newUser)
+                .then(function (data) {
+                    $location.path('/');
+                }).catch(function (response) {
+                if (response.status === 409) {
+                    $scope.userNameExist = true;
+                } else if (response.status === 400) {
+                    $scope.somethingWentWrong = true;
+                }
+
+                $log.error(response);
+            });
         }
     };
-
-    $scope.$on(AUTH_EVENTS.signUpSuccess, function (data) {
-        $scope.submitted = false;
-        $location.path('/');
-    })
 });
 
 as.controller('PostsController', function ($scope, $http, $location, $log) {

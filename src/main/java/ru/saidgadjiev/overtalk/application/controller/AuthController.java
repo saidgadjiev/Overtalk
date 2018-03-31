@@ -37,7 +37,6 @@ public class AuthController {
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
     public ResponseEntity<?> signUp(@RequestBody @Valid UserDetails userDetails, BindingResult bindingResult) throws SQLException {
         if (bindingResult.hasErrors()) {
-            bindingResult.getFieldError();
             return ResponseEntity.badRequest().body(new ResponseMessage<>().setContent(ErrorUtils.toErrors(bindingResult)));
         }
         if (userService.isExists(userDetails.getUserName())) {
@@ -47,14 +46,5 @@ public class AuthController {
         securityService.login(userDetails.getUserName(), userDetails.getPassword());
 
         return ResponseEntity.ok(new ResponseMessage<>().setContent(securityService.findLoggedInUserName()));
-    }
-
-    @RequestMapping(value = "/exist", method = RequestMethod.GET)
-    public ResponseEntity<?> exist(@RequestParam(value = "userName") String userName) throws SQLException {
-        if (userService.isExists(userName)) {
-            return ResponseEntity.status(HttpStatus.FOUND).build();
-        }
-
-        return ResponseEntity.notFound().build();
     }
 }

@@ -5,6 +5,7 @@ import ru.saidgadjiev.orm.next.core.field.DataType;
 import ru.saidgadjiev.orm.next.core.field.Getter;
 import ru.saidgadjiev.orm.next.core.field.Setter;
 import ru.saidgadjiev.orm.next.core.table.DBTable;
+import ru.saidgadjiev.overtalk.application.configuration.Constants;
 
 import java.util.Date;
 
@@ -16,7 +17,7 @@ public class Comment {
 
     @Getter(name = "getId")
     @Setter(name = "setId")
-    @DBField(id = true, generated = true, dataType = DataType.LONG)
+    @DBField(id = true, generated = true, dataType = Constants.PK_TYPE)
     private int id;
 
     @Getter(name = "getContent")

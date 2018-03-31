@@ -6,9 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.saidgadjiev.overtalk.application.model.CommentDetails;
 import ru.saidgadjiev.overtalk.application.model.ResponseMessage;
@@ -41,5 +43,14 @@ public class UserController {
         Page<UserDetails> userDetails = userService.getAll(page);
 
         return ResponseEntity.ok(new ResponseMessage<>().setContent(userDetails));
+    }
+
+    @RequestMapping(value = "/user/exist", method = RequestMethod.GET)
+    public ResponseEntity<?> exist(@RequestParam(value = "userName") String userName) throws SQLException {
+        if (userService.isExists(userName)) {
+            return ResponseEntity.status(HttpStatus.FOUND).build();
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }
