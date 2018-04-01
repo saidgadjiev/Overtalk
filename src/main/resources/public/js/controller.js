@@ -1,10 +1,13 @@
 var as = angular.module('OverTalkApp.controllers', []);
 
-as.controller('OverTalkController', function ($scope, $http, AUTH_EVENTS, USER_ROLES, AuthService, $location) {
+as.controller('OverTalkController', function ($scope, $http, $log, LocationService, AUTH_EVENTS, USER_ROLES, AuthService, $location) {
     $scope.authenticated = AuthService.isAuthenticated();
 
     $scope.signOut = function () {
-        AuthService.signOut();
+        AuthService.signOut().then(function () {
+            LocationService.saveLocation('/');
+            $location.path('/signIn');
+        });
     };
     $scope.$on(AUTH_EVENTS.signInSuccess, function () {
         $scope.authenticated = true;
@@ -21,6 +24,16 @@ as.controller('OverTalkController', function ($scope, $http, AUTH_EVENTS, USER_R
         return AuthService.isAuthorized(authorizedRoles);
     };
     $scope.userRoles = USER_ROLES;
+
+    $scope.isActiveNavItem = function (url) {
+        var currentUrl = $location.path();
+
+        if (url === '/') {
+            return currentUrl === url;
+        }
+
+        return currentUrl.indexOf(url) !== -1;
+    };
 });
 
 as.controller('NewPostController', function ($scope, $http, $location) {
@@ -59,10 +72,9 @@ as.controller('LoginController', function ($scope, $http, $location, $log, AuthS
 
         if (isValid) {
             AuthService.signIn($scope.user)
-                .then(function (data) {
-                    $location.path('/');
-                }).catch(function (response) {
+                .catch(function (response) {
                 if (response.status === 400 && response.data.message === "Username or password wrong") {
+                    $scope.userNameOrPasswordError = true;
                 }
             });
         }
@@ -100,9 +112,7 @@ as.controller('RegistrationController', function ($scope, $http, $location, $log
 
         if (isValid) {
             AuthService.signUp($scope.newUser)
-                .then(function (data) {
-                    $location.path('/');
-                }).catch(function (response) {
+                .catch(function (response) {
                 if (response.status === 409) {
                     $scope.userNameExist = true;
                 } else if (response.status === 400) {
@@ -204,4 +214,7 @@ as.controller('UsersController', function ($scope, $http, $log) {
         $log.log('Page changed to: ' + $scope.currentPage);
         loadUsers();
     };
+});
+
+as.controller('ProjectsController', function ($scope, $http, $log) {
 });

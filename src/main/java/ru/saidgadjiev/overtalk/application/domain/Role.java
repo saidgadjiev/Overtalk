@@ -6,7 +6,7 @@ import ru.saidgadjiev.orm.next.core.field.Getter;
 import ru.saidgadjiev.orm.next.core.field.Setter;
 import ru.saidgadjiev.orm.next.core.table.DBTable;
 import ru.saidgadjiev.orm.next.core.table.Unique;
-import ru.saidgadjiev.overtalk.application.configuration.Constants;
+import ru.saidgadjiev.overtalk.application.common.Constants;
 
 /**
  * Created by said on 18.03.2018.

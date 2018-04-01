@@ -2,7 +2,7 @@ package ru.saidgadjiev.overtalk.application.domain;
 
 import ru.saidgadjiev.orm.next.core.field.*;
 import ru.saidgadjiev.orm.next.core.table.DBTable;
-import ru.saidgadjiev.overtalk.application.configuration.Constants;
+import ru.saidgadjiev.overtalk.application.common.Constants;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -69,3 +69,22 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
 
     return authService;
 });
+
+as.service('LocationService', function ($location) {
+    var locationService = {};
+
+    locationService.location = '/';
+    locationService.saveLocation = function (url) {
+        if (!url || url.length === 0) {
+            locationService.location = $location.path();
+        } else {
+            locationService.location = url;
+        }
+    };
+
+    locationService.gotoLast = function () {
+        $location.path(locationService.location);
+    };
+
+    return locationService;
+});

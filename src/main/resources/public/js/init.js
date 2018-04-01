@@ -1,4 +1,4 @@
-var as = angular.module('OverTalkApp', ['ngRoute', 'ui.bootstrap', 'OverTalkApp.controllers', 'OverTalkApp.services']);
+var as = angular.module('OverTalkApp', ['ngRoute', 'ngMessages', 'ui.bootstrap', 'OverTalkApp.controllers', 'OverTalkApp.services', 'OverTalkApp.directives']);
 
 as.constant('USER_ROLES', {
     admin: 'ROLE_ADMIN',
@@ -57,6 +57,9 @@ as.config(function ($routeProvider, $httpProvider) {
     }).when('/users', {
         templateUrl: 'html/users.html',
         controller: 'UsersController'
+    }).when('/projects', {
+        templateUrl: 'html/projects.html',
+        controller: 'ProjectsController'
     }).when('/403', {
         templateUrl: 'html/error/403.html',
         publicAccess: true
@@ -69,15 +72,15 @@ as.config(function ($routeProvider, $httpProvider) {
     $httpProvider.interceptors.push('AuthInterceptor');
 });
 
-as.run(function ($rootScope, $location, AUTH_EVENTS) {
-    $(".nav .nav-link").on("click", function(){
-        $(".nav").find(".active").removeClass("active");
-        $(this).addClass("active");
-    });
+as.run(function ($rootScope, $location, $log, LocationService, AUTH_EVENTS) {
     $rootScope.$on(AUTH_EVENTS.unauthorized, function () {
+        LocationService.saveLocation();
         $location.path('/signIn');
     });
     $rootScope.$on(AUTH_EVENTS.accessDenied, function () {
         $location.path('/403');
+    });
+    $rootScope.$on(AUTH_EVENTS.signInSuccess, function () {
+        LocationService.gotoLast();
     });
 });

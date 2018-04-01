@@ -5,7 +5,7 @@ import ru.saidgadjiev.orm.next.core.field.DataType;
 import ru.saidgadjiev.orm.next.core.field.Getter;
 import ru.saidgadjiev.orm.next.core.field.Setter;
 import ru.saidgadjiev.orm.next.core.table.DBTable;
-import ru.saidgadjiev.overtalk.application.configuration.Constants;
+import ru.saidgadjiev.overtalk.application.common.Constants;
 
 import java.util.Date;
 

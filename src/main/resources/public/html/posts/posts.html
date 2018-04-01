@@ -1,19 +1,20 @@
-<div class="page-header">
-    Посты
+<div class="font-weight-bold text-center mt-3">
+    <h1>Посты</h1>
 </div>
-<button class="btn btn-success btn-block" ng-click="add()">Новый пост</button>
-<div class="row">
-    <div class="col-md-12">
-        <div ng-repeat="post in posts|orderBy:createdDate">
-            <h4>{{post.title}}</h4>
-            <p>{{post.content}}</p>
-            <div>
-                <a href="#/posts/{{post.id}}">
-                    <span class="glyphicon glyphicon-comment"></span>
-                </a>
-                {{post.createdDate|date:'short'}}
-            </div>
-        </div>
-    </div>
+<ul class="list-group list-group-flush mt-5">
+    <li class="list-group-item" ng-repeat="post in posts|orderBy:createdDate">
+        <h5>{{post.title}}</h5>
+        <p>{{post.content}}</p>
+        <a href="#/posts/{{post.id}}">
+            <span class="glyphicon glyphicon-comment"></span>
+        </a>
+    </li>
+</ul>
+<ul uib-pagination boundary-link-numbers="true" total-items="totalItems" ng-change="pageChanged()"
+    ng-model="currentPage" max-size="5" class="pagination-sm mt-2" direction-links="false"
+    items-per-page="itemsPerPage"></ul>
+<div class="fixed-action-btn">
+    <button class="btn btn-success btn-circle btn-lg" ng-click="add()">
+        <i class="fa fa-plus fa-lg"></i>
+    </button>
 </div>
-<ul uib-pagination boundary-link-numbers="true" total-items="totalItems" ng-change="pageChanged()" ng-model="currentPage" max-size="5" class="pagination-sm" direction-links="false" items-per-page="itemsPerPage"></ul>

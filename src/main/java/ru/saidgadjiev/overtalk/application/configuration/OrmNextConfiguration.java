@@ -8,19 +8,18 @@ import org.springframework.context.annotation.Scope;
 import ru.saidgadjiev.orm.next.core.cache.LRUObjectCache;
 import ru.saidgadjiev.orm.next.core.dao.BaseSessionManagerImpl;
 import ru.saidgadjiev.orm.next.core.dao.SessionManager;
-import ru.saidgadjiev.orm.next.core.db.H2DatabaseType;
 import ru.saidgadjiev.orm.next.core.db.MySQLDatabaseType;
 import ru.saidgadjiev.orm.next.core.field.DataPersisterManager;
 import ru.saidgadjiev.orm.next.core.logger.LoggerFactory;
 import ru.saidgadjiev.orm.next.core.support.ConnectionSource;
 import ru.saidgadjiev.orm.next.core.support.PolledConnectionSource;
 import ru.saidgadjiev.orm.next.core.utils.TableUtils;
+import ru.saidgadjiev.overtalk.application.common.Constants;
 import ru.saidgadjiev.overtalk.application.dao.PGDatabaseType;
 import ru.saidgadjiev.overtalk.application.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.overtalk.application.domain.Comment;
 import ru.saidgadjiev.overtalk.application.domain.Post;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 
 /**
@@ -33,7 +32,7 @@ public class OrmNextConfiguration {
     @Scope(scopeName = "singleton")
     public SessionManager sessionManager() throws SQLException {
         System.setProperty(LoggerFactory.LOG_ENABLED_PROPERTY, "true");
-        SessionManager sessionManager = new BaseSessionManagerImpl(postgreConnectionSource());
+        SessionManager sessionManager = new BaseSessionManagerImpl(mysqlConnectionSource());
 
         sessionManager.setObjectCache(new LRUObjectCache(16), Post.class, Comment.class);
         TableUtils.createTable(sessionManager.getDataSource(), Post.class, true);
