@@ -1,6 +1,6 @@
 var as = angular.module('OverTalkApp.controllers', []);
 
-as.controller('OverTalkController', function ($scope, $http, $log, LocationService, AUTH_EVENTS, USER_ROLES, AuthService, $location) {
+as.controller('OverTalkController', function ($scope, $http, $log, LocationService, AUTH_EVENTS, USER_ROLES, Session, AuthService, $location) {
     $scope.authenticated = AuthService.isAuthenticated();
 
     $scope.signOut = function () {
@@ -10,13 +10,16 @@ as.controller('OverTalkController', function ($scope, $http, $log, LocationServi
         });
     };
     $scope.$on(AUTH_EVENTS.signInSuccess, function () {
+        $scope.nickName = Session.nickName;
         $scope.authenticated = true;
     });
     $scope.$on(AUTH_EVENTS.signUpSuccess, function () {
+        $scope.nickName = Session.nickName;
         $scope.authenticated = true;
     });
     $scope.$on(AUTH_EVENTS.signOutSuccess, function () {
         $scope.authenticated = false;
+        $scope.nickName = '';
         $location.path('/signIn');
     });
 
@@ -178,18 +181,10 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
     firstLoad();
     $scope.newComment = {};
 
-    $scope.addComment = function () {
-        $('#commentDialog').modal('show');
-    };
-
-    $scope.save = function (isValid) {
-        $scope.submitted = true;
-
-        if (isValid) {
+    $scope.save = function () {
+        if (!$scope.newComment.content || $scope.newComment.content  === 0) {
             $http.post('api/post/' + $routeParams.id + '/comments', $scope.newComment).success(function (data) {
-                $('#commentDialog').modal('hide');
                 $scope.newComment = {};
-                $scope.submitted = false;
                 loadComments();
             });
         }
@@ -218,3 +213,49 @@ as.controller('UsersController', function ($scope, $http, $log) {
 
 as.controller('ProjectsController', function ($scope, $http, $log) {
 });
+
+var myApp = angular.module('myApp', []);
+
+myApp.directive('fileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+
+            element.bind('change', function(){
+                scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
+
+myApp.service('fileUpload', ['$http', function ($http) {
+    this.uploadFileToUrl = function(file, uploadUrl){
+        var fd = new FormData();
+        fd.append('file', file);
+        fd.append('data', angular.toJson({'title': 'title'}));
+        $http.post(uploadUrl, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+            .success(function(){
+            })
+            .error(function(){
+            });
+    }
+}]);
+
+myApp.controller('myCtrl', ['$scope', 'fileUpload', function($scope, fileUpload){
+
+    $scope.uploadFile = function(){
+        var file = $scope.myFile;
+        console.log('file is ' );
+        console.dir(file);
+        var uploadUrl = "http://localhost:8089/api/projects";
+        fileUpload.uploadFileToUrl(file, uploadUrl);
+    };
+
+}]);

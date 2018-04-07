@@ -40,6 +40,11 @@ public class Post {
     @ForeignCollectionField(foreignFieldName = "post", fetchType = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
+    @Getter(name = "getUser")
+    @Setter(name = "setUser")
+    @DBField(foreign = true)
+    private UserProfile user;
+
     public int getId() {
         return id;
     }
@@ -78,6 +83,14 @@ public class Post {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public UserProfile getUser() {
+        return user;
+    }
+
+    public void setUser(UserProfile user) {
+        this.user = user;
     }
 
     @Override

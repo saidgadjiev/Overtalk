@@ -13,7 +13,7 @@ import ru.saidgadjiev.overtalk.application.common.Constants;
 @DBTable(
         name = "user_role",
         uniqueConstraints = {
-                @Unique(columns = {"userProfile", "role"})
+                @Unique(columns = {"user", "role"})
         }
 )
 public class UserRole {
@@ -23,10 +23,10 @@ public class UserRole {
     @DBField(id = true, generated = true, dataType = Constants.PK_TYPE)
     private Integer id;
 
-    @Getter(name = "getUserProfile")
-    @Setter(name = "setUserProfile")
+    @Getter(name = "getUser")
+    @Setter(name = "setUser")
     @DBField(foreign = true)
-    private UserProfile userProfile;
+    private UserProfile user;
 
     @Getter(name = "getRole")
     @Setter(name = "setRole")
@@ -36,8 +36,8 @@ public class UserRole {
     public UserRole() {
     }
 
-    public UserRole(UserProfile userProfile, Role role) {
-        this.userProfile = userProfile;
+    public UserRole(UserProfile user, Role role) {
+        this.user = user;
         this.role = role;
     }
 
@@ -49,12 +49,12 @@ public class UserRole {
         this.id = id;
     }
 
-    public UserProfile getUserProfile() {
-        return userProfile;
+    public UserProfile getUser() {
+        return user;
     }
 
-    public void setUserProfile(UserProfile userProfile) {
-        this.userProfile = userProfile;
+    public void setUser(UserProfile user) {
+        this.user = user;
     }
 
     public Role getRole() {

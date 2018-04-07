@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import ru.saidgadjiev.overtalk.application.model.ExtSpringUser;
 import ru.saidgadjiev.overtalk.application.model.ResponseMessage;
 import ru.saidgadjiev.overtalk.application.utils.ResponseUtils;
 
@@ -24,7 +25,7 @@ public class RestAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         LOGGER.debug("Authentication success");
-        User user = (User) authentication.getPrincipal();
+        ExtSpringUser user = (ExtSpringUser) authentication.getPrincipal();
 
         ResponseUtils.sendResponseMessage(response, 200, new ResponseMessage<>().setContent(user));
     }

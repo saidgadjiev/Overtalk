@@ -34,13 +34,14 @@ public class PrepareForPostgres {
         SessionManager sessionManager = new BaseSessionManagerImpl(new PolledConnectionSource(createDataSource(), new PGDatabaseType()));
         Session session = sessionManager.getCurrentSession();
         createTables(session);
-        createRoles(session);
+        //createRoles(session);
         Transaction transaction = session.transaction();
 
         try {
             transaction.begin();
-            createUsers(transaction);
-            createUserRoles(transaction);
+            createTestPostsAndComments(transaction);
+            //createUsers(transaction);
+            //createUserRoles(transaction);
             transaction.commit();
         } catch (SQLException ex) {
             transaction.rollback();
@@ -64,6 +65,8 @@ public class PrepareForPostgres {
     private static void createTables(BaseDao session) throws SQLException {
         LOGGER.debug("Table UserProfile created = " + session.createTable(UserProfile.class, true));
         LOGGER.debug("Table Role created = " + session.createTable(Role.class, true));
+        LOGGER.debug("Table Post created = " + session.createTable(Post.class, true));
+        LOGGER.debug("Table Comment created = " + session.createTable(Comment.class, true));
         LOGGER.debug("Table UserRole created = " + session.createTable(UserRole.class, true));
     }
 
@@ -101,4 +104,25 @@ public class PrepareForPostgres {
 
         LOGGER.debug("UserRole for user admin created = " + (session.create(adminUserRole) > 0));
     }
+
+    private static void createTestPostsAndComments(BaseDao dao) throws SQLException {
+        Post post = new Post();
+
+        post.setContent("Test content");
+        post.setTitle("test title");
+        UserProfile userProfile = dao.queryForId(UserProfile.class, 1);
+
+        post.setUser(userProfile);
+        dao.create(post);
+        LOGGER.debug("Post created with id: " + dao.create(post));
+        for (int i = 0; i < 9; ++i) {
+            Comment comment = new Comment();
+
+            comment.setUser(userProfile);
+            comment.setContent("Test content");
+            comment.setPost(post);
+            LOGGER.debug("Comment created with id: " + dao.create(comment));
+        }
+    }
+
 }

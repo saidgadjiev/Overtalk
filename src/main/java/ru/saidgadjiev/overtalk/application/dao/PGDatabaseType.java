@@ -2,6 +2,7 @@ package ru.saidgadjiev.overtalk.application.dao;
 
 import ru.saidgadjiev.orm.next.core.db.DatabaseType;
 import ru.saidgadjiev.orm.next.core.query.core.AttributeDefinition;
+import ru.saidgadjiev.overtalk.application.common.Constants;
 
 public class PGDatabaseType implements DatabaseType {
     @Override
@@ -35,8 +36,11 @@ public class PGDatabaseType implements DatabaseType {
 
     @Override
     public String typeToSql(int type, AttributeDefinition attributeDefinition) {
-        if (type == 8) {
-            return " SERIAL ";
+        if (type == Constants.PK_TYPE) {
+            return "SERIAL";
+        }
+        if (type == Constants.TEXT_TYPE) {
+            return "TEXT";
         }
 
         return "";

@@ -41,17 +41,44 @@ public class DTOUtils {
                 return userRole.getRole().getName();
             }).collect(Collectors.toSet());
         };
+        Converter<UserProfile, String> userNickNameConverter = context -> {
+            if (context.getSource() == null) {
+                return null;
+            }
+
+            return context.getSource().getNickName();
+        };
+        INSTANCE.addMappings(new PropertyMap<Comment, CommentDetails>() {
+            @Override
+            protected void configure() {
+                using(userNickNameConverter).map(source.getUser(), destination.getNickName());
+            }
+        });
         INSTANCE.addMappings(new PropertyMap<Post, PostDetails>() {
             @Override
             protected void configure() {
-                skip().setCreatedDate(null);
+                using(userNickNameConverter).map(source.getUser(), destination.getNickName());
             }
         });
         INSTANCE.addMappings(new PropertyMap<UserProfile, UserDetails>() {
             @Override
             protected void configure() {
-                skip().setPassword(null);
+                skip(destination.getPassword());
                 using(userRolesConverter).map(source.getUserRoles(), destination.getRoles());
+            }
+        });
+        INSTANCE.addMappings(new PropertyMap<PostDetails, Post>() {
+            @Override
+            protected void configure() {
+                skip(destination.getCreatedDate());
+                skip(destination.getId());
+            }
+        });
+        INSTANCE.addMappings(new PropertyMap<CommentDetails, Comment>() {
+            @Override
+            protected void configure() {
+                skip(destination.getCreatedDate());
+                skip(destination.getId());
             }
         });
     }

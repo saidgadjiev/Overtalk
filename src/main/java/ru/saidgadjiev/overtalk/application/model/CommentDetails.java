@@ -11,6 +11,10 @@ public class CommentDetails {
 
     private String content;
 
+    private Date createdDate;
+
+    private String nickName;
+
     public int getId() {
         return id;
     }
@@ -25,5 +29,21 @@ public class CommentDetails {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 }

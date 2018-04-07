@@ -2,6 +2,7 @@ var as = angular.module('OverTalkApp.services', []);
 
 as.service('Session', function () {
     this.create = function (data) {
+        this.nickName = data.nickName;
         this.userRoles = [];
         angular.forEach(data.authorities, function (value, key) {
             this.push(value.authority);
@@ -9,6 +10,7 @@ as.service('Session', function () {
     };
 
     this.invalidate = function () {
+        this.nickName = null;
         this.userRoles = [];
     }
 });

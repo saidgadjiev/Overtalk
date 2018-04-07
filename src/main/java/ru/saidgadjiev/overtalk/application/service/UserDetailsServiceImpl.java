@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.saidgadjiev.overtalk.application.domain.UserProfile;
 import ru.saidgadjiev.overtalk.application.domain.UserRole;
+import ru.saidgadjiev.overtalk.application.model.ExtSpringUser;
 
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -39,7 +40,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 grantedAuthorities.add(new SimpleGrantedAuthority(userRole.getRole().getName()));
             }
 
-            return new User(
+            return new ExtSpringUser(
+                    userProfile.getNickName(),
                     userProfile.getUserName(),
                     userProfile.getPassword(),
                     grantedAuthorities

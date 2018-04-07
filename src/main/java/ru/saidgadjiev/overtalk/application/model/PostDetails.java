@@ -16,6 +16,8 @@ public class PostDetails {
 
     private Date createdDate;
 
+    private String nickName;
+
     public int getId() {
         return id;
     }
@@ -48,11 +50,22 @@ public class PostDetails {
         this.createdDate = createdDate;
     }
 
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
     @Override
     public String toString() {
         return "PostDetails{" +
-                "title='" + title + '\'' +
+                "id=" + id +
+                ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
+                ", createdDate=" + createdDate +
+                ", nickName='" + nickName + '\'' +
                 '}';
     }
 }

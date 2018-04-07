@@ -8,6 +8,8 @@ import ru.saidgadjiev.orm.next.core.table.DBTable;
 import ru.saidgadjiev.overtalk.application.common.Constants;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by said on 12.02.2018.
@@ -34,6 +36,11 @@ public class Comment {
     @Setter(name = "setCreatedDate")
     @DBField(dataType = DataType.DATE)
     private Date createdDate = new Date();
+
+    @Getter(name = "getUser")
+    @Setter(name = "setUser")
+    @DBField(foreign = true)
+    private UserProfile user;
 
     public Comment() {
     }
@@ -73,5 +80,13 @@ public class Comment {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public UserProfile getUser() {
+        return user;
+    }
+
+    public void setUser(UserProfile user) {
+        this.user = user;
     }
 }

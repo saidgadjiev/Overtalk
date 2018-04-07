@@ -8,5 +8,7 @@ public class Constants {
 
     }
 
-    public static final int PK_TYPE = DataType.INTEGER;
+    public static final int PK_TYPE = 8;
+
+    public static final int TEXT_TYPE = 9;
 }

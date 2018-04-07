@@ -14,6 +14,10 @@ as.constant('AUTH_EVENTS', {
     unauthorized: '401-unauthorized'
 });
 
+as.constant('RESPONSE_ERROR_EVENTS', {
+    internalServerError: 'internal-server-error'
+});
+
 as.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
     return {
         'response': function (response) {
@@ -66,13 +70,16 @@ as.config(function ($routeProvider, $httpProvider) {
     }).when('/404', {
         templateUrl: 'html/error/404.html',
         publicAccess: true
+    }).when('/500', {
+        templateUrl: 'html/error/500.html',
+        publicAccess: true
     }).otherwise({
         redirectTo: '/404'
     });
     $httpProvider.interceptors.push('AuthInterceptor');
 });
 
-as.run(function ($rootScope, $location, $log, LocationService, AUTH_EVENTS) {
+as.run(function ($rootScope, $location, $log, LocationService, AUTH_EVENTS, RESPONSE_ERROR_EVENTS) {
     $rootScope.$on(AUTH_EVENTS.unauthorized, function () {
         LocationService.saveLocation();
         $location.path('/signIn');
@@ -82,5 +89,8 @@ as.run(function ($rootScope, $location, $log, LocationService, AUTH_EVENTS) {
     });
     $rootScope.$on(AUTH_EVENTS.signInSuccess, function () {
         LocationService.gotoLast();
+    });
+    $rootScope.$on(RESPONSE_ERROR_EVENTS.internalServerError, function () {
+        $location.path('/500');
     });
 });

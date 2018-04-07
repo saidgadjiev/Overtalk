@@ -5,6 +5,8 @@ import org.postgresql.ds.PGPoolingDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import ru.saidgadjiev.orm.next.core.cache.LRUObjectCache;
 import ru.saidgadjiev.orm.next.core.dao.BaseSessionManagerImpl;
 import ru.saidgadjiev.orm.next.core.dao.SessionManager;
@@ -17,6 +19,7 @@ import ru.saidgadjiev.orm.next.core.utils.TableUtils;
 import ru.saidgadjiev.overtalk.application.common.Constants;
 import ru.saidgadjiev.overtalk.application.dao.PGDatabaseType;
 import ru.saidgadjiev.overtalk.application.dao.SerialTypeDataPersister;
+import ru.saidgadjiev.overtalk.application.dao.TextTypeDataPersister;
 import ru.saidgadjiev.overtalk.application.domain.Comment;
 import ru.saidgadjiev.overtalk.application.domain.Post;
 
@@ -32,7 +35,7 @@ public class OrmNextConfiguration {
     @Scope(scopeName = "singleton")
     public SessionManager sessionManager() throws SQLException {
         System.setProperty(LoggerFactory.LOG_ENABLED_PROPERTY, "true");
-        SessionManager sessionManager = new BaseSessionManagerImpl(mysqlConnectionSource());
+        SessionManager sessionManager = new BaseSessionManagerImpl(postgreConnectionSource());
 
         sessionManager.setObjectCache(new LRUObjectCache(16), Post.class, Comment.class);
         TableUtils.createTable(sessionManager.getDataSource(), Post.class, true);
@@ -43,6 +46,7 @@ public class OrmNextConfiguration {
 
     @Bean
     public ConnectionSource postgreConnectionSource() {
+        DataPersisterManager.register(Constants.TEXT_TYPE, new TextTypeDataPersister());
         DataPersisterManager.register(Constants.PK_TYPE, new SerialTypeDataPersister());
         PGPoolingDataSource dataSource = new PGPoolingDataSource();
 

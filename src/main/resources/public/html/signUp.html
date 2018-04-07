@@ -1,6 +1,14 @@
 <form class="mt-2" ng-submit="signUp(signUpForm.$valid)" name="signUpForm" novalidate>
     <p class="help-block" ng-show="somethingWentWrong" class="has-error">Что то пошло не так!</p>
     <div class="form-group">
+        <label for="nickName">Ник:</label>
+        <input type="text" class="form-control" id="nickName" name="nickName" ng-model="newUser.nickName" required>
+        <div ng-messages="signUpForm.nickName.$error"
+             ng-if="signUpForm.nickName.$touched || submitted" class="has-error">
+            <p class="help-block" ng-message="required">Введите ник!</p>
+        </div>
+    </div>
+    <div class="form-group">
         <label for="userName">Логин:</label>
         <input type="text" class="form-control" id="userName" name="userName" ng-model="newUser.userName"
                ng-model-options='{ debounce: 500 }' required unique-user-name>
