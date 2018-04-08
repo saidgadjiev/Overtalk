@@ -18,6 +18,8 @@ public class PostDetails {
 
     private String nickName;
 
+    private int commentsCount;
+
     public int getId() {
         return id;
     }
@@ -58,6 +60,14 @@ public class PostDetails {
         this.nickName = nickName;
     }
 
+    public int getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(int commentsCount) {
+        this.commentsCount = commentsCount;
+    }
+
     @Override
     public String toString() {
         return "PostDetails{" +
@@ -66,6 +76,7 @@ public class PostDetails {
                 ", content='" + content + '\'' +
                 ", createdDate=" + createdDate +
                 ", nickName='" + nickName + '\'' +
+                ", commentsCount=" + commentsCount +
                 '}';
     }
 }

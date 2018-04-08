@@ -35,15 +35,12 @@ public class Post {
     @DBField(dataType = DataType.DATE, notNull = true)
     private Date createdDate = new Date();
 
-    @Getter(name = "getComments")
-    @Setter(name = "setComments")
-    @ForeignCollectionField(foreignFieldName = "post", fetchType = FetchType.LAZY)
-    private List<Comment> comments = new ArrayList<>();
-
     @Getter(name = "getUser")
     @Setter(name = "setUser")
     @DBField(foreign = true)
     private UserProfile user;
+
+
 
     public int getId() {
         return id;
@@ -75,14 +72,6 @@ public class Post {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
     }
 
     public UserProfile getUser() {
