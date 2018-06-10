@@ -1,6 +1,7 @@
 var as = angular.module('OverTalkApp', ['ngRoute', 'ngMessages', 'ui.bootstrap', 'OverTalkApp.controllers', 'OverTalkApp.services', 'OverTalkApp.directives']);
 
 as.constant('USER_ROLES', {
+    all: '*',
     admin: 'ROLE_ADMIN',
     user: 'ROLE_USER'
 });
@@ -39,47 +40,123 @@ as.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
     };
 });
 
-as.config(function ($routeProvider, $httpProvider) {
+as.config(function ($routeProvider, $httpProvider, USER_ROLES) {
     $routeProvider.when('/', {
         templateUrl: 'html/main.html',
-        publicAccess: true
+        publicAccess: true,
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
     }).when('/signIn', {
-        templateUrl: 'html/signIn.html',
-        controller: 'LoginController'
+        templateUrl: 'html/auth/signIn.html',
+        controller: 'LoginController',
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
     }).when('/posts', {
         templateUrl: 'html/posts/posts.html',
-        controller: 'PostsController'
+        controller: 'PostsController',
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
     }).when('/posts/new', {
         templateUrl: 'html/posts/new.html',
-        controller: 'NewPostController'
+        controller: 'NewPostController',
+        access: {
+            loginRequired: true,
+            authorizedRoles: [USER_ROLES.admin]
+        }
     }).when('/posts/:id', {
         templateUrl: 'html/posts/details.html',
-        controller: 'DetailsController'
+        controller: 'DetailsController',
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
     }).when('/signUp', {
-        templateUrl: 'html/signUp.html',
-        controller: 'RegistrationController'
+        templateUrl: 'html/auth/signUp.html',
+        controller: 'RegistrationController',
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
     }).when('/users', {
-        templateUrl: 'html/users.html',
-        controller: 'UsersController'
+        templateUrl: 'html/users/users.html',
+        controller: 'UsersController',
+        access: {
+            loginRequired: true,
+            authorizedRoles: [USER_ROLES.admin]
+        }
     }).when('/projects', {
-        templateUrl: 'html/projects.html',
-        controller: 'ProjectsController'
+        templateUrl: 'html/projects/projects.html',
+        controller: 'ProjectsController',
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
+    }).when('/projects/new', {
+        templateUrl: 'html/projects/new.html',
+        controller: 'NewProjectController',
+        access: {
+            loginRequired: true,
+            authorizedRoles: [USER_ROLES.admin]
+        }
     }).when('/403', {
         templateUrl: 'html/error/403.html',
-        publicAccess: true
+        publicAccess: true,
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
     }).when('/404', {
         templateUrl: 'html/error/404.html',
-        publicAccess: true
+        publicAccess: true,
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
     }).when('/500', {
         templateUrl: 'html/error/500.html',
-        publicAccess: true
+        publicAccess: true,
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
     }).otherwise({
-        redirectTo: '/404'
+        redirectTo: '/404',
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
     });
     $httpProvider.interceptors.push('AuthInterceptor');
 });
 
-as.run(function ($rootScope, $location, $log, LocationService, AUTH_EVENTS, RESPONSE_ERROR_EVENTS) {
+as.run(function ($rootScope,
+                 $location,
+                 $log,
+                 LocationService,
+                 AUTH_EVENTS,
+                 RESPONSE_ERROR_EVENTS,
+                 Session,
+                 AuthService) {
+    $rootScope.$on('$routeChangeStart', function (event, next) {
+        //Если пользователь уже залогинен то он не может перейти на страницу логину
+        if (next.originalPath === "/login" && $rootScope.authenticated) {
+            event.preventDefault();
+        }
+        //Если пользователь незалогинен и вьюшка требует логин то не даем перейти на страницу
+        else if (next.access && next.access.loginRequired && !$rootScope.authenticated) {
+            event.preventDefault();
+            $rootScope.$broadcast(AUTH_EVENTS.unauthorized, {});
+        }else if(next.access && !AuthService.isAuthorized(next.access.authorizedRoles)) {
+            event.preventDefault();
+            $rootScope.$broadcast(AUTH_EVENTS.accessDenied, {});
+        }
+    });
     $rootScope.$on(AUTH_EVENTS.unauthorized, function () {
         LocationService.saveLocation();
         $location.path('/signIn');
@@ -88,9 +165,20 @@ as.run(function ($rootScope, $location, $log, LocationService, AUTH_EVENTS, RESP
         $location.path('/403');
     });
     $rootScope.$on(AUTH_EVENTS.signInSuccess, function () {
+        $rootScope.nickName = Session.nickName;
+        $rootScope.authenticated = true;
         LocationService.gotoLast();
+    });
+    $rootScope.$on(AUTH_EVENTS.signUpSuccess, function () {
+        $rootScope.nickName = Session.nickName;
+        $rootScope.authenticated = true;
     });
     $rootScope.$on(RESPONSE_ERROR_EVENTS.internalServerError, function () {
         $location.path('/500');
+    });
+    $rootScope.$on(AUTH_EVENTS.signOutSuccess, function () {
+        $rootScope.authenticated = false;
+        $rootScope.nickName = null;
+        $location.path('/signIn');
     });
 });

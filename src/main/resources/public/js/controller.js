@@ -1,32 +1,12 @@
 var as = angular.module('OverTalkApp.controllers', []);
 
-as.controller('OverTalkController', function ($scope, $http, $log, LocationService, AUTH_EVENTS, USER_ROLES, Session, AuthService, $location) {
-    $scope.authenticated = AuthService.isAuthenticated();
-
+as.controller('OverTalkController', function ($scope, LocationService, AuthService, $location) {
     $scope.signOut = function () {
         AuthService.signOut().then(function () {
             LocationService.saveLocation('/');
             $location.path('/signIn');
         });
     };
-    $scope.$on(AUTH_EVENTS.signInSuccess, function () {
-        $scope.nickName = Session.nickName;
-        $scope.authenticated = true;
-    });
-    $scope.$on(AUTH_EVENTS.signUpSuccess, function () {
-        $scope.nickName = Session.nickName;
-        $scope.authenticated = true;
-    });
-    $scope.$on(AUTH_EVENTS.signOutSuccess, function () {
-        $scope.authenticated = false;
-        $scope.nickName = '';
-        $location.path('/signIn');
-    });
-
-    $scope.isAuthorized = function (authorizedRoles) {
-        return AuthService.isAuthorized(authorizedRoles);
-    };
-    $scope.userRoles = USER_ROLES;
 
     $scope.isActiveNavItem = function (url) {
         var currentUrl = $location.path();
@@ -55,12 +35,9 @@ as.controller('NewPostController', function ($scope, $http, $location) {
 });
 
 as.controller('LoginController', function ($scope, $http, $location, $log, AuthService) {
-    if (AuthService.isAuthenticated()) {
-        $location.path('/');
-    }
     $scope.inputPasswordType = 'password';
 
-    $scope.hideShowPassword = function(){
+    $scope.hideShowPassword = function () {
         if ($scope.inputPasswordType === 'password')
             $scope.inputPasswordType = 'text';
         else
@@ -76,10 +53,10 @@ as.controller('LoginController', function ($scope, $http, $location, $log, AuthS
         if (isValid) {
             AuthService.signIn($scope.user)
                 .catch(function (response) {
-                if (response.status === 400 && response.data.message === "Username or password wrong") {
-                    $scope.userNameOrPasswordError = true;
-                }
-            });
+                    if (response.status === 400 && response.data.message === "Username or password wrong") {
+                        $scope.userNameOrPasswordError = true;
+                    }
+                });
         }
     };
     $scope.gotoSignUp = function () {
@@ -96,7 +73,7 @@ as.controller('RegistrationController', function ($scope, $http, $location, $log
     };
     $scope.inputPasswordType = 'password';
 
-    $scope.hideShowPassword = function(){
+    $scope.hideShowPassword = function () {
         if ($scope.inputPasswordType === 'password')
             $scope.inputPasswordType = 'text';
         else
@@ -104,7 +81,7 @@ as.controller('RegistrationController', function ($scope, $http, $location, $log
     };
     $scope.inputConfirmPasswordType = 'password';
 
-    $scope.hideShowConfirmPassword = function(){
+    $scope.hideShowConfirmPassword = function () {
         if ($scope.inputConfirmPasswordType === 'password')
             $scope.inputConfirmPasswordType = 'text';
         else
@@ -116,14 +93,14 @@ as.controller('RegistrationController', function ($scope, $http, $location, $log
         if (isValid) {
             AuthService.signUp($scope.newUser)
                 .catch(function (response) {
-                if (response.status === 409) {
-                    $scope.userNameExist = true;
-                } else if (response.status === 400) {
-                    $scope.somethingWentWrong = true;
-                }
+                    if (response.status === 409) {
+                        $scope.userNameExist = true;
+                    } else if (response.status === 400) {
+                        $scope.somethingWentWrong = true;
+                    }
 
-                $log.error(response);
-            });
+                    $log.error(response);
+                });
         }
     };
 });
@@ -182,7 +159,7 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
     $scope.newComment = {};
 
     $scope.save = function () {
-        if (!$scope.newComment.content || $scope.newComment.content  === 0) {
+        if (!$scope.newComment.content || $scope.newComment.content === 0) {
             $http.post('api/post/' + $routeParams.id + '/comments', $scope.newComment).success(function (data) {
                 $scope.newComment = {};
                 loadComments();
@@ -211,51 +188,35 @@ as.controller('UsersController', function ($scope, $http, $log) {
     };
 });
 
-as.controller('ProjectsController', function ($scope, $http, $log) {
-});
+as.controller('NewProjectController', function ($scope, $http, $log, $location, fileUpload) {
+    $scope.save = function (isValid) {
+        $scope.submitted = true;
 
-var myApp = angular.module('myApp', []);
-
-myApp.directive('fileModel', ['$parse', function ($parse) {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs) {
-            var model = $parse(attrs.fileModel);
-            var modelSetter = model.assign;
-
-            element.bind('change', function(){
-                scope.$apply(function(){
-                    modelSetter(scope, element[0].files[0]);
-                });
-            });
+        if (isValid) {
+            fileUpload.uploadFileToUrl($scope.logo, "/api/file/logo")
+                .success(function (response) {
+                    $scope.newProject.logoPath = response.content;
+                    $http.post('api/project', $scope.newProject)
+                        .success(function (response) {
+                            $location.path('/projects');
+                        })
+                })
+                .catch(function (reason) {
+                    $log.log(reason);
+                })
         }
     };
-}]);
-
-myApp.service('fileUpload', ['$http', function ($http) {
-    this.uploadFileToUrl = function(file, uploadUrl){
-        var fd = new FormData();
-        fd.append('file', file);
-        fd.append('data', angular.toJson({'title': 'title'}));
-        $http.post(uploadUrl, fd, {
-            transformRequest: angular.identity,
-            headers: {'Content-Type': undefined}
-        })
-            .success(function(){
-            })
-            .error(function(){
-            });
+    $scope.cancel = function () {
+        $location.path("/projects");
     }
-}]);
+});
 
-myApp.controller('myCtrl', ['$scope', 'fileUpload', function($scope, fileUpload){
-
-    $scope.uploadFile = function(){
-        var file = $scope.myFile;
-        console.log('file is ' );
-        console.dir(file);
-        var uploadUrl = "http://localhost:8089/api/projects";
-        fileUpload.uploadFileToUrl(file, uploadUrl);
+as.controller('ProjectsController', function ($scope, $http, $log, $location) {
+    $http.get('api/project').success(function (data) {
+        $log.log(data);
+        $scope.projects = data.content;
+    });
+    $scope.add = function () {
+        $location.path('/projects/new');
     };
-
-}]);
+});

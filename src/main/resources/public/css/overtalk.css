@@ -15,3 +15,7 @@
     width: 61px;
     height: 61px;
 }
+
+.hidden {
+    display: none;
+}

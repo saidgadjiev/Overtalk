@@ -61,12 +61,29 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
         });
     };
 
-    authService.isAuthorized = function (role) {
-        if (!authService.authenticated) {
-            return false;
+    authService.isAuthorized = function (authorizedRoles) {
+        if (!angular.isArray(authorizedRoles)) {
+            if (authorizedRoles === '*') {
+                return true;
+            }
+            authorizedRoles = [authorizedRoles];
         }
+        var isAuthorized = false;
 
-        return Session.userRoles.indexOf(role) !== -1;
+        angular.forEach(authorizedRoles, function (authorizedRole) {
+            if (isAuthorized) {
+                return;
+            }
+            if (authorizedRole === '*') {
+                isAuthorized = true;
+            } else if (!authService.authenticated) {
+                isAuthorized = false;
+            } else {
+                isAuthorized = Session.userRoles.indexOf(authorizedRole) !== -1;
+            }
+        });
+
+        return isAuthorized;
     };
 
     return authService;
@@ -90,3 +107,14 @@ as.service('LocationService', function ($location) {
 
     return locationService;
 });
+
+as.service('fileUpload', ['$http', function ($http) {
+    this.uploadFileToUrl = function (file, uploadUrl) {
+        var fd = new FormData();
+        fd.append('file', file);
+        return $http.post(uploadUrl, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        });
+    }
+}]);
