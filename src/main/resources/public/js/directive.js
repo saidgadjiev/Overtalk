@@ -1,4 +1,4 @@
-var as = angular.module('OverTalkApp.directives', []);
+var as = angular.module('AboutMeApp.directives', []);
 
 as.directive('uniqueUserName', function ($http, $q) {
     return {

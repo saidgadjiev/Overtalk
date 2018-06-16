@@ -4,10 +4,7 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import ru.saidgadjiev.aboutme.domain.*;
-import ru.saidgadjiev.aboutme.model.CommentDetails;
-import ru.saidgadjiev.aboutme.model.PostDetails;
-import ru.saidgadjiev.aboutme.model.ProjectDetails;
-import ru.saidgadjiev.aboutme.model.UserDetails;
+import ru.saidgadjiev.aboutme.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +38,13 @@ public final class DTOUtils {
 
             return context.getSource().getNickName();
         };
+        Converter<Post, Integer> postLikesCountConverter = context -> {
+            if (context.getSource() == null) {
+                return null;
+            }
+
+            return context.getSource().getLikes().size();
+        };
         Converter<Post, Integer> commentCountConverter = context -> {
             if (context.getSource() == null) {
                 return null;
@@ -48,22 +52,50 @@ public final class DTOUtils {
 
             return context.getSource().getComments().size();
         };
+        Converter<Post, List<String>> postLikeUsersConverter = context -> {
+            if (context.getSource() == null) {
+                return null;
+            }
+
+            return context.getSource().getLikes()
+                    .stream()
+                    .map(like -> like.getUser().getUserName())
+                    .collect(Collectors.toList());
+        };
+        Converter<LikeDetails, Post> likeDetailsPostConverter = context -> {
+            if (context.getSource() == null) {
+                return null;
+            }
+            Post post = new Post();
+
+            post.setId(context.getSource().getPostId());
+
+            return post;
+        };
+        Converter<LikeDetails, Comment> likeDetailsCommentConverter = context -> {
+            if (context.getSource() == null) {
+                return null;
+            }
+            Comment comment = new Comment();
+
+            comment.setId(context.getSource().getCommentId());
+
+            return comment;
+        };
+        Converter<LikeDetails, UserProfile> likeDetailsUserConverter = context -> {
+            if (context.getSource() == null) {
+                return null;
+            }
+            UserProfile userProfile = new UserProfile();
+
+            userProfile.setUserName(context.getSource().getUser());
+
+            return userProfile;
+        };
         INSTANCE.addMappings(new PropertyMap<Comment, CommentDetails>() {
             @Override
             protected void configure() {
                 using(userNickNameConverter).map(source.getUser(), destination.getNickName());
-            }
-        });
-        INSTANCE.addMappings(new PropertyMap<Post, PostDetails>() {
-            @Override
-            protected void configure() {
-                using(userNickNameConverter).map(source.getUser(), destination.getNickName());
-            }
-        });
-        INSTANCE.addMappings(new PropertyMap<Post, PostDetails>() {
-            @Override
-            protected void configure() {
-                using(commentCountConverter).map(source, destination.getCommentsCount());
             }
         });
         INSTANCE.addMappings(new PropertyMap<UserProfile, UserDetails>() {
@@ -89,6 +121,24 @@ public final class DTOUtils {
             @Override
             protected void configure() {
                 skip(destination.getCreatedDate());
+            }
+        });
+        INSTANCE.addMappings(new PropertyMap<Post, PostDetails>() {
+            @Override
+            protected void configure() {
+                using(userNickNameConverter).map(source.getUser(), destination.getNickName());
+                using(commentCountConverter).map(source, destination.getCommentsCount());
+                using(postLikesCountConverter).map(source, destination.getLikesCount());
+                using(postLikeUsersConverter).map(source, destination.getLikeUsers());
+            }
+        });
+        INSTANCE.addMappings(new PropertyMap<LikeDetails, Like>() {
+            @Override
+            protected void configure() {
+                skip(destination.getId());
+                using(likeDetailsCommentConverter).map(source, destination.getComment());
+                using(likeDetailsPostConverter).map(source, destination.getPost());
+                using(likeDetailsUserConverter).map(source, destination.getUser());
             }
         });
     }

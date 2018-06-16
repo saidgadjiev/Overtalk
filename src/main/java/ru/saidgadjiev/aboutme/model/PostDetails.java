@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class PostDetails {
 
-    private int id;
+    private Integer id;
 
     private String title;
 
@@ -18,13 +18,19 @@ public class PostDetails {
 
     private String nickName;
 
-    private int commentsCount;
+    private Integer commentsCount;
 
-    public int getId() {
+    private Integer likesCount;
+
+    private boolean liked = false;
+
+    private List<String> likeUsers;
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -60,12 +66,36 @@ public class PostDetails {
         this.nickName = nickName;
     }
 
-    public int getCommentsCount() {
+    public Integer getCommentsCount() {
         return commentsCount;
     }
 
     public void setCommentsCount(int commentsCount) {
         this.commentsCount = commentsCount;
+    }
+
+    public Integer getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
+    }
+
+    public boolean isLiked() {
+        return liked;
+    }
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
+    }
+
+    public List<String> getLikeUsers() {
+        return likeUsers;
+    }
+
+    public void setLikeUsers(List<String> likeUsers) {
+        this.likeUsers = likeUsers;
     }
 
     @Override

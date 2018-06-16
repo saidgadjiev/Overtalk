@@ -1,10 +1,10 @@
 package ru.saidgadjiev.aboutme.domain;
 
+import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgadjiev.ormnext.core.field.ForeignColumn;
 import ru.saidgadjiev.ormnext.core.table.DatabaseEntity;
 import ru.saidgadjiev.ormnext.core.table.Unique;
-import ru.saidgadjiev.ormnext.support.datapersister.SerialTypeDataPersister;
 
 /**
  * Created by said on 18.03.2018.
@@ -17,13 +17,15 @@ import ru.saidgadjiev.ormnext.support.datapersister.SerialTypeDataPersister;
 )
 public class UserRole {
 
-    @DatabaseColumn(id = true, generated = true, dataType = SerialTypeDataPersister.SERIAL)
+    @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)
     private Integer id;
 
-    @ForeignColumn
+    @DatabaseColumn(notNull = true)
+    @ForeignColumn(foreignFieldName = "userName")
     private UserProfile user;
 
-    @ForeignColumn
+    @DatabaseColumn(notNull = true)
+    @ForeignColumn(foreignFieldName = "name")
     private Role role;
 
     public UserRole() {

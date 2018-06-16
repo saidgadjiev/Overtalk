@@ -1,15 +1,15 @@
 package ru.saidgadjiev.aboutme.domain;
 
+import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgadjiev.ormnext.core.field.ForeignCollectionField;
-import ru.saidgadjiev.ormnext.support.datapersister.SerialTypeDataPersister;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class UserProfile {
 
-    @DatabaseColumn(id = true, generated = true, dataType = SerialTypeDataPersister.SERIAL)
+    @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)
     private Integer id;
 
     @DatabaseColumn(notNull = true, unique = true)

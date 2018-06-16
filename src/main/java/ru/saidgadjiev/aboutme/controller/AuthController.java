@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.domain.Role;
 import ru.saidgadjiev.aboutme.model.ResponseMessage;
 import ru.saidgadjiev.aboutme.model.UserDetails;
+import ru.saidgadjiev.aboutme.properties.DataSourceProperties;
 import ru.saidgadjiev.aboutme.service.SecurityService;
 import ru.saidgadjiev.aboutme.service.UserService;
 import ru.saidgadjiev.aboutme.utils.ErrorUtils;
 
+import javax.sql.DataSource;
 import javax.validation.Valid;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
@@ -23,9 +25,9 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/api/auth")
 public class AuthController {
 
-    private UserService userService;
+    private final UserService userService;
 
-    private SecurityService securityService;
+    private final SecurityService securityService;
 
     @Autowired
     public AuthController(UserService userService, SecurityService securityService) {
@@ -44,6 +46,6 @@ public class AuthController {
         userDetails.setRoles(userService.create(userDetails).stream().map(Role::getName).collect(Collectors.toSet()));
         securityService.login(userDetails.getUserName(), userDetails.getPassword());
 
-        return ResponseEntity.ok(new ResponseMessage<>().setContent(securityService.findLoggedInUserName()));
+        return ResponseEntity.ok(new ResponseMessage<>().setContent(securityService.findLoggedInUser()));
     }
 }

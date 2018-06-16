@@ -54,7 +54,7 @@ public class PostController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<PostDetails> getPost(@PathVariable("id") Integer id) throws SQLException {
-        LOGGER.debug("getPost()" + id);
+        LOGGER.debug("getPostId()" + id);
         PostDetails post = blogService.getPostById(id);
 
         return new ResponseEntity<>(post, HttpStatus.OK);

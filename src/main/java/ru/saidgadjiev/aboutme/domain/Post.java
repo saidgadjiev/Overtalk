@@ -1,8 +1,8 @@
 package ru.saidgadjiev.aboutme.domain;
 
+import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
 import ru.saidgadjiev.ormnext.core.field.*;
-import ru.saidgadjiev.ormnext.support.datapersister.SerialTypeDataPersister;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,8 +14,8 @@ import java.util.List;
 
 public class Post {
 
-    @DatabaseColumn(id = true, generated = true, dataType = SerialTypeDataPersister.SERIAL)
-    private int id;
+    @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)
+    private Integer id;
 
     @DatabaseColumn(notNull = true)
     private String title;
@@ -33,11 +33,14 @@ public class Post {
     @ForeignCollectionField(foreignFieldName = "post", fetchType = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
-    public int getId() {
+    @ForeignCollectionField(foreignFieldName = "post")
+    private List<Like> likes = new ArrayList<>();
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -79,6 +82,14 @@ public class Post {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public List<Like> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<Like> likes) {
+        this.likes = likes;
     }
 
     @Override

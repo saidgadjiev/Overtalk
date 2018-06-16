@@ -6,6 +6,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.saidgadjiev.aboutme.properties.StorageProperties;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,16 +34,11 @@ public class FileSystemStorageService implements StorageService {
 
     @Autowired
     public FileSystemStorageService(StorageProperties storageProperties) {
-        this.rootLocation = Paths.get(storageProperties.getLocation());
+        this.rootLocation = Paths.get(storageProperties.getUploadDir());
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
-    public String store(String parent, MultipartFile file) {
+    public String store(MultipartFile file) {
         String name = FilenameUtils.getBaseName(file.getOriginalFilename());
         String ext = FilenameUtils.getExtension(file.getOriginalFilename());
         String fileName = name + "_" + uidGenerator.nextUid() + "." + ext;
@@ -56,10 +52,8 @@ public class FileSystemStorageService implements StorageService {
                         "Cannot store file with relative path outside current directory "
                                 + fileName);
             }
-            Path targetPath = rootLocation.resolve(parent).resolve(fileName);
-
             try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(inputStream, rootLocation.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
             }
         }
         catch (IOException e) {
@@ -70,9 +64,9 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public Resource loadAsResource(String parentDir, String fileName) {
+    public Resource loadAsResource(String fileName) {
         try {
-            Path file = load(parentDir, fileName);
+            Path file = load(fileName);
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
@@ -89,7 +83,17 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public Path load(String parentDir, String fileName) {
-        return rootLocation.resolve(parentDir).resolve(fileName);
+    public Path load(String fileName) {
+        return rootLocation.resolve(fileName);
+    }
+
+    @Override
+    public void init() {
+        try {
+            Files.createDirectories(rootLocation);
+        }
+        catch (IOException e) {
+            throw new StorageException("Could not initialize storage", e);
+        }
     }
 }

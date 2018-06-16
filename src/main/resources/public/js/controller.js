@@ -1,6 +1,6 @@
-var as = angular.module('OverTalkApp.controllers', []);
+var as = angular.module('AboutMeApp.controllers', []);
 
-as.controller('OverTalkController', function ($scope, LocationService, AuthService, $location) {
+as.controller('AboutMeController', function ($scope, LocationService, AuthService, $location) {
     $scope.signOut = function () {
         AuthService.signOut().then(function () {
             LocationService.saveLocation('/');
@@ -130,6 +130,30 @@ as.controller('PostsController', function ($scope, $http, $location, $log) {
         $log.log('Page changed to: ' + $scope.currentPage);
         loadPosts();
     };
+
+    $scope.like = function (post) {
+        $scope.likeInfo = {};
+        $scope.likeInfo.postId = post.id;
+
+        $http.post('api/like/post', $scope.likeInfo)
+            .success(function (response) {
+                likeInfo = response.content;
+                post.liked = likeInfo.liked;
+                post.likesCount = likeInfo.likesCount;
+            });
+    };
+
+    $scope.dislike = function (post) {
+        $scope.likeInfo = {};
+        $scope.likeInfo.postId = post.id;
+
+        $http.post('api/dislike/post', $scope.likeInfo)
+            .success(function (response) {
+                likeInfo = response.content;
+                post.liked = likeInfo.liked;
+                post.likesCount = likeInfo.likesCount;
+            });
+    };
 });
 
 as.controller('DetailsController', function ($scope, $http, $routeParams, $location, $q, $log) {
@@ -188,22 +212,26 @@ as.controller('UsersController', function ($scope, $http, $log) {
     };
 });
 
-as.controller('NewProjectController', function ($scope, $http, $log, $location, fileUpload) {
+as.controller('NewProjectController', function ($scope, $http, $log, $location) {
     $scope.save = function (isValid) {
         $scope.submitted = true;
 
         if (isValid) {
-            fileUpload.uploadFileToUrl($scope.logo, "/api/file/logo")
-                .success(function (response) {
-                    $scope.newProject.logoPath = response.content;
-                    $http.post('api/project', $scope.newProject)
-                        .success(function (response) {
-                            $location.path('/projects');
-                        })
+            var fd = new FormData();
+
+            fd.append('file', file);
+            fd.append('data', angular.toJson($scope.newProject));
+
+            $http.post("/api/project", fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            })
+                .success(function () {
+                    $location.path('/projects');
                 })
                 .catch(function (reason) {
                     $log.log(reason);
-                })
+                });
         }
     };
     $scope.cancel = function () {

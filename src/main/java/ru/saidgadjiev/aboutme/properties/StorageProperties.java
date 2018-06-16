@@ -1,4 +1,4 @@
-package ru.saidgadjiev.aboutme.storage;
+package ru.saidgadjiev.aboutme.properties;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -6,10 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties
 public class StorageProperties {
 
-    @Value("${storage.location}")
-    private String location = "upload-dir";
+    @Value("${app.upload.dir}")
+    private String uploadDir = "upload-dir";
 
-    public String getLocation() {
-        return location;
+    public String getUploadDir() {
+        return uploadDir;
     }
 }

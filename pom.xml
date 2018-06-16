@@ -13,9 +13,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.saidgadjiev</groupId>
-    <artifactId>about-me</artifactId>
+    <artifactId>aboutme</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>about-me</name>
+    <name>aboutme</name>
 
     <properties>
         <java.version>1.8</java.version>
@@ -149,7 +149,7 @@
         <dependency>
             <groupId>ru.saidgadjiev.ormnext</groupId>
             <artifactId>ormnext-support</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <version>1.4</version>
         </dependency>
 
         <dependency>

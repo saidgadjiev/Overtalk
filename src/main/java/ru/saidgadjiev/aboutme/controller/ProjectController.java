@@ -7,13 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.saidgadjiev.aboutme.domain.Project;
-import ru.saidgadjiev.aboutme.model.PostDetails;
 import ru.saidgadjiev.aboutme.model.ProjectDetails;
 import ru.saidgadjiev.aboutme.model.ResponseMessage;
 import ru.saidgadjiev.aboutme.service.ProjectService;
 import ru.saidgadjiev.aboutme.storage.StorageService;
 
-import javax.validation.Valid;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -23,6 +21,9 @@ import java.util.List;
 public class ProjectController {
 
     private static final Logger LOGGER = Logger.getLogger(ProjectController.class);
+
+    @Autowired
+    private StorageService storageService;
 
     @Autowired
     private ProjectService service;
@@ -35,8 +36,14 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity create(@RequestBody @Valid ProjectDetails projectDetails) throws IOException, SQLException {
+    public ResponseEntity create(@RequestPart(value="file") MultipartFile file,
+                                 @RequestPart("data") String data) throws IOException, SQLException {
         LOGGER.debug("create()");
+        LOGGER.debug("Upload file " + file.getOriginalFilename());
+        ProjectDetails projectDetails = new ObjectMapper().readValue(data, ProjectDetails.class);
+        String logoPath = storageService.store(file);
+
+        projectDetails.setLogoPath(logoPath);
         service.create(projectDetails);
         LOGGER.debug("Added new project " + projectDetails);
         return ResponseEntity.ok().build();

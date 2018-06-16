@@ -1,4 +1,4 @@
-var as = angular.module('OverTalkApp', ['ngRoute', 'ngMessages', 'ui.bootstrap', 'OverTalkApp.controllers', 'OverTalkApp.services', 'OverTalkApp.directives']);
+var as = angular.module('AboutMeApp', ['ngRoute', 'ngMessages', 'ui.bootstrap', 'AboutMeApp.controllers', 'AboutMeApp.services', 'AboutMeApp.directives']);
 
 as.constant('USER_ROLES', {
     all: '*',

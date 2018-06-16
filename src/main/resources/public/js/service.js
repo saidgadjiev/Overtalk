@@ -1,4 +1,4 @@
-var as = angular.module('OverTalkApp.services', []);
+var as = angular.module('AboutMeApp.services', []);
 
 as.service('Session', function () {
     this.create = function (data) {

@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 public interface SecurityService {
 
-    UserDetails findLoggedInUserName();
+    UserDetails findLoggedInUser();
 
     void login(String userName, String password);
 }

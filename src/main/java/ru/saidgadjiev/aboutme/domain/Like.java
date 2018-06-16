@@ -1,38 +1,23 @@
 package ru.saidgadjiev.aboutme.domain;
 
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
-import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
-import ru.saidgadjiev.ormnext.core.field.Converter;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgadjiev.ormnext.core.field.FetchType;
 import ru.saidgadjiev.ormnext.core.field.ForeignColumn;
 
-import java.util.Date;
-
-public class Comment {
+public class Like {
 
     @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)
     private Integer id;
 
-    @DatabaseColumn
-    private String content;
-
     @ForeignColumn(fetchType = FetchType.LAZY)
     private Post post;
 
-    @Converter(value = JavaDateToSqlDate.class)
-    @DatabaseColumn
-    private Date createdDate = new Date();
+    @ForeignColumn(fetchType = FetchType.LAZY)
+    private Comment comment;
 
-    @ForeignColumn
+    @ForeignColumn(foreignFieldName = "userName", fetchType = FetchType.LAZY)
     private UserProfile user;
-
-    public Comment() { }
-
-    public Comment(int id, String content) {
-        this.id = id;
-        this.content = content;
-    }
 
     public Integer getId() {
         return id;
@@ -40,14 +25,6 @@ public class Comment {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public Post getPost() {
@@ -58,12 +35,12 @@ public class Comment {
         this.post = post;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public Comment getComment() {
+        return comment;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    public void setComment(Comment comment) {
+        this.comment = comment;
     }
 
     public UserProfile getUser() {
