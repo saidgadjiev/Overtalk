@@ -3,15 +3,15 @@
 </div>
 <form ng-submit="save(postForm.$valid)" name="postForm" novalidate>
     <div class="form-group" ng-class="{'has-error':postForm.name.$invalid && (postForm.name.$touched || submitted)}">
-        <label for="name">Заголовок:</label>
-        <input id="name" class="form-control" type="text"
-               ng-model="newPost.name" ng-required="true"/>
+        <label for="title">Заголовок:</label>
+        <input id="title" class="form-control" type="text"
+               ng-model="newPost.title" ng-required="true"/>
         <p class="help-block" ng-show="postForm.name.$invalid && (postForm.name.$touched || submitted)">Title is requiered!</p>
     </div>
     <div class="form-group" ng-class="{'has-error':postForm.content.$invalid && (postForm.content.$touched || submitted)}">
         <label for="content">Контент:</label>
         <textarea id="content" class="form-control" type="text"
-                  ng-model="newPost.content" ng-required="true" rows="8" ng-minlength="15"></textarea>
+                  ng-model="newPost.content" ng-required="true" rows="8"></textarea>
         <p class="help-block" ng-show="postForm.content.$invalid && (postForm.content.$touched || submitted)">At least 15 chars</p>
     </div>
     <div class="form-group">

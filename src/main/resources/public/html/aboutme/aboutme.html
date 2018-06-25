@@ -1,0 +1,112 @@
+<div class="mt-3">
+    <button type="button" ng-click="editBiography()" class="mb-3 btn btn-outline-primary btn-block">
+        Редактировать биографию
+    </button>
+    <h4 class="font-weight-bold">Обо мне</h4>
+    <p>
+        {{aboutme.biography}}
+    </p>
+</div>
+<br>
+<div>
+    <button type="button" ng-click="addSkill()" class="mb-3 btn btn-outline-primary btn-block">
+        Добавить навык
+    </button>
+    <h4 class="font-weight-bold">Что я знаю</h4>
+    <div>
+        <div ng-repeat="skill in skills">
+            <div class="skillbar">
+                <div class="skillbar-title">{{skill.name}}</div>
+                <div class="skill-bar-percent">{{skill.percentage}}%</div>
+                <div class="skillbar-bar bg-primary" style="width: {{skill.percentage}}%;"></div>
+            </div>
+            <div>
+                <button type="button" ng-click="removeSkill(skill)" class="btn btn-sm btn-outline-primary border-0">
+                    <i class="fa fa-times"></i>
+                </button>
+                <button type="button" ng-click="editSkill(skill)" class="btn btn-sm btn-outline-primary border-0">
+                    <i class="fa fa-edit"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editBiographyDialog" tabindex="-1" role="dialog"
+     aria-labelledby="editBiographyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="form" role="form" name="biographyForm">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="editBiographyModalLabel">
+                        Редактирование биографии
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                            <textarea ng-model="biography" name="content" class="form-control" type="text"
+                                      placeholder="Биография" rows="8">
+                            </textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="saveBiography(biographyForm.$valid)" type="button" class="btn btn-primary">
+                        Сохранить
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Отменить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addSkillDialog" tabindex="-1" role="dialog"
+     aria-labelledby="addSkillModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="form" role="form" name="skillForm">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="addSkillModalLabel">
+                        Добавление навыка
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="name">Название:</label>
+                        <input id="name" class="form-control" type="text" name="name"
+                               ng-model="skill.name" ng-required="true"/>
+                        <div ng-messages="skillForm.name.$error"
+                             ng-if="skillForm.name.$touched || submitted" style="color:red">
+                            <p class="help-block" ng-message="required">Введите название!</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="percentage">Процент владения:</label>
+                        <input id="percentage" class="form-control" type="text" name="name"
+                               ng-model="skill.percentage" ng-required="true"/>
+                        <div ng-messages="skillForm.percentage.$error"
+                             ng-if="skillForm.percentage.$touched || submitted" style="color:red">
+                            <p class="help-block" ng-message="required">Введите процент владения!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-click="saveSkill(skillForm.$valid)" type="button" class="btn btn-primary">
+                        Сохранить
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Отменить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

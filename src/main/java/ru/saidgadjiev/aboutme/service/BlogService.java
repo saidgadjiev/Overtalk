@@ -14,6 +14,7 @@ import ru.saidgadjiev.aboutme.model.CommentDetails;
 import ru.saidgadjiev.aboutme.model.PostDetails;
 import ru.saidgadjiev.aboutme.utils.DTOUtils;
 
+import javax.validation.Valid;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -78,5 +79,11 @@ public class BlogService {
         Post post = postDao.getById(id);
 
         return DTOUtils.convert(post, PostDetails.class);
+    }
+
+    public int updatePost(PostDetails postDetails) throws SQLException {
+        Post post = DTOUtils.convert(postDetails, Post.class);
+
+        return postDao.update(post);
     }
 }

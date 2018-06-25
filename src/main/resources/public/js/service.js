@@ -108,13 +108,18 @@ as.service('LocationService', function ($location) {
     return locationService;
 });
 
-as.service('fileUpload', ['$http', function ($http) {
-    this.uploadFileToUrl = function (file, uploadUrl) {
-        var fd = new FormData();
-        fd.append('file', file);
-        return $http.post(uploadUrl, fd, {
-            transformRequest: angular.identity,
-            headers: {'Content-Type': undefined}
-        });
-    }
-}]);
+as.service('DataService', function () {
+    var dataService = {};
+
+    dataService.data = {};
+
+    dataService.set = function (target, data) {
+        dataService.data[target] = data;
+    };
+
+    dataService.get = function (target) {
+        return dataService.data[target];
+    };
+
+    return dataService;
+});

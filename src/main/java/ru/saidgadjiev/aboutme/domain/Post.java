@@ -27,7 +27,7 @@ public class Post {
     @DatabaseColumn(notNull = true)
     private Date createdDate = new Date();
 
-    @ForeignColumn
+    @ForeignColumn(foreignFieldName = "userName")
     private UserProfile user;
 
     @ForeignCollectionField(foreignFieldName = "post", fetchType = FetchType.LAZY)

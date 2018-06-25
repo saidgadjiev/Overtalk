@@ -26,6 +26,8 @@ public class PostDetails {
 
     private List<String> likeUsers;
 
+    private String userName;
+
     public Integer getId() {
         return id;
     }
@@ -96,6 +98,14 @@ public class PostDetails {
 
     public void setLikeUsers(List<String> likeUsers) {
         this.likeUsers = likeUsers;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Override

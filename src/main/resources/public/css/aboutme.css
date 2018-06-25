@@ -5,3 +5,20 @@
 .mt-5-5 {
     margin-top: 3.5em !important;
 }
+
+body {
+    background-color: #ffffff;
+    font-family: 'PT Mono', sans-serif;
+}
+
+.h-100 {
+    height: calc(100% - 56px) !important;
+}
+
+.font-seymuor-one {
+    font-family: 'Seymour One', sans-serif;
+}
+
+.font-oswald {
+    font-family: 'Oswald', sans-serif;
+}

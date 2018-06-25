@@ -66,4 +66,10 @@ public class PostDao {
             return session.countOff(Post.class);
         }
     }
+
+    public int update(Post post) throws SQLException {
+        try (Session session = sessionManager.createSession()) {
+            return session.update(post);
+        }
+    }
 }

@@ -3,6 +3,7 @@ package ru.saidgadjiev.aboutme;
 import org.apache.log4j.Logger;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.saidgadjiev.aboutme.domain.*;
+import ru.saidgadjiev.ormnext.core.dao.Dao;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.Criteria;
@@ -25,6 +26,7 @@ public class PostgresRunner {
                 createRoles(session);
                 createUsers(session);
                 createUserRoles(session);
+                createAboutMe(session);
                 session.commit();
             } catch (SQLException ex) {
                 session.rollback();
@@ -134,6 +136,30 @@ public class PostgresRunner {
             LOGGER.debug("UserRole for user admin created = " + (session.create(adminUserRole) > 0));
         } else {
             LOGGER.debug("UserRole for user admin already exist");
+        }
+    }
+
+    private static void createAboutMe(Session session) throws SQLException {
+        long count = session.countOff(AboutMe.class);
+
+        if (count == 0) {
+            AboutMe aboutMe = new AboutMe();
+
+            aboutMe.setId(1);
+            aboutMe.setBiography("Меня зовут Саид.");
+            session.create(aboutMe);
+
+            LOGGER.debug("About me created " + aboutMe);
+            Skill skill = new Skill();
+
+            skill.setAboutMe(aboutMe);
+            skill.setId(1);
+            skill.setName("Java");
+            skill.setPercentage(90);
+            session.create(skill);
+            LOGGER.debug("About me skill " + skill);
+        } else {
+            LOGGER.debug("About me already exist");
         }
     }
 }

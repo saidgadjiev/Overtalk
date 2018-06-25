@@ -82,13 +82,13 @@ public final class DTOUtils {
 
             return comment;
         };
-        Converter<LikeDetails, UserProfile> likeDetailsUserConverter = context -> {
+        Converter<String, UserProfile> userNameConverter = context -> {
             if (context.getSource() == null) {
                 return null;
             }
             UserProfile userProfile = new UserProfile();
 
-            userProfile.setUserName(context.getSource().getUser());
+            userProfile.setUserName(context.getSource());
 
             return userProfile;
         };
@@ -109,6 +109,7 @@ public final class DTOUtils {
             @Override
             protected void configure() {
                 skip(destination.getCreatedDate());
+                using(userNameConverter).map(source.getUserName(), destination.getUser());
             }
         });
         INSTANCE.addMappings(new PropertyMap<CommentDetails, Comment>() {
@@ -126,6 +127,7 @@ public final class DTOUtils {
         INSTANCE.addMappings(new PropertyMap<Post, PostDetails>() {
             @Override
             protected void configure() {
+                skip(destination.getUserName());
                 using(userNickNameConverter).map(source.getUser(), destination.getNickName());
                 using(commentCountConverter).map(source, destination.getCommentsCount());
                 using(postLikesCountConverter).map(source, destination.getLikesCount());
@@ -138,7 +140,7 @@ public final class DTOUtils {
                 skip(destination.getId());
                 using(likeDetailsCommentConverter).map(source, destination.getComment());
                 using(likeDetailsPostConverter).map(source, destination.getPost());
-                using(likeDetailsUserConverter).map(source, destination.getUser());
+                using(userNameConverter).map(source.getUser(), destination.getUser());
             }
         });
     }

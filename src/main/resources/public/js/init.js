@@ -43,6 +43,15 @@ as.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
 as.config(function ($routeProvider, $httpProvider, USER_ROLES) {
     $routeProvider.when('/', {
         templateUrl: 'html/main.html',
+        controller: 'MainController',
+        publicAccess: true,
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
+    }).when('/aboutme', {
+        templateUrl: 'html/aboutme/aboutme.html',
+        controller: 'AboutMeController',
         publicAccess: true,
         access: {
             loginRequired: false,
@@ -104,6 +113,12 @@ as.config(function ($routeProvider, $httpProvider, USER_ROLES) {
             loginRequired: true,
             authorizedRoles: [USER_ROLES.admin]
         }
+    }).when('/contacts', {
+        templateUrl: 'html/contacts/contacts.html',
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
     }).when('/403', {
         templateUrl: 'html/error/403.html',
         publicAccess: true,
@@ -158,7 +173,6 @@ as.run(function ($rootScope,
         }
     });
     $rootScope.$on(AUTH_EVENTS.unauthorized, function () {
-        LocationService.saveLocation();
         $location.path('/signIn');
     });
     $rootScope.$on(AUTH_EVENTS.accessDenied, function () {
@@ -180,5 +194,9 @@ as.run(function ($rootScope,
         $rootScope.authenticated = false;
         $rootScope.nickName = null;
         $location.path('/signIn');
+    });
+
+    $rootScope.$on('$routeChangeSuccess', function (event, current, previous, reject) {
+        LocationService.saveLocation(previous.$$route.originalPath);
     });
 });

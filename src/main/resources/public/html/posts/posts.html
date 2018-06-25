@@ -1,6 +1,6 @@
-<h1 class="text-center text-secondary">Записки разработчика на Java</h1>
-<button type="button" access="admin" ng-click="add()"
-        class="mt-3 mb-3 btn btn-primary btn-lg btn-block">
+<h1 class="text-center">Записки разработчика на Java</h1>
+<button type="button" access="ROLE_ADMIN" ng-click="add()"
+        class="mt-3 mb-3 btn btn-outline-primary btn-block">
     Добавить новый пост
 </button>
 <ul class="list-group list-group-flush">
@@ -10,23 +10,23 @@
             <small class="pl-1">{{post.createdDate|date:'dd.MM.yyyy в hh:mm'}}</small>
         </div>
         <div>
-            <h1>{{post.name}}</h1>
+            <h1>{{post.title}}</h1>
             <p class="mb-1">{{post.content}}</p>
-            <a href="#/posts/{{post.id}}" class="btn btn-secondary btn-sm">
+            <a href="#/posts/{{post.id}}" class="btn btn-outline-primary btn-sm">
                 Читать дальше →
             </a>
         </div>
 
-        <div class="btn-group mt-3">
-            <button ng-if="post.liked" type="button" ng-click="dislike(post)" class="btn btn-sm btn-light">
-                <i class="text-secondary fa fa-thumbs-down"></i>
+        <div class="mt-3">
+            <button ng-if="post.liked" type="button" ng-click="dislike(post)" class="btn btn-sm btn-outline-primary border-0">
+                <i class="fa fa-thumbs-down"></i>
             </button>
-            <button ng-if="!post.liked" type="button" ng-click="like(post)" class="btn btn-sm btn-light">
-                <i class="text-secondary fa fa-thumbs-up"></i>
+            <button ng-if="!post.liked" type="button" ng-click="like(post)" class="btn btn-sm btn-outline-primary border-0">
+                <i class="fa fa-thumbs-up"></i>
             </button>
             {{post.likesCount}}
-            <button type="button" class="ml-3 btn btn-sm btn-light">
-                <i class="text-secondary fa fa-comment"></i>
+            <button type="button" class="ml-3 btn btn-sm btn-outline-primary border-0">
+                <i class="fa fa-comment"></i>
             </button>
             {{post.commentsCount}}
         </div>

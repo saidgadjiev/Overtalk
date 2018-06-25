@@ -51,7 +51,9 @@ public class OrmNextConfiguration {
                         Role.class,
                         UserRole.class,
                         Project.class,
-                        Like.class
+                        Like.class,
+                        AboutMe.class,
+                        Skill.class
                 )
                 .build();
 

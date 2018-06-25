@@ -17,6 +17,9 @@ public class UserDetails {
     private String password;
 
     @NotNull
+    private String nickName;
+
+    @NotNull
     private String confirmPassword;
 
     private Set<String> roles = new HashSet<>();
@@ -51,5 +54,13 @@ public class UserDetails {
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 }
