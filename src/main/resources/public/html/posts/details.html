@@ -2,14 +2,7 @@
     <small>{{post.nickName}} в {{post.createdDate|date:'dd.MM.yyyy в hh:mm'}}</small>
 </div>
 <h1>{{post.title}}</h1>
-<pre>
-<code class="java">
-	private static main() {
-    	System.out.println('Test');
-    }
-</code>
-</pre>
-<p>{{post.content}}</p>
+<p compile="post.content"></p>
 <div>
     <button type="button" class="btn btn-sm btn-outline-primary border-0">
         <i class="fa fa-thumbs-up"></i>
