@@ -1,11 +1,9 @@
-<div class="font-weight-bold text-center mt-3">
-    <h1>Новый проект</h1>
-</div>
+<h1 class="font-weight-bold text-center mt-3">Новый проект</h1>
 <form ng-submit="save(projectForm.$valid)" name="projectForm" novalidate>
     <div class="form-group">
         <label for="name">Название:</label>
         <input id="name" class="form-control" type="text" name="name"
-               ng-model="newProject.name" ng-required="true"/>
+               ng-model="project.name" ng-required="true"/>
         <div ng-messages="projectForm.name.$error"
              ng-if="projectForm.name.$touched || submitted" style="color:red">
             <p class="help-block" ng-message="required">Введите название!</p>
@@ -14,7 +12,7 @@
     <div class="form-group">
         <label for="description">Описание:</label>
         <textarea id="description" class="form-control" type="text" name="description"
-                  ng-model="newProject.description" ng-required="true" rows="8"></textarea>
+                  ng-model="project.description" ng-required="true" rows="8"></textarea>
         <div ng-messages="projectForm.description.$error"
              ng-if="projectForm.description.$touched || submitted" style="color:red">
             <p class="help-block" ng-message="required">Введите описание!</p>
@@ -30,5 +28,4 @@
         <button type="submit" class="btn btn-primary">Сохранить</button>
         <button type="button" ng-click="cancel()" class="btn btn-default" data-dismiss="modal">Отменить</button>
     </div>
-
 </form>

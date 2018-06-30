@@ -116,6 +116,7 @@ public final class DTOUtils {
             @Override
             protected void configure() {
                 skip(destination.getCreatedDate());
+                using(userNameConverter).map(source.getUser(), destination.getUser());
             }
         });
         INSTANCE.addMappings(new PropertyMap<ProjectDetails, Project>() {

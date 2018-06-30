@@ -18,7 +18,7 @@ public class Project {
     @DatabaseColumn(notNull = true)
     private String description;
 
-    @DatabaseColumn(notNull = true, defaultDefinition = "'fake.png'")
+    @DatabaseColumn
     private String logoPath;
 
     @Converter(value = JavaDateToSqlDate.class)

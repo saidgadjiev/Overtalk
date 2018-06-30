@@ -28,6 +28,7 @@ as.controller('MainController', function () {
     function randomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
+
     //Make the canvas occupy the full page
     var W = window.innerWidth,
         H = window.innerHeight;
@@ -105,12 +106,8 @@ as.controller('MainController', function () {
             // Warning: Causes extreme lag
             //p.font.size += randomInt(-0.1, 0.1)
         }
-
-        ctx.font = "8vh Seymour One";
-        ctx.fillStyle = "black";
-        ctx.textAlign = "center";
-        ctx.fillText("Добро пожаловать!",W / 2,H / 2);
     }
+
     setInterval(draw, 10);
 });
 
@@ -296,17 +293,17 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
-    var actionUrl = 'api/post/',
+    var actionUrl = 'api/comment/',
         loadComments = function () {
-            $http.get(actionUrl + $routeParams.id + '/comments?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
+            $http.get(actionUrl + $routeParams.id + '?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
                 $scope.comments = data.content;
                 $scope.totalItems = data.totalElements;
             })
         },
         firstLoad = function () {
             $q.all([
-                $http.get(actionUrl + $routeParams.id),
-                $http.get(actionUrl + $routeParams.id + '/comments?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage)
+                $http.get('api/post/' + $routeParams.id),
+                $http.get(actionUrl + $routeParams.id + '?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage)
             ]).then(function (result) {
                 $log.log(result);
                 $scope.post = result[0].data;
@@ -318,16 +315,16 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
     firstLoad();
     $scope.newComment = {};
 
-    $scope.save = function () {
-        if (!$scope.newComment.content || $scope.newComment.content === 0) {
-            $http.post('api/post/' + $routeParams.id + '/comments', $scope.newComment).success(function (data) {
+    $scope.saveComment = function (valid) {
+        if (valid) {
+            $http.post(actionUrl + $routeParams.id + '/create', $scope.newComment).success(function (data) {
                 $scope.newComment = {};
                 loadComments();
             });
         }
     };
 
-    $scope.edit = function (post) {
+    $scope.editPost = function (post) {
         var data = {};
 
         data.backUrl = '/posts/' + post.id;
@@ -335,6 +332,28 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
         DataService.set('NewPostController', data);
         $location.path('/posts/new');
     };
+
+    $scope.editComment = function (comment) {
+        $scope.editComment.id = comment.id;
+        $scope.editComment.content = comment.content;
+        $scope.editComment.oldComment = comment;
+
+        $('#editCommentDialog').modal('show');
+    };
+
+    $scope.saveEditComment = function (valid) {
+        $scope.submitted = true;
+
+        if (valid) {
+            $http.post(actionUrl + $routeParams.id + '/update', $scope.editComment)
+                .success(function (response) {
+                    $scope.oldComment.content = response.content.content;
+
+                    $scope.submitted = false;
+                    $scope.editComment = {};
+                });
+        }
+    }
 });
 
 as.controller('UsersController', function ($scope, $http, $log) {
@@ -357,7 +376,18 @@ as.controller('UsersController', function ($scope, $http, $log) {
     };
 });
 
-as.controller('NewProjectController', function ($scope, $http, $log, $location) {
+as.controller('NewProjectController', function ($scope, $http, $log, $location, DataService) {
+    $scope.data = DataService.get('NewProjectController');
+    $scope.project = {};
+
+    if ($scope.data) {
+        $scope.project.id = $scope.data.id;
+        $scope.project.name = $scope.data.name;
+        $scope.project.description = $scope.data.description;
+    }
+
+    var actionUrl = 'api/project/';
+
     $scope.save = function (isValid) {
         $scope.submitted = true;
 
@@ -365,18 +395,34 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location) 
             var fd = new FormData();
 
             fd.append('file', $scope.logo);
-            fd.append('data', angular.toJson($scope.newProject));
+            fd.append('data', angular.toJson($scope.project));
 
-            $http.post("/api/project", fd, {
-                transformRequest: angular.identity,
-                headers: {'Content-Type': undefined}
-            })
-                .success(function () {
-                    $location.path('/projects');
+            if ($scope.data) {
+                $http.post(actionUrl + 'update', fd, {
+                    transformRequest: angular.identity,
+                    headers: {'Content-Type': undefined}
                 })
-                .catch(function (reason) {
-                    $log.log(reason);
-                });
+                    .success(function (response) {
+                        $scope.data.name = response.content.name;
+                        $scope.data.description = response.content.description;
+
+                        $location.path('/projects');
+                    })
+                    .catch(function (reason) {
+                        $log.log(reason);
+                    });
+            } else {
+                $http.post(actionUrl + 'create', fd, {
+                    transformRequest: angular.identity,
+                    headers: {'Content-Type': undefined}
+                })
+                    .success(function () {
+                        $location.path('/projects');
+                    })
+                    .catch(function (reason) {
+                        $log.log(reason);
+                    });
+            }
         }
     };
     $scope.cancel = function () {
@@ -384,12 +430,22 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location) 
     }
 });
 
-as.controller('ProjectsController', function ($scope, $http, $log, $location) {
+as.controller('ProjectsController', function ($scope, $http, $log, $location, IMAGE, DataService) {
+    $scope.defaultUrl = IMAGE.defaultUrl;
     $http.get('api/project').success(function (data) {
         $log.log(data);
         $scope.projects = data.content;
     });
     $scope.add = function () {
+        $location.path('/projects/new');
+    };
+    $scope.openDetails = function (project) {
+        $scope.details = project;
+        $('#projectDetailsDialog').modal('show');
+    };
+
+    $scope.editProject = function (project) {
+        DataService.set('NewProjectController', project);
         $location.path('/projects/new');
     };
 });

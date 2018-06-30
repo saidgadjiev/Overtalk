@@ -39,6 +39,9 @@ public class BlogService {
     }
 
     public void createCommentOfPost(Integer id, CommentDetails details) throws SQLException {
+        UserDetails authorizedUser = securityService.findLoggedInUser();
+
+        details.setUser(authorizedUser.getUsername());
         Comment comment = DTOUtils.convert(details, Comment.class);
         Post post = postDao.getById(id);
 
@@ -85,5 +88,11 @@ public class BlogService {
         Post post = DTOUtils.convert(postDetails, Post.class);
 
         return postDao.update(post);
+    }
+
+    public int updateComment(CommentDetails commentDetails) throws SQLException {
+        Comment comment = DTOUtils.convert(commentDetails, Comment.class);
+
+        return commentDao.update(comment);
     }
 }

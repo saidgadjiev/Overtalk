@@ -23,4 +23,8 @@ public class ProjectService {
     public void create(ProjectDetails projectDetails) throws SQLException {
         dao.create(DTOUtils.convert(projectDetails, Project.class));
     }
+
+    public int update(ProjectDetails projectDetails) throws SQLException {
+        return dao.update(DTOUtils.convert(projectDetails, Project.class));
+    }
 }

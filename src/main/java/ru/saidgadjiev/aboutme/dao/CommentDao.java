@@ -9,6 +9,7 @@ import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.Criteria;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.Restrictions;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.SelectStatement;
+import ru.saidgadjiev.ormnext.core.query.criteria.impl.UpdateStatement;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -74,6 +75,20 @@ public class CommentDao {
             LOGGER.debug(count);
 
             return count;
+        }
+    }
+
+    public int update(Comment comment) throws SQLException {
+        LOGGER.debug("update(): " + comment.getId());
+        try (Session session = sessionManager.createSession()) {
+            UpdateStatement updateStatement = new UpdateStatement(Comment.class);
+
+            updateStatement.set("content", comment.getContent());
+            updateStatement.where(new Criteria().add(Restrictions.eq("id", comment.getId())));
+            long count = session.update(updateStatement);
+            LOGGER.debug(count);
+
+            return (int) count;
         }
     }
 }

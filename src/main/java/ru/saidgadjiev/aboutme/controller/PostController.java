@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.saidgadjiev.aboutme.model.CommentDetails;
 import ru.saidgadjiev.aboutme.model.PostDetails;
 import ru.saidgadjiev.aboutme.model.ResponseMessage;
 import ru.saidgadjiev.aboutme.service.BlogService;
@@ -78,23 +77,5 @@ public class PostController {
         PostDetails post = blogService.getPostById(id);
 
         return new ResponseEntity<>(post, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/{id}/comments", method = RequestMethod.GET)
-    public ResponseEntity<Page<CommentDetails>> getCommentsByPost(
-            @PathVariable("id") Integer id,
-            @PageableDefault(page = 0, size = 10, sort = "createdDate", direction = Sort.Direction.DESC) Pageable page
-    ) throws SQLException {
-        LOGGER.debug("getCommentsByPost(): " + id + ", " + page);
-        Page<CommentDetails> commentDetails = blogService.getCommentsByPostId(id, page);
-
-        return ResponseEntity.ok(commentDetails);
-    }
-
-    @RequestMapping(value = "/{id}/comments", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> createCommentOfPost(@PathVariable("id") Integer id, @RequestBody @Valid CommentDetails commentDetails) throws SQLException {
-        blogService.createCommentOfPost(id, commentDetails);
-
-        return ResponseEntity.ok().build();
     }
 }

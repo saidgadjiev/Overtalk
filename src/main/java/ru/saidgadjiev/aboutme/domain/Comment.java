@@ -17,6 +17,7 @@ public class Comment {
     @DatabaseColumn
     private String content;
 
+    @DatabaseColumn(notNull = true)
     @ForeignColumn(fetchType = FetchType.LAZY)
     private Post post;
 
@@ -24,15 +25,9 @@ public class Comment {
     @DatabaseColumn
     private Date createdDate = new Date();
 
-    @ForeignColumn
+    @DatabaseColumn(notNull = true)
+    @ForeignColumn(foreignFieldName = "userName")
     private UserProfile user;
-
-    public Comment() { }
-
-    public Comment(int id, String content) {
-        this.id = id;
-        this.content = content;
-    }
 
     public Integer getId() {
         return id;

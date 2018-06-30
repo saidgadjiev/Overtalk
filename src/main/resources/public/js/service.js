@@ -18,14 +18,18 @@ as.service('Session', function () {
 as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENTS) {
     var authService = {};
 
+    authService.loginConfirmed = function (response) {
+        Session.create(response.content);
+        authService.authenticated = true;
+        $rootScope.$broadcast(AUTH_EVENTS.signInSuccess, {
+            data: response
+        });
+    };
+
     authService.signUp = function (user) {
         return $http.post('api/auth/signUp', user).success(function (response) {
             $log.debug(response);
-            Session.create(response.content);
-            authService.authenticated = true;
-            $rootScope.$broadcast(AUTH_EVENTS.signUpSuccess, {
-                content: response
-            });
+            authService.loginConfirmed(response);
 
             return response;
         });
@@ -84,6 +88,20 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
         });
 
         return isAuthorized;
+    };
+
+    authService.getAccount = function () {
+        $http.get('api/auth/account').success(function (response) {
+            $log.debug(response);
+
+            if (response.content) {
+                Session.create(response.content);
+                authService.authenticated = true;
+                $rootScope.$broadcast(AUTH_EVENTS.signInSuccess, {
+                    data: response
+                });
+            }
+        });
     };
 
     return authService;

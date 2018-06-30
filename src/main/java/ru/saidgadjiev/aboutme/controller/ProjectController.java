@@ -35,18 +35,35 @@ public class ProjectController {
         return ResponseEntity.ok(new ResponseMessage<>("", service.getAll()));
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity create(@RequestPart(value="file") MultipartFile file,
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public ResponseEntity create(@RequestPart(value="file", required = false) MultipartFile file,
                                  @RequestPart("data") String data) throws IOException, SQLException {
         LOGGER.debug("create()");
-        LOGGER.debug("Upload file " + file.getOriginalFilename());
         ProjectDetails projectDetails = new ObjectMapper().readValue(data, ProjectDetails.class);
-        String logoPath = storageService.store(file);
+        if (file != null) {
+            String logoPath = storageService.store(file);
 
-        projectDetails.setLogoPath(logoPath);
+            projectDetails.setLogoPath(logoPath);
+        }
         service.create(projectDetails);
         LOGGER.debug("Added new project " + projectDetails);
         return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public ResponseEntity<ResponseMessage<ProjectDetails>> update(@RequestPart(value="file", required = false) MultipartFile file,
+                                 @RequestPart("data") String data) throws IOException, SQLException {
+        LOGGER.debug("create()");
+        ProjectDetails projectDetails = new ObjectMapper().readValue(data, ProjectDetails.class);
+        if (file != null) {
+            String logoPath = storageService.store(file);
+
+            projectDetails.setLogoPath(logoPath);
+        }
+        int count = service.update(projectDetails);
+        LOGGER.debug("Update project " + count);
+
+        return ResponseEntity.ok(new ResponseMessage<>("", projectDetails));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
