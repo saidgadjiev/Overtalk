@@ -17,6 +17,7 @@ public class Skill {
     private int percentage;
 
     @JsonIgnore
+    @DatabaseColumn(notNull = true)
     @ForeignColumn
     private AboutMe aboutMe;
 

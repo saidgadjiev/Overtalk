@@ -40,15 +40,15 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
     };
 
     authService.signIn = function (user) {
-        return $http.post('api/auth/signIn', user).success(function (response) {
-            $log.debug(response);
-            Session.create(response.content);
+        return $http.post('api/auth/signIn', user).success(function (profile) {
+            $log.debug(profile);
+            Session.create(profile);
             authService.authenticated = true;
             $rootScope.$broadcast(AUTH_EVENTS.signInSuccess, {
-                data: response
+                data: profile
             });
 
-            return response;
+            return profile;
         });
     };
 
@@ -91,14 +91,14 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
     };
 
     authService.getAccount = function () {
-        $http.get('api/auth/account').success(function (response) {
-            $log.debug(response);
+        $http.get('api/auth/account').success(function (profile) {
+            $log.debug(profile);
 
-            if (response.content) {
-                Session.create(response.content);
+            if (profile) {
+                Session.create(profile);
                 authService.authenticated = true;
                 $rootScope.$broadcast(AUTH_EVENTS.signInSuccess, {
-                    data: response
+                    data: profile
                 });
             }
         });
@@ -111,11 +111,16 @@ as.service('LocationService', function ($location) {
     var locationService = {};
 
     locationService.location = '/';
-    locationService.saveLocation = function (url) {
+    locationService.saveLocation = function (url, params) {
         if (!url || url.length === 0) {
             locationService.location = $location.path();
         } else {
-            locationService.location = url;
+            var resolvedUrl = url;
+
+            for (var k in params) {
+                resolvedUrl = resolvedUrl.replace(':' + k, params[k]);
+            }
+            locationService.location = resolvedUrl;
         }
     };
 
@@ -140,4 +145,43 @@ as.service('DataService', function () {
     };
 
     return dataService;
+});
+
+as.service('FileService', function ($q, $log) {
+    var fileService = {};
+
+    var onLoad = function(reader, deferred, scope) {
+        return function () {
+            scope.$apply(function () {
+                deferred.resolve(reader.result);
+            });
+        };
+    };
+
+    var onError = function (reader, deferred, scope) {
+        return function () {
+            scope.$apply(function () {
+                deferred.reject(reader.result);
+            });
+        };
+    };
+
+    var getReader = function(deferred, scope) {
+        var reader = new FileReader();
+        reader.onload = onLoad(reader, deferred, scope);
+        reader.onerror = onError(reader, deferred, scope);
+
+        return reader;
+    };
+
+    fileService.readAsDataURL = function (file, scope) {
+        var deferred = $q.defer();
+
+        var reader = getReader(deferred, scope);
+        reader.readAsDataURL(file);
+
+        return deferred.promise;
+    };
+
+    return fileService;
 });

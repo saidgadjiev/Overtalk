@@ -3,10 +3,13 @@ package ru.saidgadjiev.aboutme.dao;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import ru.saidgadjiev.aboutme.domain.Post;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
+import ru.saidgadjiev.ormnext.core.query.criteria.impl.Criteria;
+import ru.saidgadjiev.ormnext.core.query.criteria.impl.Restrictions;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.SelectStatement;
-import ru.saidgadjiev.aboutme.domain.Post;
+import ru.saidgadjiev.ormnext.core.query.criteria.impl.UpdateStatement;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -33,12 +36,14 @@ public class PostDao {
         }
     }
 
-    public List<Post> getAll(int limit, long offset) throws SQLException {
-        LOGGER.debug("getAll()");
+    public List<Post> getPosts(int categoryId, int limit, long offset) throws SQLException {
+        LOGGER.debug("getPostsByCategoryId()");
         try (Session session = sessionManager.createSession()) {
             SelectStatement<Post> selectStatement = new SelectStatement<>(Post.class);
 
             selectStatement.limit(limit).offset((int) offset);
+            selectStatement.where(new Criteria()
+                    .add(Restrictions.eq("category", categoryId)));
 
             List<Post> posts = session.list(selectStatement);
 
@@ -69,7 +74,15 @@ public class PostDao {
 
     public int update(Post post) throws SQLException {
         try (Session session = sessionManager.createSession()) {
-            return session.update(post);
+            UpdateStatement updateStatement = new UpdateStatement(Post.class);
+
+            updateStatement.set("title", post.getTitle());
+            updateStatement.set("content", post.getContent());
+
+            updateStatement.where(new Criteria()
+                    .add(Restrictions.eq("id", post.getId())));
+
+            return session.update(updateStatement);
         }
     }
 }

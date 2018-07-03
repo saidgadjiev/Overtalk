@@ -1,29 +1,52 @@
-<div>
-    <button type="button" access="ROLE_ADMIN" ng-click="editBiography()" class="mt-3 btn btn-outline-primary btn-block">
-        Редактировать биографию
-    </button>
-    <h1 class="font-weight-bold mt-3">Обо мне</h1>
-    <p class="h5">
-        {{aboutme.biography}}
-    </p>
+<div class="social-buttons social-buttons-content">
+    <div class="social-buttons-list">
+        <a class="social-buttons-item" href="#">
+
+        </a>
+    </div>
 </div>
-<div class="mt-3">
+<div class="animate-right">
+    <button type="button" access="ROLE_ADMIN" ng-click="editAboutMe()" class="mt-3 btn btn-outline-primary btn-block">
+        Редактировать
+    </button>
+    <h4 class="font-weight-bold mt-3 animate-right">ФИО</h4>
+    <ul class="list-group animate-right">
+        <li class="list-group-item"><h5 class="mb-0">{{aboutme.fio}}</h5></li>
+    </ul>
+
+    <h4 class="font-weight-bold mt-3 animate-right">Дата рождения</h4>
+    <ul class="list-group animate-right">
+        <li class="list-group-item"><h5 class="mb-0">{{aboutme.dateOfBirth|date:'longDate'}}</h5></li>
+    </ul>
+
+    <h4 class="font-weight-bold mt-3 animate-right">Место проживания</h4>
+    <ul class="list-group animate-right">
+        <li class="list-group-item"><h5 class="mb-0">{{aboutme.placeOfResidence}}</h5></li>
+    </ul>
+
+    <h4 class="font-weight-bold mt-3 animate-right">Должность</h4>
+    <ul class="list-group animate-right">
+        <li class="list-group-item"><h5 class="mb-0">{{aboutme.post}}</h5></li>
+    </ul>
+</div>
+
+<div class="mt-3 animate-right">
     <button type="button" access="ROLE_ADMIN" ng-click="addSkill()" class="btn btn-outline-primary btn-block">
         Добавить навык
     </button>
     <h1 class="font-weight-bold mt-3">Что я знаю</h1>
     <div>
-        <div ng-repeat="skill in skills">
+        <div ng-repeat="skill in aboutme.skills">
             <div class="skillbar">
                 <strong class="skillbar-title">{{skill.name}}</strong>
                 <strong class="skill-bar-percent">{{skill.percentage}}%</strong>
                 <div class="skillbar-bar bg-primary" style="width: {{skill.percentage}}%;"></div>
             </div>
             <ul class="mt-2 list-inline d-inline-flex">
-                <li class="list-inline-item">
+                <li access="ROLE_ADMIN" class="list-inline-item">
                     <i ng-click="removeSkill(skill)" class="text-primary fa fa-times"></i>
                 </li>
-                <li class="list-inline-item pl-3">
+                <li access="ROLE_ADMIN" class="list-inline-item pl-3">
                     <i ng-click="editSkill(skill)" class="text-primary fa fa-edit"></i>
                 </li>
             </ul>
@@ -31,14 +54,14 @@
     </div>
 </div>
 
-<div class="modal fade" id="editBiographyDialog" tabindex="-1" role="dialog"
-     aria-labelledby="editBiographyModalLabel" aria-hidden="true">
+<div class="modal fade" id="editAboutMeDialog" tabindex="-1" role="dialog"
+     aria-labelledby="editAboutMeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form class="form" role="form" name="biographyForm">
+            <form name="aboutMeForm" novalidate>
                 <div class="modal-header">
-                    <h4 class="modal-title" id="editBiographyModalLabel">
-                        Редактирование биографии
+                    <h4 class="modal-title" id="editAboutMeModalLabel">
+                        Редактирование обо мне
                     </h4>
                     <button type="button" class="close" data-dismiss="modal"
                             aria-hidden="true">&times;
@@ -46,13 +69,18 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                            <textarea ng-model="biography" name="content" class="form-control" type="text"
-                                      placeholder="Биография" rows="8">
-                            </textarea>
+                        <label for="placeOfResidence">ФИО:</label>
+                        <input id="placeOfResidence" class="form-control" type="text" name="placeOfResidence"
+                               ng-model="editAboutMe.placeOfResidence" ng-required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="post">Должность:</label>
+                        <input id="post" class="form-control" type="text" name="post"
+                               ng-model="editAboutMe.post" ng-required="true"/>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button ng-click="saveBiography(biographyForm.$valid)" type="button" class="btn btn-primary">
+                    <button ng-click="saveAboutMe(aboutMeForm.$valid)" type="button" class="btn btn-primary">
                         Сохранить
                     </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">

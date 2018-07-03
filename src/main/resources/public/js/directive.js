@@ -34,6 +34,7 @@ as.directive('fileModel', ['$parse', function ($parse) {
                 scope.$apply(function () {
                     modelSetter(scope, element[0].files[0]);
                 });
+                scope.upload();
             });
         }
     };
@@ -90,3 +91,5 @@ as.directive('compile', ['$compile', function ($compile) {
         );
     };
 }]);
+
+as.directive

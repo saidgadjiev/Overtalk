@@ -33,11 +33,12 @@ public class AboutMeDao {
         }
     }
 
-    public int updateBiography(String biography) throws SQLException {
+    public int update(AboutMe aboutMe) throws SQLException {
         try (Session session = sessionManager.createSession()) {
             UpdateStatement updateStatement = new UpdateStatement(AboutMe.class);
 
-            updateStatement.set("biography", biography);
+            updateStatement.set("post", aboutMe.getPost());
+            updateStatement.set("placeOfResidence", aboutMe.getPlaceOfResidence());
             updateStatement.where(new Criteria().add(Restrictions.eq("id", 1)));
 
             return session.update(updateStatement);

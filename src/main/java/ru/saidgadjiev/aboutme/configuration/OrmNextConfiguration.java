@@ -46,6 +46,7 @@ public class OrmNextConfiguration {
                 .dialect(new PgDialect())
                 .entities(
                         UserProfile.class,
+                        Category.class,
                         Post.class,
                         Comment.class,
                         Role.class,

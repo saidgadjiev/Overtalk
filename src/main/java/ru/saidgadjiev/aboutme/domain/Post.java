@@ -36,6 +36,9 @@ public class Post {
     @ForeignCollectionField(foreignFieldName = "post")
     private List<Like> likes = new ArrayList<>();
 
+    @ForeignColumn(foreignFieldName = "id", fetchType = FetchType.LAZY, onDelete = ReferenceAction.CASCADE, onUpdate = ReferenceAction.CASCADE)
+    private Category category;
+
     public Integer getId() {
         return id;
     }
@@ -90,6 +93,14 @@ public class Post {
 
     public void setLikes(List<Like> likes) {
         this.likes = likes;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     @Override

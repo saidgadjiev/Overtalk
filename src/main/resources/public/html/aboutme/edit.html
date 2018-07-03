@@ -1,0 +1,19 @@
+<div class="font-weight-bold text-center mt-3">
+    <h1>Редактирование обо мне</h1>
+</div>
+<form ng-submit="save(aboutMeForm.$valid)" name="aboutMeForm" novalidate>
+    <div class="form-group">
+        <label for="placeOfResidence">ФИО:</label>
+        <input id="placeOfResidence" class="form-control" type="text" name="placeOfResidence"
+               ng-model="aboutMe.placeOfResidence" ng-required="true"/>
+    </div>
+    <div class="form-group">
+        <label for="post">Должность:</label>
+        <input id="post" class="form-control" type="text" name="post"
+               ng-model="aboutMe.post" ng-required="true"/>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <button type="button" ng-click="cancel()" class="btn btn-default" data-dismiss="modal">Отменить</button>
+    </div>
+</form>

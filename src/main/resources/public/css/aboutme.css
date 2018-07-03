@@ -24,5 +24,38 @@ i {
 }
 
 .border {
-    border: 3px solid #e5e9eb!important;
+    border: 3px solid #e5e9eb !important;
+}
+
+.animate-right {
+    position: relative;
+    animation: animateright 2.0s
+}
+
+@keyframes animateright {
+    from {
+        right: -100%;
+        opacity: 0
+    }
+    to {
+        right: 0;
+        opacity: 1
+    }
+}
+
+.social-buttons-item .social-buttons-list {
+    display: block;
+}
+
+.social-buttons {
+    top: 0;
+    width: 100%;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.social-buttons-content {
+    position: fixed;
 }

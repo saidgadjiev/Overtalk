@@ -10,6 +10,8 @@ import ru.saidgadjiev.ormnext.core.query.criteria.impl.Criteria;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.SelectStatement;
 
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import static ru.saidgadjiev.ormnext.core.query.criteria.impl.Restrictions.eq;
 
@@ -146,7 +148,13 @@ public class PostgresRunner {
             AboutMe aboutMe = new AboutMe();
 
             aboutMe.setId(1);
-            aboutMe.setBiography("Меня зовут Саид.");
+            aboutMe.setFio("Гаджиев Саид Алиевич");
+            Calendar dateOfBirthCalendar = new GregorianCalendar(1995, 7, 1);
+
+            aboutMe.setDateOfBirth(dateOfBirthCalendar.getTime());
+            aboutMe.setPlaceOfResidence("Москва");
+            aboutMe.setPost("Java разработчик");
+            aboutMe.setEducationLevel("Бакалавр");
             session.create(aboutMe);
 
             LOGGER.debug("About me created " + aboutMe);

@@ -7,14 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import ru.saidgadjiev.aboutme.domain.AboutMe;
 import ru.saidgadjiev.aboutme.domain.Skill;
-import ru.saidgadjiev.aboutme.model.ResponseMessage;
-import ru.saidgadjiev.aboutme.service.AboutMeService;
 import ru.saidgadjiev.aboutme.service.SkillService;
 
 import java.sql.SQLException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/skill")
@@ -26,11 +22,11 @@ public class SkillController {
     private SkillService skillService;
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage<Skill>> createSkill(@RequestBody Skill skill) throws SQLException {
+    public ResponseEntity<Skill> createSkill(@RequestBody Skill skill) throws SQLException {
         LOGGER.debug("createSkill() " + skill);
         skillService.create(skill);
 
-        return ResponseEntity.ok(new ResponseMessage<>("", skill));
+        return ResponseEntity.ok(skill);
     }
 
     @RequestMapping(value = "/remove", method = RequestMethod.POST)
@@ -47,7 +43,7 @@ public class SkillController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage<Skill>> updateSkill(@RequestBody Skill skill) throws SQLException {
+    public ResponseEntity<Skill> updateSkill(@RequestBody Skill skill) throws SQLException {
         LOGGER.debug("updateSkill() " + skill);
 
         int updated = skillService.update(skill);
@@ -57,6 +53,6 @@ public class SkillController {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(new ResponseMessage<>("", skill));
+        return ResponseEntity.ok(skill);
     }
 }

@@ -5,7 +5,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import ru.saidgadjiev.aboutme.model.ExtSpringUser;
-import ru.saidgadjiev.aboutme.model.ResponseMessage;
 import ru.saidgadjiev.aboutme.utils.ResponseUtils;
 
 import javax.servlet.ServletException;
@@ -26,6 +25,6 @@ public class RestAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
         LOGGER.debug("Authentication success");
         ExtSpringUser user = (ExtSpringUser) authentication.getPrincipal();
 
-        ResponseUtils.sendResponseMessage(response, 200, new ResponseMessage<>().setContent(user));
+        ResponseUtils.sendResponseMessage(response, 200, user);
     }
 }

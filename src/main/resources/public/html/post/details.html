@@ -1,6 +1,5 @@
 <div class="mt-3">
-    <strong class="text-info">{{post.nickName}}</strong>
-    <strong class="pl-3">{{post.createdDate|date:'dd.MM.yyyy в hh:mm'}}</strong>
+    <strong>{{post.createdDate|date:'dd.MM.yyyy в hh:mm'}}</strong>
     <h1 class="font-weight-bold">{{post.title}}</h1>
 </div>
 <p compile="post.content" class="mt-3"></p>
@@ -14,7 +13,7 @@
         <strong>{{comments.length}}</strong>
     </li>
     <li class="list-inline-item pl-3 mt-1">
-        <i class="text-primary fa fa-edit"></i>
+        <i ng-click="editPost(post)" class="text-primary fa fa-edit"></i>
     </li>
 </ul>
 <div class="mt-3">

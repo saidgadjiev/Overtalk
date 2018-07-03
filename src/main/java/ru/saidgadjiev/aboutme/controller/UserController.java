@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.saidgadjiev.aboutme.model.ResponseMessage;
 import ru.saidgadjiev.aboutme.model.UserDetails;
 import ru.saidgadjiev.aboutme.service.UserService;
 
@@ -38,10 +37,10 @@ public class UserController {
     public ResponseEntity getAll(
             @PageableDefault(page = 0, size = 10, sort = "userName", direction = Sort.Direction.DESC) Pageable page
     ) throws SQLException {
-        LOGGER.debug("getAll(): " + page);
+        LOGGER.debug("getPostsByCategoryId(): " + page);
         Page<UserDetails> userDetails = userService.getAll(page);
 
-        return ResponseEntity.ok(new ResponseMessage<>().setContent(userDetails));
+        return ResponseEntity.ok(userDetails);
     }
 
     @RequestMapping(value = "/user/exist", method = RequestMethod.GET)

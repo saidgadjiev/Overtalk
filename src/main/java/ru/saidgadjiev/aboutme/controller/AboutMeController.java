@@ -3,10 +3,11 @@ package ru.saidgadjiev.aboutme.controller;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import ru.saidgadjiev.aboutme.domain.AboutMe;
-import ru.saidgadjiev.aboutme.domain.Skill;
-import ru.saidgadjiev.aboutme.model.ResponseMessage;
 import ru.saidgadjiev.aboutme.service.AboutMeService;
 
 import java.sql.SQLException;
@@ -21,13 +22,13 @@ public class AboutMeController {
     private AboutMeService aboutMeService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    private ResponseEntity<ResponseMessage<AboutMe>> getAboutMe() throws SQLException {
-        return ResponseEntity.ok(new ResponseMessage<>("", aboutMeService.getAboutMe()));
+    private ResponseEntity<AboutMe> getAboutMe() throws SQLException {
+        return ResponseEntity.ok(aboutMeService.getAboutMe());
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    private ResponseEntity<ResponseMessage<String>> updateBiography(@RequestBody String biography) throws SQLException {
-        int updated = aboutMeService.updateBiography(biography);
+    private ResponseEntity<AboutMe> update(@RequestBody AboutMe aboutMe) throws SQLException {
+        int updated = aboutMeService.update(aboutMe);
 
         LOGGER.debug("Biography updated " + updated);
 
@@ -35,6 +36,6 @@ public class AboutMeController {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(new ResponseMessage<>("", biography));
+        return ResponseEntity.ok(aboutMe);
     }
 }

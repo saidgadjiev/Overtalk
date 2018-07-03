@@ -7,12 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.model.CommentDetails;
-import ru.saidgadjiev.aboutme.model.ResponseMessage;
 import ru.saidgadjiev.aboutme.service.BlogService;
-import ru.saidgadjiev.aboutme.service.SecurityService;
 
 import javax.validation.Valid;
 import java.sql.SQLException;
@@ -24,12 +21,9 @@ public class CommentController {
     private static final Logger LOGGER = Logger.getLogger(CommentController.class);
 
     @Autowired
-    private SecurityService securityService;
-
-    @Autowired
     private BlogService blogService;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/comments", method = RequestMethod.GET)
     public ResponseEntity<Page<CommentDetails>> getCommentsByPost(
             @PathVariable("id") Integer id,
             @PageableDefault(page = 0, size = 10, sort = "createdDate", direction = Sort.Direction.DESC) Pageable page
@@ -41,7 +35,7 @@ public class CommentController {
     }
 
     @RequestMapping(value = "/{id}/create", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage> createCommentOfPost(
+    public ResponseEntity createCommentOfPost(
             @PathVariable("id") Integer id,
             @RequestBody @Valid CommentDetails commentDetails
     ) throws SQLException {
@@ -52,12 +46,12 @@ public class CommentController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ResponseEntity<ResponseMessage<CommentDetails>> updateComment(
-            @RequestBody @Valid CommentDetails commentDetails
+    public ResponseEntity<CommentDetails> updateComment(
+            @RequestBody CommentDetails commentDetails
     ) throws SQLException {
         LOGGER.debug("updateComment():" + commentDetails);
         blogService.updateComment(commentDetails);
 
-        return ResponseEntity.ok(new ResponseMessage<>("", commentDetails));
+        return ResponseEntity.ok(commentDetails);
     }
 }

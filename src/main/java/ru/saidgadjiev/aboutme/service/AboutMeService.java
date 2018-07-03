@@ -17,7 +17,7 @@ public class AboutMeService {
         return aboutMeDao.getAboutMe();
     }
 
-    public int updateBiography(String biography) throws SQLException {
-        return aboutMeDao.updateBiography(biography);
+    public int update(AboutMe aboutMe) throws SQLException {
+        return aboutMeDao.update(aboutMe);
     }
 }

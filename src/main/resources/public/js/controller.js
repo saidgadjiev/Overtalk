@@ -130,7 +130,7 @@ as.controller('AboutMeAppController', function ($scope, LocationService, AuthSer
     };
 });
 
-as.controller('NewPostController', function ($scope, $http, $location, DataService) {
+as.controller('NewPostController', function ($scope, $http, $location, $routeParams, DataService) {
     $scope.newPost = {};
     var data = DataService.get('NewPostController');
 
@@ -143,16 +143,18 @@ as.controller('NewPostController', function ($scope, $http, $location, DataServi
         $scope.newPost = {};
     }
 
+    var actionUrl = 'api/post/';
+
     $scope.save = function (isValid) {
         $scope.submitted = true;
 
         if (isValid) {
             if (!oldPost) {
-                $http.post('api/post/create', $scope.newPost).success(function (data) {
+                $http.post(actionUrl + $routeParams.id + '/create', $scope.newPost).success(function (data) {
                     $location.path(backUrl);
                 });
             } else {
-                $http.post('api/post/update', $scope.newPost).success(function (data) {
+                $http.post(actionUrl + 'update', $scope.newPost).success(function (data) {
                     $location.path(backUrl);
                 });
             }
@@ -234,29 +236,39 @@ as.controller('RegistrationController', function ($scope, $http, $location, $log
     };
 });
 
-as.controller('PostsController', function ($scope, $http, $location, $log, DataService) {
+as.controller('PostsController', function ($scope, $http, $location, $log, $routeParams, $q, DataService) {
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
-    var loadPosts = function () {
-        $http.get('api/post?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
-            $log.log(data);
-            $scope.totalItems = data.totalElements;
-            $scope.posts = data.content;
-        })
-    };
+    var actionUrl = 'api/post/',
+        loadPosts = function () {
+            $http.get(actionUrl + $routeParams.id + '/posts?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage)
+                .success(function (data) {
+                    $log.log(data);
+                    $scope.totalItems = data.totalElements;
+                    $scope.posts = data.content;
+                })
+        },
+        firstLoad = function () {
+            $q.all([
+                $http.get('api/category/' + $routeParams.id),
+                $http.get(actionUrl + $routeParams.id + '/posts/?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage)
+            ]).then(function (result) {
+                $log.log(result);
+                $scope.category = result[0].data;
+                $scope.posts = result[1].data.content;
+                $scope.totalItems = result[1].data.totalElements;
+            });
+        };
 
-    loadPosts();
+    firstLoad();
 
     $scope.add = function () {
         var data = {};
 
-        data.backUrl = '/posts';
+        data.backUrl = '/categories/' + $routeParams.id + '/posts';
         DataService.set('NewPostController', data);
-        $location.path('/posts/new');
-    };
-
-    $scope.comments = function (postId) {
+        $location.path('/categories/' + $routeParams.id + '/posts/new');
     };
 
     $scope.pageChanged = function () {
@@ -269,10 +281,9 @@ as.controller('PostsController', function ($scope, $http, $location, $log, DataS
         $scope.likeInfo.postId = post.id;
 
         $http.post('api/like/post', $scope.likeInfo)
-            .success(function (response) {
-                likeInfo = response.content;
-                post.liked = likeInfo.liked;
-                post.likesCount = likeInfo.likesCount;
+            .success(function (data) {
+                post.liked = data.liked;
+                post.likesCount = data.likesCount;
             });
     };
 
@@ -281,10 +292,9 @@ as.controller('PostsController', function ($scope, $http, $location, $log, DataS
         $scope.likeInfo.postId = post.id;
 
         $http.post('api/dislike/post', $scope.likeInfo)
-            .success(function (response) {
-                likeInfo = response.content;
-                post.liked = likeInfo.liked;
-                post.likesCount = likeInfo.likesCount;
+            .success(function (data) {
+                post.liked = data.liked;
+                post.likesCount = data.likesCount;
             });
     };
 });
@@ -295,15 +305,15 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
 
     var actionUrl = 'api/comment/',
         loadComments = function () {
-            $http.get(actionUrl + $routeParams.id + '?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
+            $http.get(actionUrl + $routeParams.postId + '/comments?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
                 $scope.comments = data.content;
                 $scope.totalItems = data.totalElements;
             })
         },
         firstLoad = function () {
             $q.all([
-                $http.get('api/post/' + $routeParams.id),
-                $http.get(actionUrl + $routeParams.id + '?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage)
+                $http.get('api/post/' + $routeParams.postId),
+                $http.get(actionUrl + $routeParams.postId + '/comments?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage)
             ]).then(function (result) {
                 $log.log(result);
                 $scope.post = result[0].data;
@@ -317,20 +327,21 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
 
     $scope.saveComment = function (valid) {
         if (valid) {
-            $http.post(actionUrl + $routeParams.id + '/create', $scope.newComment).success(function (data) {
-                $scope.newComment = {};
-                loadComments();
-            });
+            $http.post(actionUrl + $routeParams.postId + '/create', $scope.newComment)
+                .success(function (data) {
+                    $scope.newComment = {};
+                    loadComments();
+                });
         }
     };
 
     $scope.editPost = function (post) {
         var data = {};
 
-        data.backUrl = '/posts/' + post.id;
+        data.backUrl = '/categories/' + $routeParams.categoryId + '/posts/' + post.id;
         data.post = post;
         DataService.set('NewPostController', data);
-        $location.path('/posts/new');
+        $location.path('/categories/' + $routeParams.categoryId + '/posts/new');
     };
 
     $scope.editComment = function (comment) {
@@ -345,9 +356,9 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
         $scope.submitted = true;
 
         if (valid) {
-            $http.post(actionUrl + $routeParams.id + '/update', $scope.editComment)
-                .success(function (response) {
-                    $scope.oldComment.content = response.content.content;
+            $http.post(actionUrl + 'update', $scope.editComment)
+                .success(function (data) {
+                    $scope.oldComment.content = data.content;
 
                     $scope.submitted = false;
                     $scope.editComment = {};
@@ -363,8 +374,8 @@ as.controller('UsersController', function ($scope, $http, $log) {
     var loadUsers = function () {
         $http.get('api/users?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
             $log.log(data);
-            $scope.totalItems = data.content.totalElements;
-            $scope.users = data.content.content;
+            $scope.totalItems = data.totalElements;
+            $scope.users = data.content;
         })
     };
 
@@ -376,7 +387,7 @@ as.controller('UsersController', function ($scope, $http, $log) {
     };
 });
 
-as.controller('NewProjectController', function ($scope, $http, $log, $location, DataService) {
+as.controller('NewProjectController', function ($scope, $http, $log, $location, FileService, DataService) {
     $scope.data = DataService.get('NewProjectController');
     $scope.project = {};
 
@@ -384,6 +395,7 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
         $scope.project.id = $scope.data.id;
         $scope.project.name = $scope.data.name;
         $scope.project.description = $scope.data.description;
+        $scope.logoPath = $scope.data.logoPath;
     }
 
     var actionUrl = 'api/project/';
@@ -402,10 +414,7 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
                     transformRequest: angular.identity,
                     headers: {'Content-Type': undefined}
                 })
-                    .success(function (response) {
-                        $scope.data.name = response.content.name;
-                        $scope.data.description = response.content.description;
-
+                    .success(function (data) {
                         $location.path('/projects');
                     })
                     .catch(function (reason) {
@@ -427,14 +436,20 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
     };
     $scope.cancel = function () {
         $location.path("/projects");
-    }
+    };
+    $scope.upload = function () {
+        FileService.readAsDataURL($scope.logo, $scope)
+            .then(function(result) {
+                $scope.logoPath = result;
+            });
+    };
 });
 
 as.controller('ProjectsController', function ($scope, $http, $log, $location, IMAGE, DataService) {
     $scope.defaultUrl = IMAGE.defaultUrl;
     $http.get('api/project').success(function (data) {
         $log.log(data);
-        $scope.projects = data.content;
+        $scope.projects = data;
     });
     $scope.add = function () {
         $location.path('/projects/new');
@@ -451,19 +466,18 @@ as.controller('ProjectsController', function ($scope, $http, $log, $location, IM
 });
 
 as.controller('AboutMeController', function ($scope, $http, $log, DataService) {
-    $http.get('/api/aboutme').success(function (response) {
-        $scope.skills = response.content.skills;
-        $scope.aboutme = response.content;
+    $http.get('/api/aboutme').success(function (data) {
+        $scope.aboutme = data;
     });
 
-    $scope.editBiography = function () {
-        $scope.biography = $scope.aboutme.biography;
+    $scope.editAboutMe = function () {
+        $scope.editAboutMe.placeOfResidence = $scope.aboutme.placeOfResidence;
+        $scope.editAboutMe.post = $scope.aboutme.post;
 
-        $('#editBiographyDialog').modal('show');
+        $('#editAboutMeDialog').modal('show');
     };
 
     $scope.addSkill = function () {
-        DataService.set('EditBiographyController', {});
         $('#addSkillDialog').modal('show');
     };
 
@@ -491,23 +505,23 @@ as.controller('AboutMeController', function ($scope, $http, $log, DataService) {
 
             if ($scope.editableSkill) {
                 $http.post('/api/skill/update', $scope.skill)
-                    .success(function (response) {
+                    .success(function (data) {
                         $('#addSkillDialog').modal('hide');
 
-                        $log.log(response);
+                        $log.log(data);
 
-                        $scope.editableSkill.name = response.content.name;
-                        $scope.editableSkill.percentage = response.content.percentage;
+                        $scope.editableSkill.name = data.name;
+                        $scope.editableSkill.percentage = data.percentage;
 
                         $scope.submittedSkill = false;
                         $scope.skill = {};
                     });
             } else {
                 $http.post('/api/skill/create', $scope.skill)
-                    .success(function (response) {
+                    .success(function (data) {
                         $('#addSkillDialog').modal('hide');
 
-                        $scope.aboutme.skills.push(response.content);
+                        $scope.aboutme.skills.push(data);
 
                         $scope.submittedSkill = false;
                         $scope.skill = {};
@@ -516,20 +530,83 @@ as.controller('AboutMeController', function ($scope, $http, $log, DataService) {
         }
     };
 
-    $scope.saveBiography = function (isValid) {
-        $scope.submittedBiography = true;
+    $scope.saveAboutMe = function (isValid) {
+        $scope.submittedEditAboutMe = true;
 
         if (isValid) {
-            $log.log($scope.biography);
+            $log.log($scope.editAboutMe());
 
-            $http.post('/api/aboutme/update', $scope.biography)
-                .success(function (response) {
-                    $scope.aboutme.biography = response.content;
+            $http.post('/api/aboutme/update', $scope.editAboutMe)
+                .success(function (data) {
+                    $scope.aboutme.placeOfResidence = data.placeOfResidence;
+                    $scope.aboutme.post = data.post;
 
-                    $scope.submittedBiography = false;
+                    $scope.submittedEditAboutMe = false;
                     $('#editBiographyDialog').modal('hide');
                 });
         }
     };
+});
+
+as.controller('CategoriesController', function ($scope, $http, $log) {
+    $scope.currentPage = 1;
+    $scope.itemsPerPage = 20;
+
+    var actionUrl = 'api/category/';
+
+    var loadCategories = function () {
+        $http.get('api/category?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
+            $log.log(data);
+            $scope.totalItems = data.totalElements;
+            $scope.categories = data.content;
+        })
+    };
+
+    loadCategories();
+
+    $scope.pageChanged = function () {
+        $log.log('Page changed to: ' + $scope.currentPage);
+        loadCategories();
+    };
+
+    $scope.add = function () {
+        $scope.category = {};
+        $('#categoryDialog').modal('show');
+    };
+
+    $scope.category = {};
+
+    $scope.edit = function (category) {
+        $scope.category.id = category.id;
+        $scope.category.name = category.name;
+        $scope.category.description = category.description;
+        $scope.oldCategory = category;
+        $('#categoryDialog').modal('show');
+    };
+
+    $scope.saveCategory = function (valid) {
+        $scope.submitted = true;
+
+        if (valid) {
+            if ($scope.oldCategory) {
+                $http.post(actionUrl + 'update', $scope.category)
+                    .success(function (data) {
+                        $scope.oldCategory.name = data.name;
+                        $scope.oldCategory.description = data.description;
+
+                        $scope.category = {};
+                        $scope.submitted = false;
+                    });
+            } else {
+                $http.post(actionUrl + 'create', $scope.category)
+                    .success(function () {
+                        loadCategories();
+
+                        $scope.category = {};
+                        $scope.submitted = false;
+                    });
+            }
+        }
+    }
 });
 

@@ -61,6 +61,13 @@ as.config(function ($routeProvider, $httpProvider, USER_ROLES) {
             loginRequired: false,
             authorizedRoles: [USER_ROLES.all]
         }
+    }).when('/aboutme/edit', {
+        templateUrl: 'html/aboutme/edit.html',
+        controller: 'EditAboutMeController',
+        access: {
+            loginRequired: true,
+            authorizedRoles: [USER_ROLES.admin]
+        }
     }).when('/signIn', {
         templateUrl: 'html/auth/signIn.html',
         controller: 'LoginController',
@@ -68,22 +75,29 @@ as.config(function ($routeProvider, $httpProvider, USER_ROLES) {
             loginRequired: false,
             authorizedRoles: [USER_ROLES.all]
         }
-    }).when('/posts', {
-        templateUrl: 'html/posts/posts.html',
+    }).when('/categories', {
+        templateUrl: 'html/category/categories.html',
+        controller: 'CategoriesController',
+        access: {
+            loginRequired: false,
+            authorizedRoles: [USER_ROLES.all]
+        }
+    }).when('/categories/:id/posts', {
+        templateUrl: 'html/post/posts.html',
         controller: 'PostsController',
         access: {
             loginRequired: false,
             authorizedRoles: [USER_ROLES.all]
         }
-    }).when('/posts/new', {
-        templateUrl: 'html/posts/new.html',
+    }).when('/categories/:id/posts/new', {
+        templateUrl: 'html/post/new.html',
         controller: 'NewPostController',
         access: {
             loginRequired: true,
             authorizedRoles: [USER_ROLES.admin]
         }
-    }).when('/posts/:id', {
-        templateUrl: 'html/posts/details.html',
+    }).when('/categories/:categoryId/posts/:postId', {
+        templateUrl: 'html/post/details.html',
         controller: 'DetailsController',
         access: {
             loginRequired: false,
@@ -97,21 +111,21 @@ as.config(function ($routeProvider, $httpProvider, USER_ROLES) {
             authorizedRoles: [USER_ROLES.all]
         }
     }).when('/users', {
-        templateUrl: 'html/users/users.html',
+        templateUrl: 'html/user/users.html',
         controller: 'UsersController',
         access: {
             loginRequired: true,
             authorizedRoles: [USER_ROLES.admin]
         }
     }).when('/projects', {
-        templateUrl: 'html/projects/projects.html',
+        templateUrl: 'html/project/projects.html',
         controller: 'ProjectsController',
         access: {
             loginRequired: false,
             authorizedRoles: [USER_ROLES.all]
         }
     }).when('/projects/new', {
-        templateUrl: 'html/projects/new.html',
+        templateUrl: 'html/project/new.html',
         controller: 'NewProjectController',
         access: {
             loginRequired: true,
@@ -185,11 +199,20 @@ as.run(function ($rootScope,
     $rootScope.$on(AUTH_EVENTS.signInSuccess, function () {
         $rootScope.nickName = Session.nickName;
         $rootScope.authenticated = true;
-        LocationService.gotoLast();
+        if (LocationService.location) {
+            LocationService.gotoLast();
+        } else {
+            $location.path('/aboutme');
+        }
     });
     $rootScope.$on(AUTH_EVENTS.signUpSuccess, function () {
         $rootScope.nickName = Session.nickName;
         $rootScope.authenticated = true;
+        if (LocationService.location) {
+            LocationService.gotoLast();
+        } else {
+            $location.path('/aboutme');
+        }
     });
     $rootScope.$on(RESPONSE_ERROR_EVENTS.internalServerError, function () {
         $location.path('/500');
@@ -201,10 +224,8 @@ as.run(function ($rootScope,
     });
 
     $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
-        if (previous) {
-            LocationService.saveLocation(previous.$$route.originalPath);
-        } else {
-            LocationService.saveLocation(current.$$route.originalPath);
+        if (previous && previous.$$route) {
+            LocationService.saveLocation(previous.$$route.originalPath, previous.pathParams);
         }
     });
 

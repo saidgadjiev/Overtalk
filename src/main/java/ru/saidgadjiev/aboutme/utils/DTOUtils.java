@@ -92,6 +92,13 @@ public final class DTOUtils {
 
             return userProfile;
         };
+        Converter<Category, Integer> postsCountConverter = context -> {
+            if (context.getSource() == null) {
+                return null;
+            }
+
+            return context.getSource().getPosts().size();
+        };
         INSTANCE.addMappings(new PropertyMap<Comment, CommentDetails>() {
             @Override
             protected void configure() {
@@ -142,6 +149,13 @@ public final class DTOUtils {
                 using(likeDetailsCommentConverter).map(source, destination.getComment());
                 using(likeDetailsPostConverter).map(source, destination.getPost());
                 using(userNameConverter).map(source.getUser(), destination.getUser());
+            }
+        });
+
+        INSTANCE.addMappings(new PropertyMap<Category, CategoryDetails>() {
+            @Override
+            protected void configure() {
+                using(postsCountConverter).map(source, destination.getPostsCount());
             }
         });
     }
