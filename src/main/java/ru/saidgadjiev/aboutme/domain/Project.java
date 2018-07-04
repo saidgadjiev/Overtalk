@@ -21,9 +21,8 @@ public class Project {
     @DatabaseColumn
     private String logoPath;
 
-    @Converter(value = JavaDateToSqlDate.class)
-    @DatabaseColumn(notNull = true)
-    private Date createdDate = new Date();
+    @DatabaseColumn(length = 1024)
+    private String projectLink;
 
     public Integer getId() {
         return id;
@@ -57,11 +56,22 @@ public class Project {
         this.logoPath = logoPath;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public String getProjectLink() {
+        return projectLink;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    public void setProjectLink(String projectLink) {
+        this.projectLink = projectLink;
+    }
+
+    @Override
+    public String toString() {
+        return "Project{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", logoPath='" + logoPath + '\'' +
+                ", projectLink='" + projectLink + '\'' +
+                '}';
     }
 }

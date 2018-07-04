@@ -131,12 +131,6 @@ as.config(function ($routeProvider, $httpProvider, USER_ROLES) {
             loginRequired: true,
             authorizedRoles: [USER_ROLES.admin]
         }
-    }).when('/contacts', {
-        templateUrl: 'html/contacts/contacts.html',
-        access: {
-            loginRequired: false,
-            authorizedRoles: [USER_ROLES.all]
-        }
     }).when('/403', {
         templateUrl: 'html/error/403.html',
         publicAccess: true,

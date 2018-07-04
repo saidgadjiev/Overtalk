@@ -395,7 +395,8 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
         $scope.project.id = $scope.data.id;
         $scope.project.name = $scope.data.name;
         $scope.project.description = $scope.data.description;
-        $scope.logoPath = $scope.data.logoPath;
+        $scope.project.projectLink = $scope.data.projectLink;
+        $scope.logoPath = '/api/file/logo/' + $scope.data.logoPath;
     }
 
     var actionUrl = 'api/project/';
@@ -470,11 +471,12 @@ as.controller('AboutMeController', function ($scope, $http, $log, DataService) {
         $scope.aboutme = data;
     });
 
+    $scope.editableAboutMe = {};
     $scope.editAboutMe = function () {
-        $scope.editAboutMe.placeOfResidence = $scope.aboutme.placeOfResidence;
-        $scope.editAboutMe.post = $scope.aboutme.post;
+        $scope.editableAboutMe.placeOfResidence = $scope.aboutme.placeOfResidence;
+        $scope.editableAboutMe.post = $scope.aboutme.post;
 
-        $('#editAboutMeDialog').modal('show');
+        $('#editableAboutMeDialog').modal('show');
     };
 
     $scope.addSkill = function () {
@@ -534,15 +536,15 @@ as.controller('AboutMeController', function ($scope, $http, $log, DataService) {
         $scope.submittedEditAboutMe = true;
 
         if (isValid) {
-            $log.log($scope.editAboutMe());
+            $log.log($scope.editableAboutMe);
 
-            $http.post('/api/aboutme/update', $scope.editAboutMe)
+            $http.post('/api/aboutme/update', $scope.editableAboutMe)
                 .success(function (data) {
                     $scope.aboutme.placeOfResidence = data.placeOfResidence;
                     $scope.aboutme.post = data.post;
 
                     $scope.submittedEditAboutMe = false;
-                    $('#editBiographyDialog').modal('hide');
+                    $('#editableAboutMeDialog').modal('hide');
                 });
         }
     };

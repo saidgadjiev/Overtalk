@@ -1,3 +1,8 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+
 .hidden {
     display: none;
 }
@@ -9,6 +14,8 @@
 body {
     background-color: #ffffff;
     font-family: 'PT Mono', sans-serif;
+    overflow-x: hidden;
+    margin-bottom: 104px;
 }
 
 .h-100 {
@@ -28,34 +35,29 @@ i {
 }
 
 .animate-right {
-    position: relative;
     animation: animateright 2.0s
 }
 
 @keyframes animateright {
     from {
-        right: -100%;
-        opacity: 0
+        margin-left: 100%;
+        width: 300%;
     }
     to {
-        right: 0;
-        opacity: 1
+        margin-left: 0;
+        width: 100%;
     }
 }
 
-.social-buttons-item .social-buttons-list {
-    display: block;
+.text-lg {
+    font-size: 18px;
 }
 
-.social-buttons {
-    top: 0;
+.footer {
+    position: absolute;
+    bottom: 0;
     width: 100%;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-}
-
-.social-buttons-content {
-    position: fixed;
+    /* Set the fixed height of the footer here */
+    height: 104px;
+    background-color: #f7f7f7;
 }

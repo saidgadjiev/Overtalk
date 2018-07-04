@@ -19,11 +19,15 @@
         </div>
     </div>
     <div class="form-group">
+        <label for="projectLink">Ссылка на проект:</label>
+        <input class="form-control" ng-model="project.projectLink" type="text" id="projectLink" name="projectLink">
+    </div>
+    <div class="form-group">
         <label for="logo">Выберите логотип</label>
         <input type="file" class="form-control-file" id="logo" file-model="logo">
     </div>
     <div class="form-group">
-        <img ng-if="logoPath" ng-src="{{logoPath}}" />
+        <img class="w-25" ng-if="logoPath" ng-src="{{logoPath}}" />
     </div>
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Сохранить</button>

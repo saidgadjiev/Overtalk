@@ -26,52 +26,78 @@
 </head>
 
 <body ng-controller="AboutMeAppController">
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary text-light">
-    <a class="navbar-brand" href="#/"><h3>Гаджиев Саид</h3></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown" aria-expanded="false">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item" ng-class="{active: isActiveNavItem('/aboutme')}">
-                <a class="nav-link h3" href="#/aboutme">Обо мне</a>
-            </li>
-            <li class="nav-item" ng-class="{active: isActiveNavItem('/categories')}">
-                <a class="nav-link h3" href="#/categories">Блог</a>
-            </li>
-            <li class="nav-item" ng-class="{active: isActiveNavItem('/users')}" access="ROLE_ADMIN">
-                <a class="nav-link h3" href="#/users">Пользователи</a>
-            </li>
-            <li class="nav-item" ng-class="{active: isActiveNavItem('/projects')}">
-                <a class="nav-link h3" href="#/projects">Проекты</a>
-            </li>
-            <li class="nav-item" ng-class="{active: isActiveNavItem('/contacts')}">
-                <a class="nav-link h3" href="#/contacts">Контакты</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-            <li class="nav-item" ng-if="authenticated">
-                <div class="d-flex w-100 justify-content-start">
-                    <span class="navbar-text text-light mr-2">{{nickName}}</span>
-                    <a class="nav-link h3" ng-click="signOut()"><i class="fa fa-sign-out"></i> Выйти</a>
-                </div>
-            </li>
-            <li class="nav navbar-nav navbar-right nav-item " ng-if="!authenticated">
-                <a class="nav-link h3" href="#/signIn">
-                    <i class="mr-1 fa fa-sign-in"></i>
-                    Войти
-                </a>
-            </li>
-        </ul>
-    </div>
-</nav>
-<div class="container-fluid">
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary text-light">
+        <a class="navbar-brand" href="#/"><h3>Гаджиев Саид</h3></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item" ng-class="{active: isActiveNavItem('/aboutme')}">
+                    <a class="nav-link h3" href="#/aboutme">Обо мне</a>
+                </li>
+                <li class="nav-item" ng-class="{active: isActiveNavItem('/categories')}">
+                    <a class="nav-link h3" href="#/categories">Блог</a>
+                </li>
+                <li class="nav-item" ng-class="{active: isActiveNavItem('/users')}" access="ROLE_ADMIN">
+                    <a class="nav-link h3" href="#/users">Пользователи</a>
+                </li>
+                <li class="nav-item" ng-class="{active: isActiveNavItem('/projects')}">
+                    <a class="nav-link h3" href="#/projects">Проекты</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item" ng-if="authenticated">
+                    <div class="d-flex w-100 justify-content-start">
+                        <h4 class="navbar-text text-light mr-2">{{nickName}}</h4>
+                        <a class="nav-link h3" ng-click="signOut()"><i class="fa fa-sign-out"></i> Выйти</a>
+                    </div>
+                </li>
+                <li class="nav navbar-nav navbar-right nav-item " ng-if="!authenticated">
+                    <a class="nav-link h3" href="#/signIn">
+                        <i class="mr-1 fa fa-sign-in"></i>
+                        Войти
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<main class="container" role="main">
     <div class="row justify-content-around">
         <div class="col-8">
             <ng-view></ng-view>
         </div>
     </div>
-</div>
+</main>
+<footer class="footer">
+    <div class="container-fluid p-3">
+        <div class="row justify-content-center">
+            <h5 class="font-weight-bold">Контакты</h5>
+        </div>
+        <div class="row justify-content-center">
+            <ul class="d-inline-flex list-inline">
+                <li class="list-inline-item">
+                    <a href="mailto:g.said.alievich@mail.ru">
+                        <strong>Mail</strong>
+                    </a>
+                </li>
+                <li class="list-inline-item pl-3">
+                    <a href="https://github.com/saidgadjiev">
+                        <strong>Github</strong>
+                    </a>
+                </li>
+                <li class="list-inline-item pl-3">
+                    <a href="https://vk.com/said1995">
+                        <strong>Vkontakte</strong>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</footer>
 </body>
 </html>

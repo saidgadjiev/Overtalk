@@ -10,15 +10,17 @@
         <div class="card-title">
             <span class="h5 font-weight-bold">{{project.name}}</span>
             <ul class="d-inline-flex list-inline">
-                <li class="list-inline-item">
+                <li access="ROLE_ADMIN" class="list-inline-item">
                     <i ng-click="editProject(project)" class="text-primary fa fa-edit"></i>
+                </li>
+                <li ng-if="project.projectLink" class="list-inline-item">
+                    <a href="{{project.projectLink}}" target="_blank" class="card-link">
+                        <i class="text-secondary text-lg fa fa-github"></i>
+                    </a>
                 </li>
             </ul>
         </div>
         <p class="mw-100 card-text text-truncate" style="max-width: 50%;">{{project.description}}</p>
-        <p class="card-text">
-            <strong>{{project.createdDate|date:'dd.MM.yyyy в hh:mm'}}</strong>
-        </p>
         <button ng-click="openDetails(project)" type="button" class="btn btn-outline-primary btn-sm">
             Читать дальше →
         </button>
@@ -30,15 +32,23 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="font-weight-bold modal-title" id="projectDetailsModalLabel">
-                    {{details.name}}
-                </h1>
+                <span id="projectDetailsModalLabel" class="h1 font-weight-bold modal-title">{{details.name}}</span>
+                <ul class="d-inline-flex pl-3 pt-3 list-inline" style="font-size: 35px;">
+                    <li access="ROLE_ADMIN" class="list-inline-item">
+                        <i ng-click="editProject(project)" class="text-primary fa fa-edit"></i>
+                    </li>
+                    <li ng-if="details.projectLink" class="list-inline-item">
+                        <a href="{{details.projectLink}}" target="_blank" class="card-link">
+                            <i class="text-secondary fa fa-github"></i>
+                        </a>
+                    </li>
+                </ul>
                 <button type="button" class="close" data-dismiss="modal"
                         aria-hidden="true">&times;
                 </button>
             </div>
             <div class="modal-body">
-                <img class="card-img-top" ng-if="details.logoPath" ng-src="/api/file/logo/{{project.logoPath}}">
+                <img class="card-img-top" ng-if="details.logoPath" ng-src="/api/file/logo/{{details.logoPath}}">
                 <img class="card-img-top" ng-if="!details.logoPath" ng-src="{{defaultUrl}}">
                 <p class="h5 card-text mt-3">{{details.description}}</p>
             </div>

@@ -8,7 +8,7 @@
         <div class="d-flex w-100 justify-content-start mb-3">
             <a class="h1 font-weight-bold" href="#/categories/{{category.id}}/posts"><u>{{category.name}}</u></a>
             <ul class="pl-3 align-self-center list-inline">
-                <li class="list-inline-item">
+                <li access="ROLE_ADMIN" class="list-inline-item">
                     <i ng-click="edit(category)" class="text-primary fa fa-edit"></i>
                 </li>
             </ul>
