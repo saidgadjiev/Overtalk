@@ -3,7 +3,7 @@
     Добавить новый проект
 </button>
 
-<div class="card mt-3 w-50 mx-auto" ng-repeat="project in projects">
+<div class="card mt-3 w-75 mx-auto" ng-repeat="project in projects">
     <img class="card-img-top" ng-if="project.logoPath" ng-src="/api/file/logo/{{project.logoPath}}">
     <img class="card-img-top" ng-if="!project.logoPath" ng-src="{{defaultUrl}}">
     <div class="card-body">
