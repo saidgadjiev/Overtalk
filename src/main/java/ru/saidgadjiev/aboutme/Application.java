@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import ru.saidgadjiev.aboutme.properties.DataSourceProperties;
 import ru.saidgadjiev.aboutme.properties.StorageProperties;
 import ru.saidgadjiev.aboutme.storage.StorageService;
-import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 
 /**
  * Created by said on 12.02.2018.
@@ -25,7 +24,7 @@ public class Application {
     }
 
     @Bean
-    CommandLineRunner init(StorageService storageService, SessionManager sessionManager) {
+    CommandLineRunner init(StorageService storageService) {
         return (args) -> {
             storageService.init();
         };
