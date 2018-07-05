@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import ru.saidgadjiev.aboutme.domain.Role;
 import ru.saidgadjiev.aboutme.filter.RequestBodyReaderAuthenticationFilter;
 import ru.saidgadjiev.aboutme.security.Http401UnAuthorizedEntryPoint;
 import ru.saidgadjiev.aboutme.security.Http403AccessDeniedEntryPoint;
@@ -50,8 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers(HttpMethod.GET, "/api/users").hasAuthority("ROLE_ADMIN")
-                    .antMatchers(HttpMethod.POST, "/api/project").hasAuthority("ROLE_ADMIN")
+                    .antMatchers(HttpMethod.GET, "/api/users").hasAuthority(Role.ROLE_ADMIN)
                     .anyRequest().permitAll()
                 .and()
                 .exceptionHandling()

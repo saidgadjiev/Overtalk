@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.model.PostDetails;
@@ -28,6 +29,7 @@ public class PostController {
     @Autowired
     private BlogService blogService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/{id}/create", method = RequestMethod.POST)
     public ResponseEntity createPostOfCategory(
             @PathVariable("id") Integer categoryId,
@@ -39,6 +41,7 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity<PostDetails> update(@RequestBody @Valid PostDetails postDetails, BindingResult errResult) throws SQLException {
         LOGGER.debug("update(Post: " + postDetails.toString() + ")");

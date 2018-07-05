@@ -28,7 +28,6 @@ public class Application {
     CommandLineRunner init(StorageService storageService, SessionManager sessionManager) {
         return (args) -> {
             storageService.init();
-            new PostgresRunner().run(sessionManager);
         };
     }
 }

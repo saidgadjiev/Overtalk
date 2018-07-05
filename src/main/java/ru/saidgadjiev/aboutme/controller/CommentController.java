@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.model.CommentDetails;
 import ru.saidgadjiev.aboutme.service.BlogService;
@@ -34,6 +35,7 @@ public class CommentController {
         return ResponseEntity.ok(commentDetails);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{id}/create", method = RequestMethod.POST)
     public ResponseEntity createCommentOfPost(
             @PathVariable("id") Integer id,
@@ -45,6 +47,7 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity<CommentDetails> updateComment(
             @RequestBody CommentDetails commentDetails

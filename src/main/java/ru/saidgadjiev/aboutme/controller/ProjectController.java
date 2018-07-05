@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.saidgadjiev.aboutme.domain.Project;
@@ -33,6 +34,7 @@ public class ProjectController {
         return ResponseEntity.ok(service.getAll());
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity create(@RequestPart(value="file", required = false) MultipartFile file,
                                  @RequestPart("data") String data) throws IOException, SQLException {
@@ -49,6 +51,7 @@ public class ProjectController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity<Project> update(@RequestPart(value="file", required = false) MultipartFile file,
                                  @RequestPart("data") String data) throws IOException, SQLException {

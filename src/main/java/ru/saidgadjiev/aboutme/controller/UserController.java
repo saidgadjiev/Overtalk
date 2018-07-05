@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +34,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public ResponseEntity getAll(
             @PageableDefault(page = 0, size = 10, sort = "userName", direction = Sort.Direction.DESC) Pageable page
@@ -43,8 +45,9 @@ public class UserController {
         return ResponseEntity.ok(userDetails);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/user/exist", method = RequestMethod.GET)
-    public ResponseEntity<?> exist(@RequestParam(value = "userName") String userName) throws SQLException {
+    public ResponseEntity exist(@RequestParam(value = "userName") String userName) throws SQLException {
         if (userService.isExists(userName)) {
             return ResponseEntity.status(HttpStatus.FOUND).build();
         }

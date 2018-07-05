@@ -2,6 +2,7 @@ package ru.saidgadjiev.aboutme.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +19,7 @@ public class LikeController {
     @Autowired
     private LikeService likeService;
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/like/post", method = RequestMethod.POST)
     public ResponseEntity<LikeDetails> like(@RequestBody LikeDetails likeDetails) throws SQLException {
         likeService.create(likeDetails);
@@ -27,6 +29,7 @@ public class LikeController {
         return ResponseEntity.ok(likeDetails);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/dislike/post", method = RequestMethod.POST)
     public ResponseEntity<LikeDetails> dislike(@RequestBody LikeDetails likeDetails) throws SQLException {
         likeService.remove(likeDetails);

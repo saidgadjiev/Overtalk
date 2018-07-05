@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.model.CategoryDetails;
 import ru.saidgadjiev.aboutme.service.BlogService;
@@ -26,6 +27,7 @@ public class CategoryController {
     @Autowired
     private BlogService blogService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity create(@RequestBody CategoryDetails categoryDetails) throws SQLException {
         LOGGER.debug("create(Category: " + categoryDetails.toString() + ")");
@@ -35,6 +37,7 @@ public class CategoryController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity<CategoryDetails> update(@RequestBody CategoryDetails categoryDetails) throws SQLException {
         LOGGER.debug("update(Category: " + categoryDetails.toString() + ")");
@@ -54,14 +57,5 @@ public class CategoryController {
         Page<CategoryDetails> categories = blogService.getCategories(page);
 
         return ResponseEntity.ok(categories);
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<CategoryDetails> getCategory(@PathVariable("id") Integer id) throws SQLException {
-        LOGGER.debug("getPostId()" + id);
-        CategoryDetails categoryDetails = blogService.getCategoryById(id);
-
-        return new ResponseEntity<>(categoryDetails, HttpStatus.OK);
     }
 }

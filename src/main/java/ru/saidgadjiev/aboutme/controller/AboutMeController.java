@@ -3,6 +3,7 @@ package ru.saidgadjiev.aboutme.controller;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,6 +27,7 @@ public class AboutMeController {
         return ResponseEntity.ok(aboutMeService.getAboutMe());
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     private ResponseEntity<AboutMe> update(@RequestBody AboutMe aboutMe) throws SQLException {
         int updated = aboutMeService.update(aboutMe);

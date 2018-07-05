@@ -3,6 +3,7 @@ package ru.saidgadjiev.aboutme.controller;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +22,7 @@ public class SkillController {
     @Autowired
     private SkillService skillService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<Skill> createSkill(@RequestBody Skill skill) throws SQLException {
         LOGGER.debug("createSkill() " + skill);
@@ -29,6 +31,7 @@ public class SkillController {
         return ResponseEntity.ok(skill);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/remove", method = RequestMethod.POST)
     public ResponseEntity<?> removeSkill(@RequestBody Skill skill) throws SQLException {
         LOGGER.debug("removeSkill() " + skill);
@@ -42,6 +45,7 @@ public class SkillController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity<Skill> updateSkill(@RequestBody Skill skill) throws SQLException {
         LOGGER.debug("updateSkill() " + skill);
