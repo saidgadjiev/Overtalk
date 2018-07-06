@@ -91,4 +91,11 @@ public class CommentDao {
             return (int) count;
         }
     }
+
+    public int deleteById(Integer id) throws SQLException {
+        LOGGER.debug("deleteById(): " + id);
+        try (Session session = sessionManager.createSession()) {
+            return session.deleteById(Comment.class, id);
+        }
+    }
 }

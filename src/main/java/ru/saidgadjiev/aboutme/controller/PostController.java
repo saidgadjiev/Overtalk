@@ -70,4 +70,13 @@ public class PostController {
 
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<PostDetails> deletePost(@PathVariable("id") Integer id) throws SQLException {
+        LOGGER.debug("deletePost()" + id);
+        blogService.deletePostById(id);
+
+        return ResponseEntity.ok().build();
+    }
 }

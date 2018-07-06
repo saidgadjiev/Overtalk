@@ -130,7 +130,7 @@ as.controller('AboutMeAppController', function ($scope, LocationService, AuthSer
     };
 });
 
-as.controller('NewPostController', function ($scope, $http, $location, $routeParams, DataService) {
+as.controller('NewPostController', function ($scope, $http, $location, $routeParams, HtmlEncoder, DataService) {
     $scope.newPost = {};
     var data = DataService.get('NewPostController');
 
@@ -149,6 +149,8 @@ as.controller('NewPostController', function ($scope, $http, $location, $routePar
         $scope.submitted = true;
 
         if (isValid) {
+            $scope.newPost.content = HtmlEncoder.encode($scope.newPost.content);
+
             if (!oldPost) {
                 $http.post(actionUrl + $routeParams.id + '/create', $scope.newPost).success(function (data) {
                     $location.path(backUrl);
@@ -236,7 +238,7 @@ as.controller('RegistrationController', function ($scope, $http, $location, $log
     };
 });
 
-as.controller('PostsController', function ($scope, $http, $location, $log, $routeParams, $q, DataService) {
+as.controller('PostsController', function ($scope, $http, $location, $log, $routeParams, $q, LikeService, DataService) {
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
@@ -280,7 +282,7 @@ as.controller('PostsController', function ($scope, $http, $location, $log, $rout
         $scope.likeInfo = {};
         $scope.likeInfo.postId = post.id;
 
-        $http.post('api/like/post', $scope.likeInfo)
+        LikeService.like($scope.likeInfo)
             .success(function (data) {
                 post.liked = data.liked;
                 post.likesCount = data.likesCount;
@@ -291,7 +293,7 @@ as.controller('PostsController', function ($scope, $http, $location, $log, $rout
         $scope.likeInfo = {};
         $scope.likeInfo.postId = post.id;
 
-        $http.post('api/dislike/post', $scope.likeInfo)
+        LikeService.dislike($scope.likeInfo)
             .success(function (data) {
                 post.liked = data.liked;
                 post.likesCount = data.likesCount;
@@ -299,7 +301,17 @@ as.controller('PostsController', function ($scope, $http, $location, $log, $rout
     };
 });
 
-as.controller('DetailsController', function ($scope, $http, $routeParams, $location, $q, $log, DataService) {
+as.controller('DetailsController', function ($scope,
+                                             $http,
+                                             $routeParams,
+                                             $location,
+                                             $q,
+                                             $log,
+                                             Session,
+                                             HtmlEncoder,
+                                             AuthService,
+                                             LikeService,
+                                             DataService) {
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
@@ -324,6 +336,17 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
 
     firstLoad();
     $scope.newComment = {};
+
+    $scope.canEdit = function (comment) {
+        if (AuthService.isAuthorizedRole('ROLE_ADMIN')) {
+            return true;
+        }
+        if (Session.nickName === comment.nickName) {
+            return true;
+        }
+
+        return false;
+    };
 
     $scope.saveComment = function (valid) {
         if (valid) {
@@ -364,7 +387,29 @@ as.controller('DetailsController', function ($scope, $http, $routeParams, $locat
                     $scope.editComment = {};
                 });
         }
-    }
+    };
+
+    $scope.like = function (post) {
+        $scope.likeInfo = {};
+        $scope.likeInfo.postId = post.id;
+
+        LikeService.like($scope.likeInfo)
+            .success(function (data) {
+                post.liked = data.liked;
+                post.likesCount = data.likesCount;
+            });
+    };
+
+    $scope.dislike = function (post) {
+        $scope.likeInfo = {};
+        $scope.likeInfo.postId = post.id;
+
+        LikeService.dislike($scope.likeInfo)
+            .success(function (data) {
+                post.liked = data.liked;
+                post.likesCount = data.likesCount;
+            });
+    };
 });
 
 as.controller('UsersController', function ($scope, $http, $log) {

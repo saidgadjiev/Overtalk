@@ -74,7 +74,7 @@ public class BlogService {
         UserDetails userDetails = securityService.findLoggedInUser();
 
         if (userDetails != null) {
-            for (PostDetails postDetails: postDetailsList) {
+            for (PostDetails postDetails : postDetailsList) {
                 postDetails.setLiked(postDetails.getLikeUsers().contains(userDetails.getUsername()));
             }
         }
@@ -91,8 +91,14 @@ public class BlogService {
 
     public PostDetails getPostById(Integer id) throws SQLException {
         Post post = postDao.getById(id);
+        PostDetails postDetails = DTOUtils.convert(post, PostDetails.class);
+        UserDetails userDetails = securityService.findLoggedInUser();
 
-        return DTOUtils.convert(post, PostDetails.class);
+        if (userDetails != null) {
+            postDetails.setLiked(postDetails.getLikeUsers().contains(userDetails.getUsername()));
+        }
+
+        return postDetails;
     }
 
     public int updatePost(PostDetails postDetails) throws SQLException {
@@ -129,5 +135,17 @@ public class BlogService {
 
     public CategoryDetails getCategoryById(Integer id) throws SQLException {
         return DTOUtils.convert(categoryDao.getById(id), CategoryDetails.class);
+    }
+
+    public int deleteCommentById(Integer id) throws SQLException {
+        return commentDao.deleteById(id);
+    }
+
+    public int deletePostById(Integer id) throws SQLException {
+        return postDao.deleteById(id);
+    }
+
+    public int deleteCategoryById(Integer id) throws SQLException {
+        return categoryDao.deleteById(id);
     }
 }

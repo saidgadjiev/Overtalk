@@ -25,7 +25,9 @@
                 <strong>{{post.likesCount}}</strong>
             </li>
             <li class="list-inline-item pl-3">
-                <i class="text-primary fa fa-comment"></i>
+                <a href="#/categories/{{category.id}}/posts/{{post.id}}">
+                    <i class="text-primary fa fa-comment"></i>
+                </a>
                 <strong>{{post.commentsCount}}</strong>
             </li>
         </ul>

@@ -58,4 +58,22 @@ public class CategoryController {
 
         return ResponseEntity.ok(categories);
     }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<CategoryDetails> getCategory(@PathVariable("id") Integer id) throws SQLException {
+        LOGGER.debug("getPostId()" + id);
+        CategoryDetails categoryDetails = blogService.getCategoryById(id);
+
+        return new ResponseEntity<>(categoryDetails, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<CategoryDetails> deleteCategoryById(@PathVariable("id") Integer id) throws SQLException {
+        LOGGER.debug("deleteCategoryById()" + id);
+        blogService.deleteCategoryById(id);
+
+        return ResponseEntity.ok().build();
+    }
 }
