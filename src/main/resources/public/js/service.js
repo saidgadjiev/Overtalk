@@ -220,14 +220,16 @@ as.service('LikeService', function ($http) {
 as.service('HtmlEncoder', function () {
     var HtmlToken = {
         WORD: 0,
-        TAG: 1
+        TAG_OPEN: 1,
+        TAG_CLOSE: 2
     };
     var HtmlTokenizeState = {
         DEFAULT: 0,
         TAG_START: 1,
         TAG_END: 2,
         WORD_START: 3,
-        WORD_END: 4
+        WORD_END: 4,
+        TAG_CLOSE: 5
     };
 
     var HtmlLexer = {};
@@ -237,6 +239,9 @@ as.service('HtmlEncoder', function () {
     HtmlLexer.position = -1;
     HtmlLexer.expression = '';
     HtmlLexer.tokenize = function () {
+        HtmlLexer.position = -1;
+        HtmlLexer.value = '';
+        HtmlLexer.tokenizeState = HtmlTokenizeState.DEFAULT;
         var lexems = [];
         var ch;
 
@@ -246,6 +251,9 @@ as.service('HtmlEncoder', function () {
             if (lexem !== null) {
                 lexems.push(lexem);
             }
+        }
+        if (HtmlLexer.tokenizeState !== HtmlTokenizeState.DEFAULT) {
+            lexems.push(HtmlLexer.createToken(HtmlToken.WORD, false));
         }
 
         return lexems;
@@ -268,13 +276,23 @@ as.service('HtmlEncoder', function () {
                 break;
             case HtmlTokenizeState.TAG_START:
                 HtmlLexer.value += ch;
-                if (ch == '>') {
+
+                if (ch == '/') {
+                    HtmlLexer.tokenizeState = HtmlTokenizeState.TAG_CLOSE;
+                } else if (ch == '>') {
                     HtmlLexer.tokenizeState = HtmlTokenizeState.TAG_END;
                     HtmlLexer.position -= 1;
                 }
                 break;
+            case HtmlTokenizeState.TAG_CLOSE:
+                HtmlLexer.value += ch;
+
+                if (ch == '>') {
+                    return HtmlLexer.createToken(HtmlToken.TAG_CLOSE, false);
+                }
+                break;
             case HtmlTokenizeState.TAG_END:
-                return HtmlLexer.createToken(HtmlToken.TAG, false);
+                return HtmlLexer.createToken(HtmlToken.TAG_OPEN, false);
             case HtmlTokenizeState.WORD_START:
                 if (ch == '<') {
                     HtmlLexer.tokenizeState = HtmlTokenizeState.WORD_END;
@@ -307,30 +325,74 @@ as.service('HtmlEncoder', function () {
 
     var HtmlEncoder = {};
 
+    HtmlEncoder.prevLexem = function (i, lexems) {
+        return i > 0 ? lexems[i - 1] : null;
+    };
+
+    HtmlEncoder.nextLexem = function(i, lexems) {
+        return i < lexems.length - 1 ? lexems[i + 1] : null;
+    };
+
     HtmlEncoder.encode = function (html) {
+        if (!html) {
+            return '';
+        }
         HtmlLexer.expression = html;
 
         var lexems = HtmlLexer.tokenize();
         var encoded = '';
 
-        lexems.forEach(function(lexem) {
+        for (var i = 0; i < lexems.length; ++i) {
+            var lexem = lexems[i];
+
             switch (lexem.token) {
                 case HtmlToken.WORD:
                     encoded += lexem.value;
                     break;
-                case HtmlToken.TAG:
-                    if (lexem.value.startsWith("<code")) {
-                        encoded += '<pre>';
-                        encoded += lexem.value.substring(0, 5) + ' hljs' + lexem.value.substring(5);
-                    } else if (lexem.value === '</code>') {
+                case HtmlToken.TAG_CLOSE: {
+                    if (lexem.value === '</code>') {
+                        var next = HtmlEncoder.nextLexem(i, lexems);
+
                         encoded += lexem.value;
-                        encoded += '</pre>';
+                        if (next == null || !next.value === '</pre>') {
+                            encoded += '</pre>';
+                        }
                     } else {
+                        if (lexem.value === '</pre>') {
+                            var prev = HtmlEncoder.prevLexem(i, lexems);
+
+                            if (prev != null && prev.value === '</code>') {
+                                encoded += lexem.value;
+                                break;
+                            }
+                        }
                         encoded += lexem.value.replace("<", "&lt;").replace(">", "&gt;");
                     }
                     break;
+                }
+                case HtmlToken.TAG_OPEN: {
+                    if (lexem.value.startsWith('<code')) {
+                        var prev = HtmlEncoder.prevLexem(i, lexems);
+
+                        if (prev == null || !prev.value === '<pre>') {
+                            encoded += '<pre>';
+                        }
+                        encoded += lexem.value.substring(0, 5) + ' hljs' + lexem.value.substring(5);
+                    } else {
+                        if (lexem.value === '<pre>') {
+                            var next = HtmlEncoder.nextLexem(i, lexems);
+
+                            if (next != null && next.value.startsWith('<code')) {
+                                encoded += lexem.value;
+                                break;
+                            }
+                        }
+                        encoded += lexem.value.replace("<", "&lt;").replace(">", "&gt;");
+                    }
+                    break;
+                }
             }
-        });
+        }
 
         return encoded;
     };

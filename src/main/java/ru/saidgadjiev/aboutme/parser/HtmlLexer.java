@@ -1,7 +1,9 @@
 package ru.saidgadjiev.aboutme.parser;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class HtmlLexer {
 
@@ -18,7 +20,7 @@ public class HtmlLexer {
     }
 
     public List<HtmlLexem> tokenize() {
-        List<HtmlLexem> lexems = new ArrayList<>();
+        List<HtmlLexem> lexems = new LinkedList<>();
         int ch;
 
         while ((ch = get()) != -1) {
@@ -27,6 +29,9 @@ public class HtmlLexer {
             if (lexem != null) {
                 lexems.add(lexem);
             }
+        }
+        if (this.tokenizeState != HtmlTokenizeState.DEFAULT) {
+            lexems.add(createToken(HtmlToken.WORD, false));
         }
 
         return lexems;
@@ -47,13 +52,22 @@ public class HtmlLexer {
                 break;
             case TAG_START:
                 value += ch;
-                if (ch == '>') {
+                if (ch == '/') {
+                    tokenizeState = HtmlTokenizeState.TAG_CLOSE;
+                } else if (ch == '>') {
                     tokenizeState = HtmlTokenizeState.TAG_END;
                     position -= 1;
                 }
                 break;
+            case TAG_CLOSE:
+                value += ch;
+
+                if (ch == '>') {
+                    return createToken(HtmlToken.TAG_CLOSE, false);
+                }
+                break;
             case TAG_END:
-                return createToken(HtmlToken.TAG, false);
+                return createToken(HtmlToken.TAG_OPEN, false);
             case WORD_START:
                 if (ch == '<') {
                     tokenizeState = HtmlTokenizeState.WORD_END;
@@ -87,4 +101,9 @@ public class HtmlLexer {
         return lexem;
     }
 
+    public static void main(String[] args) {
+        HtmlLexer lexer = new HtmlLexer("fw  efewfewwef <pre><code hljs lang=\"java\">fwe  f  wefwefwfe</code><script></script>");
+
+        System.out.println(lexer.tokenize().toString());
+    }
 }

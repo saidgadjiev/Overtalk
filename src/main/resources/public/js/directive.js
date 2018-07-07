@@ -70,7 +70,7 @@ as.directive('hljs', [function () {
     }]
 );
 
-as.directive('compile', ['$compile', function ($compile) {
+as.directive('compile', function ($compile, HtmlEncoder) {
     return function(scope, element, attrs) {
         scope.$watch(
             function(scope) {
@@ -80,6 +80,7 @@ as.directive('compile', ['$compile', function ($compile) {
             function(value) {
                 // when the 'compile' expression changes
                 // assign it into the current DOM
+                value = HtmlEncoder.encode(value);
                 element.html(value);
 
                 // compile the new DOM and link it to the current
@@ -90,6 +91,4 @@ as.directive('compile', ['$compile', function ($compile) {
             }
         );
     };
-}]);
-
-as.directive
+});

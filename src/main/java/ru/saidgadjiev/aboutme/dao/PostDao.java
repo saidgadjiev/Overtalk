@@ -1,5 +1,6 @@
 package ru.saidgadjiev.aboutme.dao;
 
+import javafx.geometry.Pos;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -81,6 +82,7 @@ public class PostDao {
 
             updateStatement.where(new Criteria()
                     .add(Restrictions.eq("id", post.getId())));
+            sessionManager.cacheHelper().delete(Post.class, post.getId());
 
             return session.update(updateStatement);
         }

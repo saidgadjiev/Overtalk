@@ -130,7 +130,7 @@ as.controller('AboutMeAppController', function ($scope, LocationService, AuthSer
     };
 });
 
-as.controller('NewPostController', function ($scope, $http, $location, $routeParams, HtmlEncoder, DataService) {
+as.controller('NewPostController', function ($scope, $http, $location, $routeParams, $log, DataService) {
     $scope.newPost = {};
     var data = DataService.get('NewPostController');
 
@@ -149,8 +149,6 @@ as.controller('NewPostController', function ($scope, $http, $location, $routePar
         $scope.submitted = true;
 
         if (isValid) {
-            $scope.newPost.content = HtmlEncoder.encode($scope.newPost.content);
-
             if (!oldPost) {
                 $http.post(actionUrl + $routeParams.id + '/create', $scope.newPost).success(function (data) {
                     $location.path(backUrl);
@@ -308,7 +306,6 @@ as.controller('DetailsController', function ($scope,
                                              $q,
                                              $log,
                                              Session,
-                                             HtmlEncoder,
                                              AuthService,
                                              LikeService,
                                              DataService) {

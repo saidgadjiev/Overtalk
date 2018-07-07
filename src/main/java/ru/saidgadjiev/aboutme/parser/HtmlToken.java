@@ -2,5 +2,6 @@ package ru.saidgadjiev.aboutme.parser;
 
 public enum HtmlToken {
     WORD,
-    TAG
+    TAG_OPEN,
+    TAG_CLOSE
 }

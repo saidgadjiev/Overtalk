@@ -19,21 +19,21 @@ public class AboutMeController {
 
     private static final Logger LOGGER = Logger.getLogger(AboutMeController.class);
 
-    @Autowired
     private final AboutMeService aboutMeService;
 
+    @Autowired
     public AboutMeController(AboutMeService aboutMeService) {
         this.aboutMeService = aboutMeService;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    private ResponseEntity<AboutMe> getAboutMe() throws SQLException {
+    public ResponseEntity<AboutMe> getAboutMe() throws SQLException {
         return ResponseEntity.ok(aboutMeService.getAboutMe());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    private ResponseEntity<AboutMe> update(@RequestBody AboutMe aboutMe) throws SQLException {
+    public ResponseEntity<AboutMe> update(@RequestBody AboutMe aboutMe) throws SQLException {
         int updated = aboutMeService.update(aboutMe);
 
         LOGGER.debug("Biography updated " + updated);
