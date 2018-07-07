@@ -20,7 +20,11 @@ public class AboutMeController {
     private static final Logger LOGGER = Logger.getLogger(AboutMeController.class);
 
     @Autowired
-    private AboutMeService aboutMeService;
+    private final AboutMeService aboutMeService;
+
+    public AboutMeController(AboutMeService aboutMeService) {
+        this.aboutMeService = aboutMeService;
+    }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     private ResponseEntity<AboutMe> getAboutMe() throws SQLException {
