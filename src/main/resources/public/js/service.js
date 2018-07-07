@@ -325,14 +325,6 @@ as.service('HtmlEncoder', function () {
 
     var HtmlEncoder = {};
 
-    HtmlEncoder.prevLexem = function (i, lexems) {
-        return i > 0 ? lexems[i - 1] : null;
-    };
-
-    HtmlEncoder.nextLexem = function(i, lexems) {
-        return i < lexems.length - 1 ? lexems[i + 1] : null;
-    };
-
     HtmlEncoder.encode = function (html) {
         if (!html) {
             return '';
@@ -351,42 +343,18 @@ as.service('HtmlEncoder', function () {
                     break;
                 case HtmlToken.TAG_CLOSE: {
                     if (lexem.value === '</code>') {
-                        var next = HtmlEncoder.nextLexem(i, lexems);
-
                         encoded += lexem.value;
-                        if (next == null || !next.value === '</pre>') {
-                            encoded += '</pre>';
-                        }
+                        encoded += '</pre>';
                     } else {
-                        if (lexem.value === '</pre>') {
-                            var prev = HtmlEncoder.prevLexem(i, lexems);
-
-                            if (prev != null && prev.value === '</code>') {
-                                encoded += lexem.value;
-                                break;
-                            }
-                        }
                         encoded += lexem.value.replace("<", "&lt;").replace(">", "&gt;");
                     }
                     break;
                 }
                 case HtmlToken.TAG_OPEN: {
                     if (lexem.value.startsWith('<code')) {
-                        var prev = HtmlEncoder.prevLexem(i, lexems);
-
-                        if (prev == null || !prev.value === '<pre>') {
-                            encoded += '<pre>';
-                        }
+                        encoded += '<pre>';
                         encoded += lexem.value.substring(0, 5) + ' hljs' + lexem.value.substring(5);
                     } else {
-                        if (lexem.value === '<pre>') {
-                            var next = HtmlEncoder.nextLexem(i, lexems);
-
-                            if (next != null && next.value.startsWith('<code')) {
-                                encoded += lexem.value;
-                                break;
-                            }
-                        }
                         encoded += lexem.value.replace("<", "&lt;").replace(">", "&gt;");
                     }
                     break;
