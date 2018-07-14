@@ -2,7 +2,9 @@ package ru.saidgadjiev.aboutme.domain;
 
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
+import ru.saidgajiev.ormnext.cache.Cacheable;
 
+@Cacheable
 public class Role {
 
     public static final String ROLE_ADMIN = "ROLE_ADMIN";

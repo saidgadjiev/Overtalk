@@ -6,10 +6,13 @@
 <ul class="list-group list-group-flush mt-3">
     <li class="list-group-item" ng-repeat="category in categories|orderBy:name">
         <div class="d-flex w-100 justify-content-start mb-3">
-            <a class="h1 font-weight-bold" href="#/categories/{{category.id}}/posts"><u>{{category.name}}</u></a>
+            <button class="btn btn-link p-0" ng-click="gotoPosts(category)"><u class="h1 text-dark font-weight-bold">{{category.name}}</u></button>
             <ul class="pl-3 align-self-center list-inline">
                 <li access="ROLE_ADMIN" class="list-inline-item">
                     <i ng-click="edit(category)" class="text-primary fa fa-edit"></i>
+                </li>
+                <li access="ROLE_ADMIN" class="list-inline-item">
+                    <i ng-click="delete(category)" class="text-primary fa fa-times"></i>
                 </li>
             </ul>
         </div>
@@ -56,7 +59,7 @@
                                ng-model="category.description" ng-required="true"/>
                         <div ng-messages="categoryForm.description.$error"
                              ng-if="categoryForm.description.$touched || submitted" style="color:red">
-                            <p class="help-block" ng-message="required">Введите процент владения!</p>
+                            <p class="help-block" ng-message="required">Введите описание!</p>
                         </div>
                     </div>
                 </div>

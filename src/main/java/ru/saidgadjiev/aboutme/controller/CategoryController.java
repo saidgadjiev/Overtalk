@@ -9,10 +9,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.model.CategoryDetails;
 import ru.saidgadjiev.aboutme.service.BlogService;
 
+import javax.validation.Valid;
 import java.sql.SQLException;
 
 /**
@@ -29,7 +31,12 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity create(@RequestBody CategoryDetails categoryDetails) throws SQLException {
+    public ResponseEntity create(
+            @RequestBody @Valid CategoryDetails categoryDetails, BindingResult bindingResult
+    ) throws SQLException {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
         LOGGER.debug("create(Category: " + categoryDetails.toString() + ")");
 
         blogService.createCategory(categoryDetails);
@@ -39,7 +46,12 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ResponseEntity<CategoryDetails> update(@RequestBody CategoryDetails categoryDetails) throws SQLException {
+    public ResponseEntity<CategoryDetails> update(
+            @RequestBody @Valid CategoryDetails categoryDetails, BindingResult bindingResult
+    ) throws SQLException {
+        if (bindingResult.hasErrors() || categoryDetails.getId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
         LOGGER.debug("update(Category: " + categoryDetails.toString() + ")");
 
         int count = blogService.updateCategory(categoryDetails);
@@ -68,9 +80,10 @@ public class CategoryController {
         return new ResponseEntity<>(categoryDetails, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<CategoryDetails> deleteCategoryById(@PathVariable("id") Integer id) throws SQLException {
+    public ResponseEntity<CategoryDetails> deleteCategory(@PathVariable("id") Integer id) throws SQLException {
         LOGGER.debug("deleteCategoryById()" + id);
         blogService.deleteCategoryById(id);
 

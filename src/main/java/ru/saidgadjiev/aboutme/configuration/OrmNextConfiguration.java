@@ -5,17 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
-import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
 import ru.saidgadjiev.aboutme.domain.*;
 import ru.saidgadjiev.aboutme.properties.DataSourceProperties;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 import ru.saidgadjiev.ormnext.core.dao.SessionManagerBuilder;
 import ru.saidgadjiev.ormnext.core.dao.TableOperation;
-import ru.saidgadjiev.ormnext.core.field.DataPersisterManager;
 import ru.saidgadjiev.ormnext.core.logger.LoggerFactory;
 import ru.saidgadjiev.ormnext.support.connection.source.PolledConnectionSource;
 import ru.saidgadjiev.ormnext.support.dialect.PgDialect;
+import ru.saidgajiev.ormnext.cache.CacheImpl;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -58,6 +56,7 @@ public class OrmNextConfiguration {
                 )
                 .build();
 
+        sessionManager.upgrade(new CacheImpl());
         sessionManager.enableDefaultCache();
 
         return sessionManager;

@@ -71,7 +71,6 @@ public class CategoryDao {
     public int deleteById(Integer id) throws SQLException {
         LOGGER.debug("deleteById()");
         try (Session session = sessionManager.createSession()) {
-
             return session.deleteById(Category.class, id);
         }
     }

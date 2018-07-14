@@ -1,11 +1,15 @@
 package ru.saidgadjiev.aboutme.model;
 
+import javax.validation.constraints.NotNull;
+
 public class CategoryDetails {
 
     private Integer id;
 
+    @NotNull
     private String name;
 
+    @NotNull
     private String description;
 
     private int postsCount;

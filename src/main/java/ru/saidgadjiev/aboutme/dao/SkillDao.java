@@ -36,4 +36,10 @@ public class SkillDao {
             return session.delete(skill);
         }
     }
+
+    public int removeById(Integer id) throws SQLException {
+        try (Session session = sessionManager.createSession()) {
+            return session.deleteById(Skill.class, id);
+        }
+    }
 }

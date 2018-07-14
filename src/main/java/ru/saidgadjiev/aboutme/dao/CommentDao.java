@@ -36,18 +36,6 @@ public class CommentDao {
         }
     }
 
-    public List<Comment> getAll() throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            return session.queryForAll(Comment.class);
-        }
-    }
-
-    public Comment getById(Integer id) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            return session.queryForId(Comment.class, id);
-        }
-    }
-
     public List<Comment> getByPostId(Integer id, int limit, int offset) throws SQLException {
         LOGGER.debug("getByPostId(): " + id);
         try (Session session = sessionManager.createSession()) {

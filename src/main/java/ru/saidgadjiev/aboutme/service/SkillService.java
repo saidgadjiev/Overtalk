@@ -24,10 +24,6 @@ public class SkillService {
         skillDao.create(skill);
     }
 
-    public int remove(Skill skill) throws SQLException {
-        return skillDao.remove(skill);
-    }
-
     public int update(Skill skill) throws SQLException {
         AboutMe aboutMe = new AboutMe();
 
@@ -36,7 +32,7 @@ public class SkillService {
         return skillDao.update(skill);
     }
 
-    public List<Skill> getAll() {
-        return null;
+    public int removeById(Integer id) throws SQLException {
+        return skillDao.removeById(id);
     }
 }

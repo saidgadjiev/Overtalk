@@ -4,12 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgadjiev.ormnext.core.field.ForeignColumn;
+import ru.saidgajiev.ormnext.cache.Cacheable;
+
+import javax.validation.constraints.NotNull;
 
 public class Skill {
 
     @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)
     private Integer id;
 
+    @NotNull
     @DatabaseColumn(notNull = true)
     private String name;
 

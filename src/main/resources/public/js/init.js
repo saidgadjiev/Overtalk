@@ -44,7 +44,7 @@ as.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
     };
 });
 
-as.config(function ($routeProvider, $httpProvider, USER_ROLES) {
+as.config(function ($routeProvider, $httpProvider, $locationProvider, USER_ROLES) {
     $routeProvider.when('/', {
         templateUrl: 'html/main.html',
         controller: 'MainController',
@@ -77,14 +77,14 @@ as.config(function ($routeProvider, $httpProvider, USER_ROLES) {
         }
     }).when('/categories', {
         templateUrl: 'html/category/categories.html',
-        controller: 'CategoriesController',
+        controller: 'CategoryController',
         access: {
             loginRequired: false,
             authorizedRoles: [USER_ROLES.all]
         }
     }).when('/categories/:id/posts', {
         templateUrl: 'html/post/posts.html',
-        controller: 'PostsController',
+        controller: 'PostController',
         access: {
             loginRequired: false,
             authorizedRoles: [USER_ROLES.all]
@@ -119,7 +119,7 @@ as.config(function ($routeProvider, $httpProvider, USER_ROLES) {
         }
     }).when('/projects', {
         templateUrl: 'html/project/projects.html',
-        controller: 'ProjectsController',
+        controller: 'ProjectController',
         access: {
             loginRequired: false,
             authorizedRoles: [USER_ROLES.all]
@@ -160,6 +160,7 @@ as.config(function ($routeProvider, $httpProvider, USER_ROLES) {
         }
     });
     $httpProvider.interceptors.push('AuthInterceptor');
+    $locationProvider.hashPrefix('');
 });
 
 as.run(function ($rootScope,

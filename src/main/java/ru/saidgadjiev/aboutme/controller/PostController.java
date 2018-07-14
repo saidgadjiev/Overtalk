@@ -33,7 +33,12 @@ public class PostController {
     @RequestMapping(value = "/{id}/create", method = RequestMethod.POST)
     public ResponseEntity createPostOfCategory(
             @PathVariable("id") Integer categoryId,
-            @RequestBody PostDetails postDetails) throws SQLException {
+            @RequestBody @Valid PostDetails postDetails,
+            BindingResult bindingResult
+    ) throws SQLException {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
         LOGGER.debug("createPost(Post: " + postDetails.toString() + ")");
 
         blogService.createPostOfCategory(categoryId, postDetails);
@@ -43,7 +48,12 @@ public class PostController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ResponseEntity<PostDetails> update(@RequestBody @Valid PostDetails postDetails, BindingResult errResult) throws SQLException {
+    public ResponseEntity<PostDetails> update(
+            @RequestBody @Valid PostDetails postDetails, BindingResult errResult
+    ) throws SQLException {
+        if (errResult.hasErrors() || postDetails.getId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
         LOGGER.debug("update(Post: " + postDetails.toString() + ")");
 
         blogService.updatePost(postDetails);
@@ -71,7 +81,8 @@ public class PostController {
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<PostDetails> deletePost(@PathVariable("id") Integer id) throws SQLException {
         LOGGER.debug("deletePost()" + id);

@@ -72,7 +72,7 @@ public class UserDao {
         }
     }
 
-    public List<UserProfile> getAll(int limit, long offset) throws SQLException {
+    public List<UserProfile> getList(int limit, long offset) throws SQLException {
         try (Session session = sessionManager.createSession()) {
             SelectStatement<UserProfile> selectStatement = new SelectStatement<>(UserProfile.class);
 

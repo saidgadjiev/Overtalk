@@ -4,11 +4,13 @@ import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
 import ru.saidgadjiev.ormnext.core.field.Converter;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgadjiev.ormnext.core.field.ForeignCollectionField;
+import ru.saidgajiev.ormnext.cache.Cacheable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Cacheable
 public class AboutMe {
 
     @DatabaseColumn(id = true)

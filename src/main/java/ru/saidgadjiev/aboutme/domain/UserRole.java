@@ -6,9 +6,6 @@ import ru.saidgadjiev.ormnext.core.field.ForeignColumn;
 import ru.saidgadjiev.ormnext.core.table.DatabaseEntity;
 import ru.saidgadjiev.ormnext.core.table.Unique;
 
-/**
- * Created by said on 18.03.2018.
- */
 @DatabaseEntity(
         name = "user_role",
         uniqueConstraints = {

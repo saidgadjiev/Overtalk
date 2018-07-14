@@ -1,21 +1,29 @@
 package ru.saidgadjiev.aboutme.domain;
 
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
-import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
-import ru.saidgadjiev.ormnext.core.field.Converter;
+import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
+import ru.saidgajiev.ormnext.cache.Cacheable;
+import ru.saidgajiev.ormnext.cache.policy.CachePolicy;
 
-import java.util.Date;
+import javax.validation.constraints.NotNull;
 
+@Cacheable(
+        policies = {
+                CachePolicy.CACHE_QUERY_FOR_ALL
+        }
+)
 public class Project {
 
     @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)
     private Integer id;
 
+    @NotNull
     @DatabaseColumn(notNull = true, unique = true)
     private String name;
 
-    @DatabaseColumn(notNull = true)
+    @NotNull
+    @DatabaseColumn(notNull = true, persisterClass = TextTypeDataPersister.class)
     private String description;
 
     @DatabaseColumn

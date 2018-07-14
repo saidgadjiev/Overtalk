@@ -49,6 +49,13 @@ i {
     }
 }
 
+.text-ellipsis {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 .text-lg {
     font-size: 18px;
 }
@@ -60,4 +67,8 @@ i {
     /* Set the fixed height of the footer here */
     height: 104px;
     background-color: #f7f7f7;
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }

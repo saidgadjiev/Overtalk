@@ -70,6 +70,15 @@ as.directive('hljs', [function () {
     }]
 );
 
+as.directive('ellipsis', function () {
+    return {
+        restrict: 'A',
+        link: function (scope, element) {
+
+        }
+    };
+});
+
 as.directive('compile', function ($compile, HtmlEncoder) {
     return function(scope, element, attrs) {
         scope.$watch(

@@ -4,13 +4,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.domain.Skill;
 import ru.saidgadjiev.aboutme.service.SkillService;
 
+import javax.validation.Valid;
 import java.sql.SQLException;
 
 @RestController
@@ -24,7 +23,13 @@ public class SkillController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<Skill> createSkill(@RequestBody Skill skill) throws SQLException {
+    public ResponseEntity<Skill> createSkill(
+            @RequestBody @Valid Skill skill,
+            BindingResult bindingResult
+    ) throws SQLException {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
         LOGGER.debug("createSkill() " + skill);
         skillService.create(skill);
 
@@ -32,10 +37,10 @@ public class SkillController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/remove", method = RequestMethod.POST)
-    public ResponseEntity<?> removeSkill(@RequestBody Skill skill) throws SQLException {
-        LOGGER.debug("removeSkill() " + skill);
-        int removed = skillService.remove(skill);
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
+    public ResponseEntity<?> removeSkill(@PathVariable("id") Integer id) throws SQLException {
+        LOGGER.debug("removeSkill() " + id);
+        int removed = skillService.removeById(id);
 
         LOGGER.debug("Skill removed " + removed);
         if (removed == 0) {
@@ -47,7 +52,13 @@ public class SkillController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ResponseEntity<Skill> updateSkill(@RequestBody Skill skill) throws SQLException {
+    public ResponseEntity<Skill> updateSkill(
+            @RequestBody @Valid Skill skill,
+            BindingResult bindingResult
+    ) throws SQLException {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
         LOGGER.debug("updateSkill() " + skill);
 
         int updated = skillService.update(skill);

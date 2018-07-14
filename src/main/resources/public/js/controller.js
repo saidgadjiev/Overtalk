@@ -145,22 +145,22 @@ as.controller('NewPostController', function ($scope, $http, $location, $routePar
 
     var actionUrl = 'api/post/';
 
-    $scope.save = function (isValid) {
+    $scope.doSave = function (isValid) {
         $scope.submitted = true;
 
         if (isValid) {
             if (!oldPost) {
-                $http.post(actionUrl + $routeParams.id + '/create', $scope.newPost).success(function (data) {
+                $http.post(actionUrl + $routeParams.id + '/create', $scope.newPost).then(function (response) {
                     $location.path(backUrl);
                 });
             } else {
-                $http.post(actionUrl + 'update', $scope.newPost).success(function (data) {
+                $http.post(actionUrl + 'update', $scope.newPost).then(function (response) {
                     $location.path(backUrl);
                 });
             }
         }
     };
-    $scope.cancel = function () {
+    $scope.doCancel = function () {
         $location.path(backUrl);
     }
 });
@@ -236,34 +236,31 @@ as.controller('RegistrationController', function ($scope, $http, $location, $log
     };
 });
 
-as.controller('PostsController', function ($scope, $http, $location, $log, $routeParams, $q, LikeService, DataService) {
+as.controller('PostController', function ($scope,
+                                          $http,
+                                          $location,
+                                          $log,
+                                          $routeParams,
+                                          $q,
+                                          LikeService,
+                                          DataService) {
+    $scope.category = DataService.get('PostController');
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
-    var actionUrl = 'api/post/',
+    var postUrl = 'api/post/',
         loadPosts = function () {
-            $http.get(actionUrl + $routeParams.id + '/posts?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage)
-                .success(function (data) {
-                    $log.log(data);
-                    $scope.totalItems = data.totalElements;
-                    $scope.posts = data.content;
+            $http.get(postUrl + $routeParams.id + '/posts?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage)
+                .then(function (response) {
+                    $log.log(response.data);
+                    $scope.totalItems = response.data.totalElements;
+                    $scope.posts = response.data.content;
                 })
-        },
-        firstLoad = function () {
-            $q.all([
-                $http.get('api/category/' + $routeParams.id),
-                $http.get(actionUrl + $routeParams.id + '/posts/?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage)
-            ]).then(function (result) {
-                $log.log(result);
-                $scope.category = result[0].data;
-                $scope.posts = result[1].data.content;
-                $scope.totalItems = result[1].data.totalElements;
-            });
         };
 
-    firstLoad();
+    loadPosts();
 
-    $scope.add = function () {
+    $scope.doCreate = function () {
         var data = {};
 
         data.backUrl = '/categories/' + $routeParams.id + '/posts';
@@ -271,31 +268,51 @@ as.controller('PostsController', function ($scope, $http, $location, $log, $rout
         $location.path('/categories/' + $routeParams.id + '/posts/new');
     };
 
-    $scope.pageChanged = function () {
+    $scope.doChangePage = function () {
         $log.log('Page changed to: ' + $scope.currentPage);
         loadPosts();
     };
 
-    $scope.like = function (post) {
+    $scope.doLike = function (post) {
         $scope.likeInfo = {};
         $scope.likeInfo.postId = post.id;
 
-        LikeService.like($scope.likeInfo)
-            .success(function (data) {
-                post.liked = data.liked;
-                post.likesCount = data.likesCount;
+        LikeService.doLike($scope.likeInfo)
+            .then(function (response) {
+                post.liked = response.data.liked;
+                post.likesCount = response.data.likesCount;
             });
     };
 
-    $scope.dislike = function (post) {
+    $scope.doDislike = function (post) {
         $scope.likeInfo = {};
         $scope.likeInfo.postId = post.id;
 
-        LikeService.dislike($scope.likeInfo)
-            .success(function (data) {
-                post.liked = data.liked;
-                post.likesCount = data.likesCount;
+        LikeService.doDislike($scope.likeInfo)
+            .then(function (response) {
+                post.liked = response.data.liked;
+                post.likesCount = response.data.likesCount;
             });
+    };
+
+    $scope.doDelete = function (post) {
+        $http.post(postUrl + 'delete/' + post.id).then(function () {
+            $log.log('delete post' + post);
+            $scope.posts.splice($scope.posts.indexOf(post), 1);
+        });
+    };
+    $scope.doEdit = function (post) {
+        var data = {};
+
+        data.backUrl = '/categories/' + $routeParams.id + '/posts';
+        data.post = post;
+        DataService.set('NewPostController', data);
+        $location.path('/categories/' + $routeParams.id + '/posts/new');
+    };
+
+    $scope.gotoComments = function (post) {
+        DataService.set('DetailsController', post);
+        $location.path('/categories/' + $scope.category.id + '/posts/' + post.id)
     };
 });
 
@@ -306,32 +323,24 @@ as.controller('DetailsController', function ($scope,
                                              $q,
                                              $log,
                                              Session,
+                                             LocationService,
                                              AuthService,
                                              LikeService,
                                              DataService) {
+    $scope.post = DataService.get('DetailsController');
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
-    var actionUrl = 'api/comment/',
+    var commentUrl = 'api/comment/',
         loadComments = function () {
-            $http.get(actionUrl + $routeParams.postId + '/comments?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
-                $scope.comments = data.content;
-                $scope.totalItems = data.totalElements;
+            $http.get(commentUrl + $routeParams.postId + '/comments?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).then(function (response) {
+                $scope.comments = response.data.content;
+                $scope.totalItems = response.data.totalElements;
             })
-        },
-        firstLoad = function () {
-            $q.all([
-                $http.get('api/post/' + $routeParams.postId),
-                $http.get(actionUrl + $routeParams.postId + '/comments?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage)
-            ]).then(function (result) {
-                $log.log(result);
-                $scope.post = result[0].data;
-                $scope.comments = result[1].data.content;
-                $scope.totalItems = result[1].data.totalElements;
-            });
         };
 
-    firstLoad();
+    loadComments();
+
     $scope.newComment = {};
 
     $scope.canEdit = function (comment) {
@@ -345,17 +354,18 @@ as.controller('DetailsController', function ($scope,
         return false;
     };
 
-    $scope.saveComment = function (valid) {
+    $scope.doCreateComment = function (valid) {
         if (valid) {
-            $http.post(actionUrl + $routeParams.postId + '/create', $scope.newComment)
-                .success(function (data) {
-                    $scope.newComment = {};
+            $http.post(commentUrl + $routeParams.postId + '/create', $scope.newComment)
+                .then(function (response) {
                     loadComments();
+
+                    $scope.newComment = {};
                 });
         }
     };
 
-    $scope.editPost = function (post) {
+    $scope.doEditPost = function (post) {
         var data = {};
 
         data.backUrl = '/categories/' + $routeParams.categoryId + '/posts/' + post.id;
@@ -364,48 +374,68 @@ as.controller('DetailsController', function ($scope,
         $location.path('/categories/' + $routeParams.categoryId + '/posts/new');
     };
 
-    $scope.editComment = function (comment) {
+    $scope.editComment = {};
+
+    $scope.doEditComment = function (comment) {
         $scope.editComment.id = comment.id;
         $scope.editComment.content = comment.content;
+        $scope.editComment.user = comment.user;
         $scope.editComment.oldComment = comment;
 
         $('#editCommentDialog').modal('show');
     };
 
-    $scope.saveEditComment = function (valid) {
+    $scope.doSaveComment = function (valid) {
         $scope.submitted = true;
 
         if (valid) {
-            $http.post(actionUrl + 'update', $scope.editComment)
-                .success(function (data) {
-                    $scope.oldComment.content = data.content;
+            $http.post(commentUrl + 'update', $scope.editComment)
+                .then(function (response) {
+                    $scope.editComment.oldComment.content = response.data.content;
 
                     $scope.submitted = false;
                     $scope.editComment = {};
+
+                    $('#editCommentDialog').modal('hide');
                 });
         }
     };
 
-    $scope.like = function (post) {
+    $scope.doLike = function (post) {
         $scope.likeInfo = {};
         $scope.likeInfo.postId = post.id;
 
-        LikeService.like($scope.likeInfo)
-            .success(function (data) {
-                post.liked = data.liked;
-                post.likesCount = data.likesCount;
+        LikeService.doLike($scope.likeInfo)
+            .then(function (response) {
+                post.liked = response.data.liked;
+                post.likesCount = response.data.likesCount;
             });
     };
 
-    $scope.dislike = function (post) {
+    $scope.doDislike = function (post) {
         $scope.likeInfo = {};
         $scope.likeInfo.postId = post.id;
 
-        LikeService.dislike($scope.likeInfo)
-            .success(function (data) {
-                post.liked = data.liked;
-                post.likesCount = data.likesCount;
+        LikeService.doDislike($scope.likeInfo)
+            .then(function (response) {
+                post.liked = response.data.liked;
+                post.likesCount = response.data.likesCount;
             });
+    };
+
+    $scope.doDeleteComment = function (comment) {
+        $http.post(commentUrl + 'delete', comment).then(function (comment) {
+            $log.log('delete comment' + comment);
+            $scope.comments.splice($scope.comments.indexOf(comment), 1);
+        });
+    };
+
+    $scope.doDeletePost = function (post) {
+        $http.post('api/comment/delete', post).then(function (post) {
+            $log.log('delete post' + post);
+
+            $location.path('/categories/' + $routeParams.categoryId + '/posts');
+        });
     };
 });
 
@@ -414,10 +444,10 @@ as.controller('UsersController', function ($scope, $http, $log) {
     $scope.itemsPerPage = 20;
 
     var loadUsers = function () {
-        $http.get('api/users?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
-            $log.log(data);
-            $scope.totalItems = data.totalElements;
-            $scope.users = data.content;
+        $http.get('api/users?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).then(function (response) {
+            $log.log(response);
+            $scope.totalItems = response.data.totalElements;
+            $scope.users = response.data.content;
         })
     };
 
@@ -457,7 +487,7 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
                     transformRequest: angular.identity,
                     headers: {'Content-Type': undefined}
                 })
-                    .success(function (data) {
+                    .then(function (response) {
                         $location.path('/projects');
                     })
                     .catch(function (reason) {
@@ -468,7 +498,7 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
                     transformRequest: angular.identity,
                     headers: {'Content-Type': undefined}
                 })
-                    .success(function () {
+                    .then(function () {
                         $location.path('/projects');
                     })
                     .catch(function (reason) {
@@ -482,35 +512,36 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
     };
     $scope.upload = function () {
         FileService.readAsDataURL($scope.logo, $scope)
-            .then(function(result) {
+            .then(function (result) {
                 $scope.logoPath = result;
             });
     };
 });
 
-as.controller('ProjectsController', function ($scope, $http, $log, $location, IMAGE, DataService) {
+as.controller('ProjectController', function ($scope, $http, $log, $location, IMAGE, DataService) {
     $scope.defaultUrl = IMAGE.defaultUrl;
-    $http.get('api/project').success(function (data) {
-        $log.log(data);
-        $scope.projects = data;
+
+    $http.get('api/project').then(function (response) {
+        $log.log(response);
+        $scope.projects = response.data;
     });
-    $scope.add = function () {
+    $scope.doCreate = function () {
         $location.path('/projects/new');
     };
-    $scope.openDetails = function (project) {
+    $scope.doOpenDetails = function (project) {
         $scope.details = project;
         $('#projectDetailsDialog').modal('show');
     };
 
-    $scope.editProject = function (project) {
+    $scope.doEdit = function (project) {
         DataService.set('NewProjectController', project);
         $location.path('/projects/new');
     };
 });
 
 as.controller('AboutMeController', function ($scope, $http, $log, DataService) {
-    $http.get('/api/aboutme').success(function (data) {
-        $scope.aboutme = data;
+    $http.get('/api/aboutme').then(function (response) {
+        $scope.aboutme = response.data;
     });
 
     $scope.editableAboutMe = {};
@@ -526,7 +557,10 @@ as.controller('AboutMeController', function ($scope, $http, $log, DataService) {
     };
 
     $scope.removeSkill = function (skill) {
-        $log.log(skill);
+        $http.post('/api/skill/remove/' + skill.id).then(function () {
+            $log.log('delete skill ' + skill);
+            $scope.aboutme.skills.splice($scope.aboutme.skills.indexOf(skill), 1);
+        });
     };
 
     $scope.skill = {};
@@ -549,23 +583,23 @@ as.controller('AboutMeController', function ($scope, $http, $log, DataService) {
 
             if ($scope.editableSkill) {
                 $http.post('/api/skill/update', $scope.skill)
-                    .success(function (data) {
+                    .then(function (response) {
                         $('#addSkillDialog').modal('hide');
 
-                        $log.log(data);
+                        $log.log(response);
 
-                        $scope.editableSkill.name = data.name;
-                        $scope.editableSkill.percentage = data.percentage;
+                        $scope.editableSkill.name = response.data.name;
+                        $scope.editableSkill.percentage = response.data.percentage;
 
                         $scope.submittedSkill = false;
                         $scope.skill = {};
                     });
             } else {
                 $http.post('/api/skill/create', $scope.skill)
-                    .success(function (data) {
+                    .then(function (response) {
                         $('#addSkillDialog').modal('hide');
 
-                        $scope.aboutme.skills.push(data);
+                        $scope.aboutme.skills.push(response.data);
 
                         $scope.submittedSkill = false;
                         $scope.skill = {};
@@ -581,9 +615,9 @@ as.controller('AboutMeController', function ($scope, $http, $log, DataService) {
             $log.log($scope.editableAboutMe);
 
             $http.post('/api/aboutme/update', $scope.editableAboutMe)
-                .success(function (data) {
-                    $scope.aboutme.placeOfResidence = data.placeOfResidence;
-                    $scope.aboutme.post = data.post;
+                .then(function (response) {
+                    $scope.aboutme.placeOfResidence = response.data.placeOfResidence;
+                    $scope.aboutme.post = response.data.post;
 
                     $scope.submittedEditAboutMe = false;
                     $('#editableAboutMeDialog').modal('hide');
@@ -592,17 +626,21 @@ as.controller('AboutMeController', function ($scope, $http, $log, DataService) {
     };
 });
 
-as.controller('CategoriesController', function ($scope, $http, $log) {
+as.controller('CategoryController', function ($scope,
+                                              $location,
+                                              $http,
+                                              $log,
+                                              DataService) {
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
     var actionUrl = 'api/category/';
 
     var loadCategories = function () {
-        $http.get('api/category?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).success(function (data) {
-            $log.log(data);
-            $scope.totalItems = data.totalElements;
-            $scope.categories = data.content;
+        $http.get('api/category?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).then(function (response) {
+            $log.log(response);
+            $scope.totalItems = response.data.totalElements;
+            $scope.categories = response.data.content;
         })
     };
 
@@ -634,16 +672,16 @@ as.controller('CategoriesController', function ($scope, $http, $log) {
         if (valid) {
             if ($scope.oldCategory) {
                 $http.post(actionUrl + 'update', $scope.category)
-                    .success(function (data) {
-                        $scope.oldCategory.name = data.name;
-                        $scope.oldCategory.description = data.description;
+                    .then(function (response) {
+                        $scope.oldCategory.name = response.data.name;
+                        $scope.oldCategory.description = response.data.description;
 
                         $scope.category = {};
                         $scope.submitted = false;
                     });
             } else {
                 $http.post(actionUrl + 'create', $scope.category)
-                    .success(function () {
+                    .then(function () {
                         loadCategories();
 
                         $scope.category = {};
@@ -651,6 +689,18 @@ as.controller('CategoriesController', function ($scope, $http, $log) {
                     });
             }
         }
-    }
+    };
+
+    $scope.delete = function (category) {
+        $http.post(actionUrl + 'delete/' + category.id).then(function () {
+            $log.log('delete category ' + category);
+            $scope.categories.splice($scope.categories.indexOf(category), 1);
+        });
+    };
+
+    $scope.gotoPosts = function (category) {
+        DataService.set('PostController', category);
+        $location.path('/categories/' + category.id + '/posts');
+    };
 });
 

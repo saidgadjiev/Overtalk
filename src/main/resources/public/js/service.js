@@ -1,10 +1,10 @@
 var as = angular.module('AboutMeApp.services', []);
 
 as.service('Session', function () {
-    this.create = function (data) {
-        this.nickName = data.nickName;
+    this.create = function (profile) {
+        this.nickName = profile.nickName;
         this.userRoles = [];
-        angular.forEach(data.authorities, function (value, key) {
+        angular.forEach(profile.authorities, function (value, key) {
             this.push(value.authority);
         }, this.userRoles);
     };
@@ -18,18 +18,24 @@ as.service('Session', function () {
 as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENTS) {
     var authService = {};
 
-    authService.loginConfirmed = function (response) {
-        Session.create(response.content);
+    authService.loginConfirmed = function (profile) {
+        Session.create(profile);
         authService.authenticated = true;
         $rootScope.$broadcast(AUTH_EVENTS.signInSuccess, {
-            data: response
+            data: profile
         });
     };
 
     authService.signUp = function (user) {
-        return $http.post('api/auth/signUp', user).success(function (response) {
+        return $http.post('api/auth/signUp', user).then(function (response) {
             $log.debug(response);
-            authService.loginConfirmed(response);
+            var profile = response.data;
+
+            Session.create(profile);
+            authService.authenticated = true;
+            $rootScope.$broadcast(AUTH_EVENTS.signUpSuccess, {
+                data: profile
+            });
 
             return response;
         });
@@ -40,20 +46,18 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
     };
 
     authService.signIn = function (user) {
-        return $http.post('api/auth/signIn', user).success(function (profile) {
-            $log.debug(profile);
-            Session.create(profile);
-            authService.authenticated = true;
-            $rootScope.$broadcast(AUTH_EVENTS.signInSuccess, {
-                data: profile
-            });
+        return $http.post('api/auth/signIn', user).then(function (response) {
+            $log.log(response);
+            var profile = response.data;
 
-            return profile;
+            authService.loginConfirmed(profile);
+
+            return response;
         });
     };
 
     authService.signOut = function () {
-        return $http.post('api/auth/signOut').success(function (response) {
+        return $http.post('api/auth/signOut').then(function (response) {
             $log.debug(response);
             Session.invalidate();
             authService.authenticated = false;
@@ -108,16 +112,16 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
     };
 
     authService.getAccount = function () {
-        $http.get('api/auth/account').success(function (profile) {
-            $log.debug(profile);
+        $http.get('api/auth/account').then(function (response) {
+            $log.debug(response);
+
+            var profile = response.data;
 
             if (profile) {
-                Session.create(profile);
-                authService.authenticated = true;
-                $rootScope.$broadcast(AUTH_EVENTS.signInSuccess, {
-                    data: profile
-                });
+                authService.loginConfirmed(profile);
             }
+
+            return response;
         });
     };
 
@@ -132,17 +136,22 @@ as.service('LocationService', function ($location) {
         if (!url || url.length === 0) {
             locationService.location = $location.path();
         } else {
-            var resolvedUrl = url;
-
-            for (var k in params) {
-                resolvedUrl = resolvedUrl.replace(':' + k, params[k]);
-            }
-            locationService.location = resolvedUrl;
+            locationService.location = locationService.replaceParamsInUrl(url, params);
         }
     };
 
     locationService.gotoLast = function () {
         $location.path(locationService.location);
+    };
+
+    locationService.replaceParamsInUrl = function (url, params) {
+        var resolvedUrl = url;
+
+        for (var k in params) {
+            resolvedUrl = resolvedUrl.replace(':' + k, params[k]);
+        }
+
+        return resolvedUrl;
     };
 
     return locationService;
@@ -206,11 +215,11 @@ as.service('FileService', function ($q, $log) {
 as.service('LikeService', function ($http) {
     var likeService = {};
 
-    likeService.like = function (post) {
+    likeService.doLike = function (post) {
         return $http.post('api/like/post', post);
     };
 
-    likeService.dislike = function (post) {
+    likeService.doDislike = function (post) {
         return $http.post('api/dislike/post', post);
     };
 
@@ -325,6 +334,10 @@ as.service('HtmlEncoder', function () {
 
     var HtmlEncoder = {};
 
+    HtmlEncoder.escape = function (str) {
+        return str.replace("<", "&lt;").replace(">", "&gt;");
+    };
+
     HtmlEncoder.encode = function (html) {
         if (!html) {
             return '';
@@ -339,14 +352,14 @@ as.service('HtmlEncoder', function () {
 
             switch (lexem.token) {
                 case HtmlToken.WORD:
-                    encoded += lexem.value;
+                    encoded += HtmlEncoder.escape(lexem.value);
                     break;
                 case HtmlToken.TAG_CLOSE: {
                     if (lexem.value === '</code>') {
                         encoded += lexem.value;
                         encoded += '</pre>';
                     } else {
-                        encoded += lexem.value.replace("<", "&lt;").replace(">", "&gt;");
+                        encoded += HtmlEncoder.escape(lexem.value);
                     }
                     break;
                 }
@@ -355,7 +368,7 @@ as.service('HtmlEncoder', function () {
                         encoded += '<pre>';
                         encoded += lexem.value.substring(0, 5) + ' hljs' + lexem.value.substring(5);
                     } else {
-                        encoded += lexem.value.replace("<", "&lt;").replace(">", "&gt;");
+                        encoded += HtmlEncoder.escape(lexem.value);
                     }
                     break;
                 }

@@ -1,16 +1,13 @@
 package ru.saidgadjiev.aboutme.domain;
 
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
+import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
 import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
 import ru.saidgadjiev.ormnext.core.field.*;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-/**
- * Created by said on 19.02.2018.
- */
 
 public class Post {
 
@@ -20,7 +17,7 @@ public class Post {
     @DatabaseColumn(notNull = true)
     private String title;
 
-    @DatabaseColumn(notNull = true)
+    @DatabaseColumn(notNull = true, persisterClass = TextTypeDataPersister.class)
     private String content;
 
     @Converter(value = JavaDateToSqlDate.class)

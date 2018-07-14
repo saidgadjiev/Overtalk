@@ -62,7 +62,7 @@ public class UserService {
 
     public Page<UserDetails> getAll(Pageable pageable) throws SQLException {
         long totalCount = userDao.countOff();
-        List<UserProfile> userProfiles = userDao.getAll(pageable.getPageSize(), pageable.getOffset());
+        List<UserProfile> userProfiles = userDao.getList(pageable.getPageSize(), pageable.getOffset());
 
         return new PageImpl<>(DTOUtils.convert(userProfiles, UserDetails.class), pageable, totalCount);
     }

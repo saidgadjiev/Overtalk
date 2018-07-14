@@ -1,5 +1,6 @@
 package ru.saidgadjiev.aboutme.model;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -10,8 +11,10 @@ public class PostDetails {
 
     private Integer id;
 
+    @NotNull
     private String title;
 
+    @NotNull
     private String content;
 
     private Date createdDate;

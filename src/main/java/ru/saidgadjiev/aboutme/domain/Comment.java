@@ -1,24 +1,23 @@
 package ru.saidgadjiev.aboutme.domain;
 
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
+import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
 import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
-import ru.saidgadjiev.ormnext.core.field.Converter;
-import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
-import ru.saidgadjiev.ormnext.core.field.FetchType;
-import ru.saidgadjiev.ormnext.core.field.ForeignColumn;
+import ru.saidgadjiev.ormnext.core.field.*;
 
 import java.util.Date;
+
 
 public class Comment {
 
     @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)
     private Integer id;
 
-    @DatabaseColumn
+    @DatabaseColumn(notNull = true, persisterClass = TextTypeDataPersister.class)
     private String content;
 
     @DatabaseColumn(notNull = true)
-    @ForeignColumn(fetchType = FetchType.LAZY)
+    @ForeignColumn(fetchType = FetchType.LAZY, onDelete = ReferenceAction.CASCADE, onUpdate = ReferenceAction.CASCADE)
     private Post post;
 
     @Converter(value = JavaDateToSqlDate.class)

@@ -1,5 +1,6 @@
 package ru.saidgadjiev.aboutme.model;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -9,6 +10,7 @@ public class CommentDetails {
 
     private Integer id;
 
+    @NotNull
     private String content;
 
     private Date createdDate;

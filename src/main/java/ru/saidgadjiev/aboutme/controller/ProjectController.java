@@ -5,7 +5,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.DataBinder;
+import org.springframework.validation.beanvalidation.OptionalValidatorFactoryBean;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ru.saidgadjiev.aboutme.domain.Project;
 import ru.saidgadjiev.aboutme.service.ProjectService;
@@ -41,6 +46,9 @@ public class ProjectController {
         LOGGER.debug("create()");
         Project project = new ObjectMapper().readValue(data, Project.class);
 
+        if (hasErrors(project)) {
+            return ResponseEntity.badRequest().build();
+        }
         if (file != null) {
             String logoPath = storageService.store(file);
 
@@ -57,6 +65,10 @@ public class ProjectController {
                                  @RequestPart("data") String data) throws IOException, SQLException {
         LOGGER.debug("create()");
         Project project = new ObjectMapper().readValue(data, Project.class);
+
+        if (hasErrors(project)) {
+            return ResponseEntity.badRequest().build();
+        }
         if (file != null) {
             String logoPath = storageService.store(file);
 
@@ -66,5 +78,14 @@ public class ProjectController {
         LOGGER.debug("Update project " + count);
 
         return ResponseEntity.ok(project);
+    }
+
+    private boolean hasErrors(Project project) {
+        DataBinder dataBinder = new DataBinder(project);
+
+        dataBinder.setValidator(new OptionalValidatorFactoryBean());
+        dataBinder.validate();
+
+        return dataBinder.getBindingResult().hasErrors();
     }
 }

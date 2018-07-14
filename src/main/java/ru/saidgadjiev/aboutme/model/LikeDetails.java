@@ -1,7 +1,10 @@
 package ru.saidgadjiev.aboutme.model;
 
+import javax.validation.constraints.NotNull;
+
 public class LikeDetails {
 
+    @NotNull
     private Integer postId;
 
     private Integer commentId;
