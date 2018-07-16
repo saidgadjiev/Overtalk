@@ -138,6 +138,12 @@
 
         <dependency>
             <groupId>ru.saidgadjiev.ormnext</groupId>
+            <artifactId>ormnext-core</artifactId>
+            <version>1.8-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.saidgadjiev.ormnext</groupId>
             <artifactId>ormnext-support</artifactId>
             <version>1.5-SNAPSHOT</version>
         </dependency>

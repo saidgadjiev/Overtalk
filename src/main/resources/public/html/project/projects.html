@@ -27,31 +27,26 @@
     </div>
 </div>
 
-<div class="modal fade" id="projectDetailsDialog" tabindex="-1" role="dialog"
-     aria-labelledby="projectDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span id="projectDetailsModalLabel" class="h1 font-weight-bold modal-title">{{details.name}}</span>
-                <ul class="d-inline-flex pl-3 pt-3 list-inline" style="font-size: 35px;">
-                    <li access="ROLE_ADMIN" class="list-inline-item">
-                        <i ng-click="doEdit(project)" class="text-primary fa fa-edit"></i>
-                    </li>
-                    <li ng-if="details.projectLink" class="list-inline-item">
-                        <a href="{{details.projectLink}}" target="_blank" class="card-link">
-                            <i class="text-secondary fa fa-github"></i>
-                        </a>
-                    </li>
-                </ul>
-                <button type="button" class="close" data-dismiss="modal"
-                        aria-hidden="true">&times;
-                </button>
-            </div>
-            <div class="modal-body">
-                <img class="card-img-top" ng-if="details.logoPath" ng-src="/api/file/logo/{{details.logoPath}}">
-                <img class="card-img-top" ng-if="!details.logoPath" ng-src="{{defaultUrl}}">
-                <p class="h5 card-text mt-3">{{details.description}}</p>
-            </div>
-        </div>
+<script type="text/ng-template" id="projectDetails.html">
+    <div class="modal-header">
+        <span id="projectDetailsModalLabel" class="h1 font-weight-bold modal-title">{{details.name}}</span>
+        <ul class="d-inline-flex pl-3 pt-3 list-inline" style="font-size: 35px;">
+            <li access="ROLE_ADMIN" class="list-inline-item">
+                <i ng-click="doEdit(project)" class="text-primary fa fa-edit"></i>
+            </li>
+            <li ng-if="details.projectLink" class="list-inline-item">
+                <a href="{{details.projectLink}}" target="_blank" class="card-link">
+                    <i class="text-secondary fa fa-github"></i>
+                </a>
+            </li>
+        </ul>
+        <button type="button" class="close" data-dismiss="modal"
+                aria-hidden="true">&times;
+        </button>
     </div>
-</div>
+    <div class="modal-body">
+        <img class="card-img-top" ng-if="details.logoPath" ng-src="/api/file/logo/{{details.logoPath}}">
+        <img class="card-img-top" ng-if="!details.logoPath" ng-src="{{defaultUrl}}">
+        <p class="h5 card-text mt-3">{{details.description}}</p>
+    </div>
+</script>

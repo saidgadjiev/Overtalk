@@ -6,7 +6,8 @@
 <ul class="list-group list-group-flush mt-3">
     <li class="list-group-item" ng-repeat="category in categories|orderBy:name">
         <div class="d-flex w-100 justify-content-start mb-3">
-            <button class="btn btn-link p-0" ng-click="gotoPosts(category)"><u class="h1 text-dark font-weight-bold">{{category.name}}</u></button>
+            <button class="btn btn-link p-0" ng-click="gotoPosts(category)"><u class="h1 text-dark font-weight-bold">{{category.name}}</u>
+            </button>
             <ul class="pl-3 align-self-center list-inline">
                 <li access="ROLE_ADMIN" class="list-inline-item">
                     <i ng-click="edit(category)" class="text-primary fa fa-edit"></i>
@@ -30,48 +31,44 @@
     ng-model="currentPage" max-size="5" class="pagination-sm mt-2" direction-links="false"
     items-per-page="itemsPerPage"></ul>
 
-<div class="modal fade" id="categoryDialog" tabindex="-1" role="dialog"
-     aria-labelledby="categoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form class="form" role="form" name="categoryForm">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="categoryModalLabel">
-                        Категория
-                    </h4>
-                    <button type="button" class="close" data-dismiss="modal"
-                            aria-hidden="true">&times;
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="name">Название:</label>
-                        <input id="name" class="form-control" type="text" name="name"
-                               ng-model="category.name" ng-required="true"/>
-                        <div ng-messages="categoryForm.name.$error"
-                             ng-if="categoryForm.name.$touched || submitted" style="color:red">
-                            <p class="help-block" ng-message="required">Введите название!</p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Описание:</label>
-                        <input id="description" class="form-control" type="text" name="description"
-                               ng-model="category.description" ng-required="true"/>
-                        <div ng-messages="categoryForm.description.$error"
-                             ng-if="categoryForm.description.$touched || submitted" style="color:red">
-                            <p class="help-block" ng-message="required">Введите описание!</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button ng-click="saveCategory(categoryForm.$valid)" type="button" data-dismiss="modal" class="btn btn-primary">
-                        Сохранить
-                    </button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                        Отменить
-                    </button>
-                </div>
-            </form>
-        </div>
+<script type="text/ng-template" id="createOrEditCategory.html">
+    <div class="modal-header">
+        <h4 class="modal-title" id="categoryModalLabel">
+            Категория
+        </h4>
+        <button type="button" class="close" data-dismiss="modal"
+                aria-hidden="true">&times;
+        </button>
     </div>
-</div>
+    <div class="modal-body">
+        <form class="form" role="form" name="categoryForm">
+            <div class="form-group">
+                <label for="name">Название:</label>
+                <input id="name" class="form-control" type="text" name="name"
+                       ng-model="category.name" ng-required="true"/>
+                <div ng-messages="categoryForm.name.$error"
+                     ng-if="categoryForm.name.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Введите название!</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <input id="description" class="form-control" type="text" name="description"
+                       ng-model="category.description" ng-required="true"/>
+                <div ng-messages="categoryForm.description.$error"
+                     ng-if="categoryForm.description.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Введите описание!</p>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="ok()" type="button" data-dismiss="modal"
+                class="btn btn-primary">
+            Сохранить
+        </button>
+        <button type="button" ng-click="cancel()" class="btn btn-default">
+            Отменить
+        </button>
+    </div>
+</script>

@@ -39,86 +39,76 @@
     </div>
 </div>
 
-<div class="modal fade" id="editableAboutMeDialog" tabindex="-1" role="dialog"
-     aria-labelledby="editableAboutMeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form name="aboutMeForm" novalidate>
-                <div class="modal-header">
-                    <h4 class="modal-title" id="editableAboutMeModalLabel">
-                        Редактирование обо мне
-                    </h4>
-                    <button type="button" class="close" data-dismiss="modal"
-                            aria-hidden="true">&times;
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="placeOfResidence">Место проживания:</label>
-                        <input id="placeOfResidence" class="form-control" type="text" name="placeOfResidence"
-                               ng-model="editableAboutMe.placeOfResidence" ng-required="true"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="post">Должность:</label>
-                        <input id="post" class="form-control" type="text" name="post"
-                               ng-model="editableAboutMe.post" ng-required="true"/>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button ng-click="saveAboutMe(aboutMeForm.$valid)" type="button" class="btn btn-primary">
-                        Сохранить
-                    </button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                        Отменить
-                    </button>
-                </div>
-            </form>
-        </div>
+<script type="text/ng-template" id="editAboutMe.html">
+    <div class="modal-header">
+        <h4 class="modal-title" id="editableAboutMeModalLabel">
+            Редактирование обо мне
+        </h4>
+        <button type="button" class="close" data-dismiss="modal"
+                aria-hidden="true">&times;
+        </button>
     </div>
-</div>
+    <div class="modal-body">
+        <form name="aboutMeForm" novalidate>
+            <div class="form-group">
+                <label for="placeOfResidence">Место проживания:</label>
+                <input id="placeOfResidence" class="form-control" type="text" name="placeOfResidence"
+                       ng-model="aboutMe.placeOfResidence" ng-required="true"/>
+            </div>
+            <div class="form-group">
+                <label for="post">Должность:</label>
+                <input id="post" class="form-control" type="text" name="post"
+                       ng-model="aboutMe.post" ng-required="true"/>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="ok()" type="button" class="btn btn-primary">
+            Сохранить
+        </button>
+        <button type="button" ng-click="cancel()" class="btn btn-default">
+            Отменить
+        </button>
+    </div>
+</script>
 
-<div class="modal fade" id="addSkillDialog" tabindex="-1" role="dialog"
-     aria-labelledby="addSkillModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form class="form" role="form" name="skillForm">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="addSkillModalLabel">
-                        Добавление навыка
-                    </h4>
-                    <button type="button" class="close" data-dismiss="modal"
-                            aria-hidden="true">&times;
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="name">Название:</label>
-                        <input id="name" class="form-control" type="text" name="name"
-                               ng-model="skill.name" ng-required="true"/>
-                        <div ng-messages="skillForm.name.$error"
-                             ng-if="skillForm.name.$touched || submitted" style="color:red">
-                            <p class="help-block" ng-message="required">Введите название!</p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="percentage">Процент владения:</label>
-                        <input id="percentage" class="form-control" type="text" name="name"
-                               ng-model="skill.percentage" ng-required="true"/>
-                        <div ng-messages="skillForm.percentage.$error"
-                             ng-if="skillForm.percentage.$touched || submitted" style="color:red">
-                            <p class="help-block" ng-message="required">Введите процент владения!</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button ng-click="saveSkill(skillForm.$valid)" type="button" class="btn btn-primary">
-                        Сохранить
-                    </button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                        Отменить
-                    </button>
-                </div>
-            </form>
-        </div>
+<script type="text/ng-template" id="createOrEditSkill.html">
+    <div class="modal-header">
+        <h4 class="modal-title" id="addSkillModalLabel">
+            Добавление навыка
+        </h4>
+        <button type="button" class="close" data-dismiss="modal"
+                aria-hidden="true">&times;
+        </button>
     </div>
-</div>
+    <div class="modal-body">
+        <form class="form" role="form" name="skillForm">
+            <div class="form-group">
+                <label for="name">Название:</label>
+                <input id="name" class="form-control" type="text" name="name"
+                       ng-model="skill.name" ng-required="true"/>
+                <div ng-messages="skillForm.name.$error"
+                     ng-if="skillForm.name.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Введите название!</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="percentage">Процент владения:</label>
+                <input id="percentage" class="form-control" type="text" name="name"
+                       ng-model="skill.percentage" ng-required="true"/>
+                <div ng-messages="skillForm.percentage.$error"
+                     ng-if="skillForm.percentage.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Введите процент владения!</p>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="ok()" type="button" class="btn btn-primary">
+            Сохранить
+        </button>
+        <button ng-click="cancel()" type="button" class="btn btn-default">
+            Отменить
+        </button>
+    </div>
+</script>

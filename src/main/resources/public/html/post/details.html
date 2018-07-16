@@ -33,10 +33,12 @@
                 <strong class="pl-3">{{comment.createdDate|date:'dd.MM.yyyy в hh:mm'}}</strong>
                 <ul class="pl-3 list-inline">
                     <li class="list-inline-item">
-                        <i ng-if="canEdit(comment)" ng-click="doEditComment(comment)" class="text-primary fa fa-edit"></i>
+                        <i ng-if="canEdit(comment)" ng-click="doEditComment(comment)"
+                           class="text-primary fa fa-edit"></i>
                     </li>
                     <li class="list-inline-item">
-                        <i ng-if="canEdit(comment)" ng-click="doDeleteComment(comment)" class="text-primary fa fa-times"></i>
+                        <i ng-if="canEdit(comment)" ng-click="doDeleteComment(comment)"
+                           class="text-primary fa fa-times"></i>
                     </li>
                 </ul>
             </div>
@@ -65,36 +67,31 @@
     </div>
 </form>
 
-<div class="modal fade" id="editCommentDialog" tabindex="-1" role="dialog"
-     aria-labelledby="editCommentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form class="form" role="form" name="editCommentForm">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="editCommentModalLabel">
-                        Редактирование комментария
-                    </h4>
-                    <button type="button" class="close" data-dismiss="modal"
-                            aria-hidden="true">&times;
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="editCommentTextArea">Комментарий</label>
-                        <textarea ng-model="editComment.content" id="editCommentTextArea" class="form-control"
-                                  type="text" rows="8"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button ng-click="doSaveComment(editCommentForm.$valid)" type="button"
-                            class="btn btn-primary">
-                        Сохранить
-                    </button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                        Отменить
-                    </button>
-                </div>
-            </form>
-        </div>
+<script type="text/ng-template" id="editComment.html">
+    <div class="modal-header">
+        <h4 class="modal-title" id="editCommentModalLabel">
+            Редактирование комментария
+        </h4>
+        <button type="button" class="close" data-dismiss="modal"
+                aria-hidden="true">&times;
+        </button>
     </div>
-</div>
+    <div class="modal-body">
+        <form class="form" role="form" name="editCommentForm">
+            <div class="form-group">
+                <label for="editCommentTextArea">Комментарий</label>
+                <textarea ng-model="editComment.content" id="editCommentTextArea" class="form-control"
+                          type="text" rows="8"></textarea>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="ok()" type="button"
+                class="btn btn-primary">
+            Сохранить
+        </button>
+        <button type="button" ng-click="cancel()" class="btn btn-default">
+            Отменить
+        </button>
+    </div>
+</script>

@@ -245,6 +245,12 @@ as.controller('PostController', function ($scope,
                                           LikeService,
                                           DataService) {
     $scope.category = DataService.get('PostController');
+
+    if (!$scope.category) {
+        $http.get('api/category/' + $routeParams.postId).then(function (value) {
+            $scope.category = value;
+        });
+    }
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
@@ -322,12 +328,19 @@ as.controller('DetailsController', function ($scope,
                                              $location,
                                              $q,
                                              $log,
+                                             $uibModal,
                                              Session,
                                              LocationService,
                                              AuthService,
                                              LikeService,
                                              DataService) {
     $scope.post = DataService.get('DetailsController');
+
+    if (!$scope.post) {
+        $http.get('api/post/' + $routeParams.postId).then(function (value) {
+            $scope.post = value;
+        });
+    }
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
@@ -374,31 +387,38 @@ as.controller('DetailsController', function ($scope,
         $location.path('/categories/' + $routeParams.categoryId + '/posts/new');
     };
 
-    $scope.editComment = {};
-
     $scope.doEditComment = function (comment) {
-        $scope.editComment.id = comment.id;
-        $scope.editComment.content = comment.content;
-        $scope.editComment.user = comment.user;
-        $scope.editComment.oldComment = comment;
+        var editCommentModal = $uibModal.open({
+            templateUrl: 'editComment.html',
+            controller: function ($scope, $uibModalInstance, $log) {
+                $scope.comment = {};
 
-        $('#editCommentDialog').modal('show');
-    };
+                $scope.comment.id = comment.id;
+                $scope.comment.content = comment.content;
 
-    $scope.doSaveComment = function (valid) {
-        $scope.submitted = true;
+                $scope.ok = function () {
+                    $scope.submitted = true;
 
-        if (valid) {
-            $http.post(commentUrl + 'update', $scope.editComment)
+                    if ($scope.editCommentForm.$valid) {
+                        $scope.submitted = false;
+                        $uibModalInstance.close($scope.comment);
+                    }
+                };
+
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
+
+                $log.log('Open edit comment modal');
+            }
+        });
+
+        editCommentModal.result.then(function (editedComment) {
+            $http.post(commentUrl + 'update', editedComment)
                 .then(function (response) {
-                    $scope.editComment.oldComment.content = response.data.content;
-
-                    $scope.submitted = false;
-                    $scope.editComment = {};
-
-                    $('#editCommentDialog').modal('hide');
+                    comment.content = response.data.content;
                 });
-        }
+        });
     };
 
     $scope.doLike = function (post) {
@@ -525,12 +545,23 @@ as.controller('ProjectController', function ($scope, $http, $log, $location, IMA
         $log.log(response);
         $scope.projects = response.data;
     });
+
     $scope.doCreate = function () {
         $location.path('/projects/new');
     };
+
     $scope.doOpenDetails = function (project) {
-        $scope.details = project;
-        $('#projectDetailsDialog').modal('show');
+        $uibModal.open({
+            templateUrl: 'projectDetails.html',
+            controller: function ($scope) {
+                $scope.details = project;
+
+                $scope.doEdit = function (project) {
+                    DataService.set('NewProjectController', project);
+                    $location.path('/projects/new');
+                };
+            }
+        });
     };
 
     $scope.doEdit = function (project) {
@@ -539,21 +570,74 @@ as.controller('ProjectController', function ($scope, $http, $log, $location, IMA
     };
 });
 
-as.controller('AboutMeController', function ($scope, $http, $log, DataService) {
+as.controller('AboutMeController', function ($scope,
+                                             $http,
+                                             $uibModal,
+                                             $log) {
     $http.get('/api/aboutme').then(function (response) {
         $scope.aboutme = response.data;
     });
 
-    $scope.editableAboutMe = {};
-    $scope.editAboutMe = function () {
-        $scope.editableAboutMe.placeOfResidence = $scope.aboutme.placeOfResidence;
-        $scope.editableAboutMe.post = $scope.aboutme.post;
+    $scope.editAboutMe = function (aboutme) {
+        var editAboutMeModal = $uibModal.open({
+            templateUrl: 'editAboutMe.html',
+            controller: function ($scope, $uibModalInstance) {
+                $scope.aboutme = {};
 
-        $('#editableAboutMeDialog').modal('show');
+                $scope.aboutme.placeOfResidence = aboutme.placeOfResidence;
+                $scope.aboutme.post = aboutme.post;
+
+                $scope.ok = function () {
+                    $scope.submitted = true;
+
+                    if ($scope.editAboutMeForm.$valid) {
+                        $scope.submitted = false;
+                        $uibModalInstance.close($scope.aboutme);
+                    }
+                };
+
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
+            }
+        });
+
+        editAboutMeModal.result.then(function (value) {
+            $http.post('/api/aboutme/update', value)
+                .then(function (response) {
+                    aboutme.placeOfResidence = response.data.placeOfResidence;
+                    aboutme.post = response.data.post;
+                });
+        });
     };
 
-    $scope.addSkill = function () {
-        $('#addSkillDialog').modal('show');
+    $scope.addSkill = function (aboutMe) {
+        var addSkillModal = $uibModal.open({
+            templateUrl: 'createOrEditSkill.html',
+            controller: function ($scope, $uibModalInstance) {
+                $scope.skill = {};
+
+                $scope.ok = function () {
+                    $scope.submitted = true;
+
+                    if ($scope.skillForm.$valid) {
+                        $scope.submitted = false;
+                        $uibModalInstance.close($scope.skill);
+                    }
+                };
+
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
+            }
+        });
+
+        addSkillModal.result.then(function (value) {
+            $http.post('/api/skill/create', value)
+                .then(function (response) {
+                    aboutMe.skills.push(response.data);
+                });
+        });
     };
 
     $scope.removeSkill = function (skill) {
@@ -567,62 +651,40 @@ as.controller('AboutMeController', function ($scope, $http, $log, DataService) {
 
     $scope.editSkill = function (skill) {
         $log.log(skill);
-        $scope.skill.id = skill.id;
-        $scope.skill.name = skill.name;
-        $scope.skill.percentage = skill.percentage;
-        $scope.editableSkill = skill;
 
-        $('#addSkillDialog').modal('show');
-    };
+        var editSkillModal = $uibModal.open({
+            templateUrl: 'createOrEditSkill.html',
+            controller: function ($scope, $uibModalInstance) {
+                $scope.skill = {};
 
-    $scope.saveSkill = function (isValid) {
-        $scope.submittedSkill = true;
+                $scope.skill.id = skill.id;
+                $scope.skill.name = skill.name;
+                $scope.skill.percentage = skill.percentage;
 
-        if (isValid) {
-            $log.log($scope.skill);
+                $scope.ok = function () {
+                    $scope.submitted = true;
 
-            if ($scope.editableSkill) {
-                $http.post('/api/skill/update', $scope.skill)
-                    .then(function (response) {
-                        $('#addSkillDialog').modal('hide');
+                    if ($scope.skillForm.$valid) {
+                        $scope.submitted = false;
+                        $uibModalInstance.close($scope.skill);
+                    }
+                };
 
-                        $log.log(response);
-
-                        $scope.editableSkill.name = response.data.name;
-                        $scope.editableSkill.percentage = response.data.percentage;
-
-                        $scope.submittedSkill = false;
-                        $scope.skill = {};
-                    });
-            } else {
-                $http.post('/api/skill/create', $scope.skill)
-                    .then(function (response) {
-                        $('#addSkillDialog').modal('hide');
-
-                        $scope.aboutme.skills.push(response.data);
-
-                        $scope.submittedSkill = false;
-                        $scope.skill = {};
-                    });
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
             }
-        }
-    };
+        });
 
-    $scope.saveAboutMe = function (isValid) {
-        $scope.submittedEditAboutMe = true;
-
-        if (isValid) {
-            $log.log($scope.editableAboutMe);
-
-            $http.post('/api/aboutme/update', $scope.editableAboutMe)
+        editSkillModal.result.then(function (value) {
+            $http.post('/api/skill/update', value)
                 .then(function (response) {
-                    $scope.aboutme.placeOfResidence = response.data.placeOfResidence;
-                    $scope.aboutme.post = response.data.post;
+                    $log.log(response);
 
-                    $scope.submittedEditAboutMe = false;
-                    $('#editableAboutMeDialog').modal('hide');
+                    skill.name = response.data.name;
+                    skill.percentage = response.data.percentage;
                 });
-        }
+        });
     };
 });
 
@@ -652,43 +714,66 @@ as.controller('CategoryController', function ($scope,
     };
 
     $scope.add = function () {
-        $scope.category = {};
-        $('#categoryDialog').modal('show');
-    };
+        var createCategoryModal = $uibModal.open({
+            templateUrl: 'createOrEditCategory.html',
+            controller: function ($scope, $uibModalInstance) {
+                $scope.category = {};
 
-    $scope.category = {};
+                $scope.ok = function () {
+                    $scope.submitted = true;
+
+                    if ($scope.categoryForm.$valid) {
+                        $scope.submitted = false;
+                        $uibModalInstance.close($scope.category);
+                    }
+                };
+
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
+            }
+        });
+
+        createCategoryModal.result.then(function (value) {
+            $http.post(actionUrl + 'create', value)
+                .then(function () {
+                    loadCategories();
+                });
+        });
+    };
 
     $scope.edit = function (category) {
-        $scope.category.id = category.id;
-        $scope.category.name = category.name;
-        $scope.category.description = category.description;
-        $scope.oldCategory = category;
-        $('#categoryDialog').modal('show');
-    };
+        var editCategoryModal = $uibModal.open({
+            templateUrl: 'editCategory.html',
+            controller: function ($scope, $uibModalInstance) {
+                $scope.category = {};
 
-    $scope.saveCategory = function (valid) {
-        $scope.submitted = true;
+                $scope.category.id = category.id;
+                $scope.category.name = category.name;
+                $scope.category.description = category.description;
 
-        if (valid) {
-            if ($scope.oldCategory) {
-                $http.post(actionUrl + 'update', $scope.category)
-                    .then(function (response) {
-                        $scope.oldCategory.name = response.data.name;
-                        $scope.oldCategory.description = response.data.description;
+                $scope.ok = function () {
+                    $scope.submitted = true;
 
-                        $scope.category = {};
+                    if ($scope.categoryForm.$valid) {
                         $scope.submitted = false;
-                    });
-            } else {
-                $http.post(actionUrl + 'create', $scope.category)
-                    .then(function () {
-                        loadCategories();
+                        $uibModalInstance.close($scope.category);
+                    }
+                };
 
-                        $scope.category = {};
-                        $scope.submitted = false;
-                    });
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
             }
-        }
+        });
+
+        editCategoryModal.result.then(function (value) {
+            $http.post(actionUrl + 'update', value)
+                .then(function (response) {
+                    category.name = response.data.name;
+                    category.description = response.data.description;
+                });
+        });
     };
 
     $scope.delete = function (category) {
@@ -701,6 +786,28 @@ as.controller('CategoryController', function ($scope,
     $scope.gotoPosts = function (category) {
         DataService.set('PostController', category);
         $location.path('/categories/' + category.id + '/posts');
+    };
+});
+
+as.controller('TestController', function ($scope, $log, $uibModal) {
+    $scope.open = function () {
+        $uibModal.open({
+            templateUrl: 'stackedModal.html',
+            controller: function ($log) {
+                $log.log('Open modal');
+            }
+        });
+    }
+});
+
+as.controller('ModalDemoCtrl', function ($scope, $uibModal, $log, $document) {
+    $scope.open = function () {
+        $uibModal.open({
+            templateUrl: 'stackedModal.html',
+            controller: function ($log) {
+                $log.log('Open modal');
+            }
+        });
     };
 });
 
