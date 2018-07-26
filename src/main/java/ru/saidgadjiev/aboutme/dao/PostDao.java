@@ -30,67 +30,55 @@ public class PostDao {
     }
 
     public void create(Post post) throws SQLException {
-        LOGGER.debug("create(): " + post.toString());
-        try (Session session = sessionManager.createSession()) {
-            session.create(post);
-        }
+        Session session = sessionManager.currentSession();
+        session.create(post);
     }
 
     public List<Post> getPosts(int categoryId, int limit, long offset) throws SQLException {
-        LOGGER.debug("getPostsByCategoryId()");
-        try (Session session = sessionManager.createSession()) {
-            SelectStatement<Post> selectStatement = new SelectStatement<>(Post.class);
+        Session session = sessionManager.currentSession();
+        SelectStatement<Post> selectStatement = new SelectStatement<>(Post.class);
 
-            selectStatement.limit(limit).offset((int) offset);
-            selectStatement.where(new Criteria()
-                    .add(Restrictions.eq("category", categoryId)));
+        selectStatement.limit(limit).offset((int) offset);
+        selectStatement.where(new Criteria()
+                .add(Restrictions.eq("category", categoryId)));
 
-            List<Post> posts = session.list(selectStatement);
-
-            LOGGER.debug(posts.toString());
-
-            return posts;
-        }
+        return session.list(selectStatement);
     }
 
     public Post getById(int id) throws SQLException {
-        LOGGER.debug("getById(): " + id);
-        try (Session session = sessionManager.createSession()) {
-            Post post = session.queryForId(Post.class, id);
+        Session session = sessionManager.currentSession();
 
-            LOGGER.debug(post.toString());
-
-            return post;
-        }
+        return session.queryForId(Post.class, id);
     }
 
-    public long countOff() throws SQLException {
-        LOGGER.debug("countOffByPostId()");
-        try (Session session = sessionManager.createSession()) {
+    public long countOffPostsByCategoryId(Integer categoryId) throws SQLException {
+        Session session = sessionManager.currentSession();
+        SelectStatement<Post> selectStatement = new SelectStatement<>(Post.class);
 
-            return session.countOff(Post.class);
-        }
+        selectStatement
+                .withoutJoins(true)
+                .countOff()
+                .where(new Criteria().add(Restrictions.eq("category", categoryId)));
+
+        return session.queryForLong(selectStatement);
     }
 
     public int update(Post post) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            UpdateStatement updateStatement = new UpdateStatement(Post.class);
+        Session session = sessionManager.currentSession();
+        UpdateStatement updateStatement = new UpdateStatement(Post.class);
 
-            updateStatement.set("title", post.getTitle());
-            updateStatement.set("content", post.getContent());
+        updateStatement.set("title", post.getTitle());
+        updateStatement.set("content", post.getContent());
 
-            updateStatement.where(new Criteria()
-                    .add(Restrictions.eq("id", post.getId())));
+        updateStatement.where(new Criteria()
+                .add(Restrictions.eq("id", post.getId())));
 
-            return session.update(updateStatement);
-        }
+        return session.update(updateStatement);
     }
 
     public int deleteById(Integer id) throws SQLException {
-        LOGGER.debug("deleteById()");
-        try (Session session = sessionManager.createSession()) {
+        Session session = sessionManager.currentSession();
 
-            return session.deleteById(Post.class, id);
-        }
+        return session.deleteById(Post.class, id);
     }
 }

@@ -118,7 +118,11 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
             var profile = response.data;
 
             if (profile) {
-                authService.loginConfirmed(profile);
+                Session.create(profile);
+                authService.authenticated = true;
+                $rootScope.$broadcast(AUTH_EVENTS.accountRequestSuccess, {
+                    data: profile
+                });
             }
 
             return response;
@@ -131,7 +135,6 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
 as.service('LocationService', function ($location) {
     var locationService = {};
 
-    locationService.location = '/';
     locationService.saveLocation = function (url, params) {
         if (!url || url.length === 0) {
             locationService.location = $location.path();
@@ -141,7 +144,9 @@ as.service('LocationService', function ($location) {
     };
 
     locationService.gotoLast = function () {
-        $location.path(locationService.location);
+        if (locationService.location) {
+            $location.path(locationService.location);
+        }
     };
 
     locationService.replaceParamsInUrl = function (url, params) {

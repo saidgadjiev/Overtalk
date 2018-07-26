@@ -30,60 +30,46 @@ public class CommentDao {
     }
 
     public void create(Comment comment) throws SQLException {
-        LOGGER.debug("create(): " + comment.toString());
-        try (Session session = sessionManager.createSession()) {
-            session.create(comment);
-        }
+        Session session = sessionManager.currentSession();
+
+        session.create(comment);
     }
 
     public List<Comment> getByPostId(Integer id, int limit, int offset) throws SQLException {
-        LOGGER.debug("getByPostId(): " + id);
-        try (Session session = sessionManager.createSession()) {
-            SelectStatement<Comment> selectStatement = new SelectStatement<>(Comment.class);
+        Session session = sessionManager.currentSession();
+        SelectStatement<Comment> selectStatement = new SelectStatement<>(Comment.class);
 
-            selectStatement.where(new Criteria().add(Restrictions.eq("post", id))).limit(limit).offset(offset);
+        selectStatement.where(new Criteria().add(Restrictions.eq("post", id))).limit(limit).offset(offset);
 
-            List<Comment> comments = session.list(selectStatement);
-            LOGGER.debug(comments.toString());
-
-            return comments;
-        }
+        return session.list(selectStatement);
     }
 
     public long countOffByPostId(Integer id) throws SQLException {
-        LOGGER.debug("countOffByPostId(): " + id);
-        try (Session session = sessionManager.createSession()) {
-            SelectStatement<Comment> selectStatement = new SelectStatement<>(Comment.class);
+        Session session = sessionManager.currentSession();
+        SelectStatement<Comment> selectStatement = new SelectStatement<>(Comment.class);
 
-            selectStatement
-                    .countOff()
-                    .where(new Criteria().add(Restrictions.eq("post", id)));
+        selectStatement
+                .withoutJoins(true)
+                .countOff()
+                .where(new Criteria().add(Restrictions.eq("post", id)));
 
-            Long count = session.queryForLong(selectStatement);
-            LOGGER.debug(count);
-
-            return count;
-        }
+        return session.queryForLong(selectStatement);
     }
 
     public int update(Comment comment) throws SQLException {
-        LOGGER.debug("update(): " + comment.getId());
-        try (Session session = sessionManager.createSession()) {
-            UpdateStatement updateStatement = new UpdateStatement(Comment.class);
+        Session session = sessionManager.currentSession();
+        UpdateStatement updateStatement = new UpdateStatement(Comment.class);
 
-            updateStatement.set("content", comment.getContent());
-            updateStatement.where(new Criteria().add(Restrictions.eq("id", comment.getId())));
-            long count = session.update(updateStatement);
-            LOGGER.debug(count);
+        updateStatement.set("content", comment.getContent());
+        updateStatement.where(new Criteria().add(Restrictions.eq("id", comment.getId())));
+        long count = session.update(updateStatement);
 
-            return (int) count;
-        }
+        return (int) count;
     }
 
     public int deleteById(Integer id) throws SQLException {
-        LOGGER.debug("deleteById(): " + id);
-        try (Session session = sessionManager.createSession()) {
-            return session.deleteById(Comment.class, id);
-        }
+        Session session = sessionManager.currentSession();
+
+        return session.deleteById(Comment.class, id);
     }
 }

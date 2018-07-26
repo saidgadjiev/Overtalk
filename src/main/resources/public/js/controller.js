@@ -247,8 +247,8 @@ as.controller('PostController', function ($scope,
     $scope.category = DataService.get('PostController');
 
     if (!$scope.category) {
-        $http.get('api/category/' + $routeParams.postId).then(function (value) {
-            $scope.category = value;
+        $http.get('api/category/' + $routeParams.id).then(function (value) {
+            $scope.category = value.data;
         });
     }
     $scope.currentPage = 1;
@@ -338,7 +338,7 @@ as.controller('DetailsController', function ($scope,
 
     if (!$scope.post) {
         $http.get('api/post/' + $routeParams.postId).then(function (value) {
-            $scope.post = value;
+            $scope.post = value.data;
         });
     }
     $scope.currentPage = 1;
@@ -444,14 +444,14 @@ as.controller('DetailsController', function ($scope,
     };
 
     $scope.doDeleteComment = function (comment) {
-        $http.post(commentUrl + 'delete', comment).then(function (comment) {
+        $http.post(commentUrl + 'delete', comment).then(function () {
             $log.log('delete comment' + comment);
             $scope.comments.splice($scope.comments.indexOf(comment), 1);
         });
     };
 
     $scope.doDeletePost = function (post) {
-        $http.post('api/comment/delete', post).then(function (post) {
+        $http.post('api/comment/delete', post).then(function () {
             $log.log('delete post' + post);
 
             $location.path('/categories/' + $routeParams.categoryId + '/posts');
@@ -538,7 +538,13 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
     };
 });
 
-as.controller('ProjectController', function ($scope, $http, $log, $location, IMAGE, DataService) {
+as.controller('ProjectController', function ($scope,
+                                             $http,
+                                             $log,
+                                             $location,
+                                             $uibModal,
+                                             IMAGE,
+                                             DataService) {
     $scope.defaultUrl = IMAGE.defaultUrl;
 
     $http.get('api/project').then(function (response) {
@@ -692,6 +698,7 @@ as.controller('CategoryController', function ($scope,
                                               $location,
                                               $http,
                                               $log,
+                                              $uibModal,
                                               DataService) {
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
@@ -744,7 +751,7 @@ as.controller('CategoryController', function ($scope,
 
     $scope.edit = function (category) {
         var editCategoryModal = $uibModal.open({
-            templateUrl: 'editCategory.html',
+            templateUrl: 'createOrEditCategory.html',
             controller: function ($scope, $uibModalInstance) {
                 $scope.category = {};
 

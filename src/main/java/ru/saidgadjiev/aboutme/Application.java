@@ -1,5 +1,6 @@
 package ru.saidgadjiev.aboutme;
 
+import org.apache.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,7 +20,10 @@ import ru.saidgadjiev.aboutme.storage.StorageService;
 @SpringBootApplication
 public class Application {
 
+    private static final Logger logger = Logger.getLogger(Application.class);
+
     public static void main(String[] args) {
+        logger.debug("App(Test)");
         SpringApplication.run(Application.class, args);
     }
 

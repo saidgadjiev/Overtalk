@@ -20,20 +20,20 @@ public class ProjectDao {
     }
 
     public List<Project> getAll() throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            return session.queryForAll(Project.class);
-        }
+        Session session = sessionManager.currentSession();
+
+        return session.queryForAll(Project.class);
     }
 
     public void create(Project project) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            session.create(project);
-        }
+        Session session = sessionManager.currentSession();
+
+        session.create(project);
     }
 
     public int update(Project project) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            return session.update(project);
-        }
+        Session session = sessionManager.currentSession();
+
+        return session.update(project);
     }
 }

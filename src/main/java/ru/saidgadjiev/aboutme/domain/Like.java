@@ -17,7 +17,7 @@ public class Like {
     private Comment comment;
 
     @ForeignColumn(foreignFieldName = "userName", fetchType = FetchType.LAZY)
-    private UserProfile user;
+    private UserProfile2 user;
 
     public Integer getId() {
         return id;
@@ -43,11 +43,21 @@ public class Like {
         this.comment = comment;
     }
 
-    public UserProfile getUser() {
+    public UserProfile2 getUser() {
         return user;
     }
 
-    public void setUser(UserProfile user) {
+    public void setUser(UserProfile2 user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Like{" +
+                "id=" + id +
+                ", post=" + (post == null ? null : post.getId()) +
+                ", comment=" + (comment == null ? null : comment.getId()) +
+                ", user=" + (user == null ? null : user.getUserName()) +
+                '}';
     }
 }

@@ -4,11 +4,13 @@ import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
 import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
 import ru.saidgadjiev.ormnext.core.field.*;
+import ru.saidgajiev.ormnext.cache.Cacheable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Cacheable
 public class Post {
 
     @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)
@@ -25,7 +27,7 @@ public class Post {
     private Date createdDate = new Date();
 
     @ForeignColumn(foreignFieldName = "userName")
-    private UserProfile user;
+    private UserProfile2 user;
 
     @ForeignCollectionField(foreignFieldName = "post", fetchType = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
@@ -68,11 +70,11 @@ public class Post {
         this.createdDate = createdDate;
     }
 
-    public UserProfile getUser() {
+    public UserProfile2 getUser() {
         return user;
     }
 
-    public void setUser(UserProfile user) {
+    public void setUser(UserProfile2 user) {
         this.user = user;
     }
 
@@ -103,9 +105,12 @@ public class Post {
     @Override
     public String toString() {
         return "Post{" +
+                "id=" + id +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", createdDate='" + createdDate + "'\'" +
+                ", createdDate=" + createdDate +
+                ", user=" + (user == null ? null : user.getUserName()) +
+                ", likes=" + likes +
                 '}';
     }
 }

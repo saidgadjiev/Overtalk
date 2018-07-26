@@ -2,6 +2,7 @@ package ru.saidgadjiev.aboutme.domain;
 
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
+import ru.saidgadjiev.ormnext.core.field.FetchType;
 import ru.saidgadjiev.ormnext.core.field.ForeignColumn;
 import ru.saidgadjiev.ormnext.core.table.DatabaseEntity;
 import ru.saidgadjiev.ormnext.core.table.Unique;
@@ -55,5 +56,13 @@ public class UserRole {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "UserRole{" +
+                "id=" + id +
+                ", role=" + (role == null ? null : role.getName()) +
+                '}';
     }
 }

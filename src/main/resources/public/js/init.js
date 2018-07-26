@@ -11,6 +11,7 @@ as.constant('IMAGE', {
 });
 
 as.constant('AUTH_EVENTS', {
+    accountRequestSuccess: 'account-request-success',
     signUpSuccess: 'auth-signUp-success',
     signInSuccess: 'auth-signIn-success',
     signInFailed: 'auth-signIn-failed',
@@ -186,7 +187,7 @@ as.run(function ($rootScope,
         else if (next.access && next.access.loginRequired && !$rootScope.authenticated) {
             event.preventDefault();
             $rootScope.$broadcast(AUTH_EVENTS.unauthorized, {});
-        }else if(next.access && !AuthService.isAuthorized(next.access.authorizedRoles)) {
+        } else if (next.access && !AuthService.isAuthorized(next.access.authorizedRoles)) {
             event.preventDefault();
             $rootScope.$broadcast(AUTH_EVENTS.accessDenied, {});
         }
@@ -222,6 +223,10 @@ as.run(function ($rootScope,
         $rootScope.authenticated = false;
         $rootScope.nickName = null;
         $location.path('/signIn');
+    });
+    $rootScope.$on(AUTH_EVENTS.accountRequestSuccess, function () {
+        $rootScope.nickName = Session.nickName;
+        $rootScope.authenticated = true;
     });
 
     $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {

@@ -2,7 +2,6 @@ package ru.saidgadjiev.aboutme.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import ru.saidgadjiev.aboutme.domain.AboutMe;
 import ru.saidgadjiev.aboutme.domain.Skill;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
@@ -20,26 +19,26 @@ public class SkillDao {
     }
 
     public void create(Skill skill) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            session.create(skill);
-        }
+        Session session = sessionManager.currentSession();
+
+        session.create(skill);
     }
 
     public int update(Skill skill) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            return session.update(skill);
-        }
+        Session session = sessionManager.currentSession();
+
+        return session.update(skill);
     }
 
     public int remove(Skill skill) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            return session.delete(skill);
-        }
+        Session session = sessionManager.currentSession();
+
+        return session.delete(skill);
     }
 
     public int removeById(Integer id) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            return session.deleteById(Skill.class, id);
-        }
+        Session session = sessionManager.currentSession();
+
+        return session.deleteById(Skill.class, id);
     }
 }

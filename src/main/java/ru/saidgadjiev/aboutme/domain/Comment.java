@@ -4,10 +4,11 @@ import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
 import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
 import ru.saidgadjiev.ormnext.core.field.*;
+import ru.saidgajiev.ormnext.cache.Cacheable;
 
 import java.util.Date;
 
-
+@Cacheable
 public class Comment {
 
     @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)
@@ -26,7 +27,7 @@ public class Comment {
 
     @DatabaseColumn(notNull = true)
     @ForeignColumn(foreignFieldName = "userName")
-    private UserProfile user;
+    private UserProfile2 user;
 
     public Integer getId() {
         return id;
@@ -60,11 +61,22 @@ public class Comment {
         this.createdDate = createdDate;
     }
 
-    public UserProfile getUser() {
+    public UserProfile2 getUser() {
         return user;
     }
 
-    public void setUser(UserProfile user) {
+    public void setUser(UserProfile2 user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", post=" + post +
+                ", createdDate=" + createdDate +
+                ", user=" + (user == null ? null : user.getUserName()) +
+                '}';
     }
 }

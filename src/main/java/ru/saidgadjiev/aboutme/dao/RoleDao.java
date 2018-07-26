@@ -22,8 +22,8 @@ public class RoleDao {
     }
 
     public Role queryForId(Integer id) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            return session.queryForId(Role.class, id);
-        }
+        Session session = sessionManager.currentSession();
+
+        return session.queryForId(Role.class, id);
     }
 }

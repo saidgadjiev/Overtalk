@@ -67,7 +67,7 @@ public class BlogService {
     }
 
     public Page<PostDetails> getPostsByCategoryId(Integer categoryId, Pageable page) throws SQLException {
-        long totalCount = postDao.countOff();
+        long totalCount = postDao.countOffPostsByCategoryId(categoryId);
         List<Post> posts = postDao.getPosts(categoryId, page.getPageSize(), page.getOffset());
 
         List<PostDetails> postDetailsList = DTOUtils.convert(posts, PostDetails.class);

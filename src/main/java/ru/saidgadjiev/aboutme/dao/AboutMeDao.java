@@ -22,26 +22,25 @@ public class AboutMeDao {
     }
 
     public void createOrUpdate(AboutMe aboutMe) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            session.createOrUpdate(aboutMe);
-        }
+        Session session = sessionManager.currentSession();
+
+        session.createOrUpdate(aboutMe);
     }
 
     public AboutMe getAboutMe() throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            return session.queryForAll(AboutMe.class).iterator().next();
-        }
+        Session session = sessionManager.currentSession();
+
+        return session.queryForAll(AboutMe.class).iterator().next();
     }
 
     public int update(AboutMe aboutMe) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            UpdateStatement updateStatement = new UpdateStatement(AboutMe.class);
+        Session session = sessionManager.currentSession();
+        UpdateStatement updateStatement = new UpdateStatement(AboutMe.class);
 
-            updateStatement.set("post", aboutMe.getPost());
-            updateStatement.set("placeOfResidence", aboutMe.getPlaceOfResidence());
-            updateStatement.where(new Criteria().add(Restrictions.eq("id", 1)));
+        updateStatement.set("post", aboutMe.getPost());
+        updateStatement.set("placeOfResidence", aboutMe.getPlaceOfResidence());
+        updateStatement.where(new Criteria().add(Restrictions.eq("id", 1)));
 
-            return session.update(updateStatement);
-        }
+        return session.update(updateStatement);
     }
 }

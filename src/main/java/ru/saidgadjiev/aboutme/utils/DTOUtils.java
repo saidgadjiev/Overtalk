@@ -31,7 +31,7 @@ public final class DTOUtils {
                 return userRole.getRole().getName();
             }).collect(Collectors.toSet());
         };
-        Converter<UserProfile, String> userNickNameConverter = context -> {
+        Converter<UserProfile2, String> userNickNameConverter = context -> {
             if (context.getSource() == null) {
                 return null;
             }
@@ -82,11 +82,11 @@ public final class DTOUtils {
 
             return comment;
         };
-        Converter<String, UserProfile> userNameConverter = context -> {
+        Converter<String, UserProfile2> userNameConverter = context -> {
             if (context.getSource() == null) {
                 return null;
             }
-            UserProfile userProfile = new UserProfile();
+            UserProfile2 userProfile = new UserProfile2();
 
             userProfile.setUserName(context.getSource());
 

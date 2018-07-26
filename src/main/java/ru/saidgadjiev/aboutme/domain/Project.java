@@ -4,15 +4,10 @@ import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgajiev.ormnext.cache.Cacheable;
-import ru.saidgajiev.ormnext.cache.policy.CachePolicy;
 
 import javax.validation.constraints.NotNull;
 
-@Cacheable(
-        policies = {
-                CachePolicy.CACHE_QUERY_FOR_ALL
-        }
-)
+@Cacheable
 public class Project {
 
     @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)

@@ -23,35 +23,34 @@ public class LikeDao {
     }
 
     public void create(Like like) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            session.create(like);
-        }
+        Session session = sessionManager.currentSession();
+
+        session.create(like);
     }
 
     public void delete(Like like) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            DeleteStatement deleteStatement = new DeleteStatement(Like.class);
+        Session session = sessionManager.currentSession();
+        DeleteStatement deleteStatement = new DeleteStatement(Like.class);
 
-            deleteStatement
-                    .where(new Criteria()
-                            .add(like.getPost().getId() != null ? eq("post", like.getPost().getId()) : isNull("post"))
-                            .add(like.getComment().getId() != null ? eq("comment", like.getComment().getId()): isNull("comment"))
-                            .add(eq("user", like.getUser().getUserName())));
+        deleteStatement
+                .where(new Criteria()
+                        .add(like.getPost().getId() != null ? eq("post", like.getPost().getId()) : isNull("post"))
+                        .add(like.getComment().getId() != null ? eq("comment", like.getComment().getId()) : isNull("comment"))
+                        .add(eq("user", like.getUser().getUserName())));
 
-            session.delete(deleteStatement);
-        }
+        session.delete(deleteStatement);
     }
 
     public long postLikes(Integer postId) throws SQLException {
-        try (Session session = sessionManager.createSession()) {
-            SelectStatement<Like> selectStatement = new SelectStatement<>(Like.class);
+        Session session = sessionManager.currentSession();
+        SelectStatement<Like> selectStatement = new SelectStatement<>(Like.class);
 
-            selectStatement
-                    .countOff()
-                    .where(new Criteria()
-                            .add(eq("post", postId)));
+        selectStatement
+                .countOff()
+                .where(new Criteria()
+                        .add(eq("post", postId)));
 
-            return session.queryForLong(selectStatement);
-        }
+        return session.queryForLong(selectStatement);
     }
+
 }
