@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import ru.saidgadjiev.aboutme.domain.Category;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
+import ru.saidgadjiev.ormnext.core.query.criteria.impl.Order;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.SelectStatement;
 
 import java.sql.SQLException;
@@ -45,7 +46,9 @@ public class CategoryDao {
         Session session = sessionManager.currentSession();
         SelectStatement<Category> selectStatement = new SelectStatement<>(Category.class);
 
-        selectStatement.limit(limit).offset((int) offset);
+        selectStatement
+                .limit(limit)
+                .offset((int) offset);
 
         return session.list(selectStatement);
     }

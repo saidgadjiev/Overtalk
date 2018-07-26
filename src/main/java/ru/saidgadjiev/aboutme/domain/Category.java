@@ -20,6 +20,9 @@ public class Category {
 
     @DatabaseColumn(notNull = true)
     private String description;
+    
+    @DatabaseColumn()
+    private int index;
 
     @ForeignCollectionField(foreignFieldName = "category", fetchType = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
