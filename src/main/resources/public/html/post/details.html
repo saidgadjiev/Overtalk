@@ -60,7 +60,7 @@
                     ng-click="doCreateComment(commentForm.$valid)">Опубликовать
             </button>
             <button type="button" ng-if="!authenticated" data-toggle="tooltip"
-                    name="Войдите, чтобы оставлять комментарии"
+                    title="Войдите, чтобы оставлять комментарии" data-placement="top"
                     class="btn btn-primary" disabled>Опубликовать
             </button>
         </div>
@@ -72,7 +72,7 @@
         <h4 class="modal-title" id="editCommentModalLabel">
             Редактирование комментария
         </h4>
-        <button type="button" class="close" data-dismiss="modal"
+        <button type="button" class="close" ng-click="dismiss()"
                 aria-hidden="true">&times;
         </button>
     </div>

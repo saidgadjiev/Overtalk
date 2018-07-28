@@ -409,6 +409,10 @@ as.controller('DetailsController', function ($scope,
                     $uibModalInstance.dismiss('cancel');
                 };
 
+                $scope.dismiss = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
+
                 $log.log('Open edit comment modal');
             }
         });
@@ -568,8 +572,8 @@ as.controller('ProjectController', function ($scope,
                     $location.path('/projects/new');
                 };
 
-                $scope.doClose = function () {
-                    $uibModalInstance.dismiss();
+                $scope.dismiss = function () {
+                    $uibModalInstance.dismiss('cancel');
                 };
             }
         });
@@ -585,7 +589,7 @@ as.controller('AboutMeController', function ($scope,
                                              $http,
                                              $uibModal,
                                              $log) {
-    $http.get('/api/aboutme').then(function (response) {
+    $http.get('/api/aboutMe').then(function (response) {
         $scope.aboutMe = response.data;
     });
 
@@ -611,14 +615,14 @@ as.controller('AboutMeController', function ($scope,
                     $uibModalInstance.dismiss('cancel');
                 };
 
-                $scope.doClose = function () {
-                    $uibModalInstance.dismiss();
+                $scope.dismiss = function () {
+                    $uibModalInstance.dismiss('cancel');
                 };
             }
         });
 
         editAboutMeModal.result.then(function (value) {
-            $http.post('/api/aboutme/update', value)
+            $http.post('/api/aboutMe/update', value)
                 .then(function (response) {
                     aboutMe.placeOfResidence = response.data.placeOfResidence;
                     aboutMe.post = response.data.post;
@@ -645,8 +649,8 @@ as.controller('AboutMeController', function ($scope,
                     $uibModalInstance.dismiss('cancel');
                 };
 
-                $scope.doClose = function () {
-                    $uibModalInstance.dismiss();
+                $scope.dismiss = function () {
+                    $uibModalInstance.dismiss('cancel');
                 };
             }
         });
@@ -751,6 +755,10 @@ as.controller('CategoryController', function ($scope,
                 $scope.cancel = function () {
                     $uibModalInstance.dismiss('cancel');
                 };
+
+                $scope.dismiss = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
             }
         });
 
@@ -809,25 +817,4 @@ as.controller('CategoryController', function ($scope,
     };
 });
 
-as.controller('TestController', function ($scope, $log, $uibModal) {
-    $scope.open = function () {
-        $uibModal.open({
-            templateUrl: 'stackedModal.html',
-            controller: function ($log) {
-                $log.log('Open modal');
-            }
-        });
-    }
-});
-
-as.controller('ModalDemoCtrl', function ($scope, $uibModal, $log, $document) {
-    $scope.open = function () {
-        $uibModal.open({
-            templateUrl: 'stackedModal.html',
-            controller: function ($log) {
-                $log.log('Open modal');
-            }
-        });
-    };
-});
 

@@ -54,20 +54,13 @@ as.config(function ($routeProvider, $httpProvider, $locationProvider, USER_ROLES
             loginRequired: false,
             authorizedRoles: [USER_ROLES.all]
         }
-    }).when('/aboutme', {
-        templateUrl: 'html/aboutme/aboutme.html',
+    }).when('/aboutMe', {
+        templateUrl: 'html/aboutMe/aboutMe.html',
         controller: 'AboutMeController',
         publicAccess: true,
         access: {
             loginRequired: false,
             authorizedRoles: [USER_ROLES.all]
-        }
-    }).when('/aboutme/edit', {
-        templateUrl: 'html/aboutme/edit.html',
-        controller: 'EditAboutMeController',
-        access: {
-            loginRequired: true,
-            authorizedRoles: [USER_ROLES.admin]
         }
     }).when('/signIn', {
         templateUrl: 'html/auth/signIn.html',
@@ -201,19 +194,19 @@ as.run(function ($rootScope,
     $rootScope.$on(AUTH_EVENTS.signInSuccess, function () {
         $rootScope.nickName = Session.nickName;
         $rootScope.authenticated = true;
-        if (LocationService.location) {
+        if (LocationService.location && !LocationService.location === '/signUp') {
             LocationService.gotoLast();
         } else {
-            $location.path('/aboutme');
+            $location.path('/aboutMe');
         }
     });
     $rootScope.$on(AUTH_EVENTS.signUpSuccess, function () {
         $rootScope.nickName = Session.nickName;
         $rootScope.authenticated = true;
-        if (LocationService.location && !LocationService.location === '/signUp') {
+        if (LocationService.location && !LocationService.location === '/signIn') {
             LocationService.gotoLast();
         } else {
-            $location.path('/aboutme');
+            $location.path('/aboutMe');
         }
     });
     $rootScope.$on(RESPONSE_ERROR_EVENTS.internalServerError, function () {

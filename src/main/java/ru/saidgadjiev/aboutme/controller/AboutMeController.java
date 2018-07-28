@@ -14,7 +14,7 @@ import ru.saidgadjiev.aboutme.service.AboutMeService;
 import java.sql.SQLException;
 
 @RestController
-@RequestMapping("/api/aboutme")
+@RequestMapping("/api/aboutMe")
 public class AboutMeController {
 
     private static final Logger LOGGER = Logger.getLogger(AboutMeController.class);
