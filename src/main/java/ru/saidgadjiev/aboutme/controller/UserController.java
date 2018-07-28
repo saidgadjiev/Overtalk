@@ -45,7 +45,6 @@ public class UserController {
         return ResponseEntity.ok(userDetails);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/user/exist", method = RequestMethod.GET)
     public ResponseEntity exist(@RequestParam(value = "userName") String userName) throws SQLException {
         if (userService.isExists(userName)) {

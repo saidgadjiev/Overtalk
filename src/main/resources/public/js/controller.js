@@ -569,7 +569,7 @@ as.controller('ProjectController', function ($scope,
                 };
 
                 $scope.doClose = function () {
-                    $uibModalInstance.close($scope.comment);
+                    $uibModalInstance.dismiss();
                 };
             }
         });
@@ -586,29 +586,33 @@ as.controller('AboutMeController', function ($scope,
                                              $uibModal,
                                              $log) {
     $http.get('/api/aboutme').then(function (response) {
-        $scope.aboutme = response.data;
+        $scope.aboutMe = response.data;
     });
 
-    $scope.editAboutMe = function (aboutme) {
+    $scope.editAboutMe = function (aboutMe) {
         var editAboutMeModal = $uibModal.open({
             templateUrl: 'editAboutMe.html',
             controller: function ($scope, $uibModalInstance) {
-                $scope.aboutme = {};
+                $scope.aboutMe = {};
 
-                $scope.aboutme.placeOfResidence = aboutme.placeOfResidence;
-                $scope.aboutme.post = aboutme.post;
+                $scope.aboutMe.placeOfResidence = aboutMe.placeOfResidence;
+                $scope.aboutMe.post = aboutMe.post;
 
                 $scope.ok = function () {
                     $scope.submitted = true;
 
                     if ($scope.editAboutMeForm.$valid) {
                         $scope.submitted = false;
-                        $uibModalInstance.close($scope.aboutme);
+                        $uibModalInstance.close($scope.aboutMe);
                     }
                 };
 
                 $scope.cancel = function () {
                     $uibModalInstance.dismiss('cancel');
+                };
+
+                $scope.doClose = function () {
+                    $uibModalInstance.dismiss();
                 };
             }
         });
@@ -616,8 +620,8 @@ as.controller('AboutMeController', function ($scope,
         editAboutMeModal.result.then(function (value) {
             $http.post('/api/aboutme/update', value)
                 .then(function (response) {
-                    aboutme.placeOfResidence = response.data.placeOfResidence;
-                    aboutme.post = response.data.post;
+                    aboutMe.placeOfResidence = response.data.placeOfResidence;
+                    aboutMe.post = response.data.post;
                 });
         });
     };
@@ -640,6 +644,10 @@ as.controller('AboutMeController', function ($scope,
                 $scope.cancel = function () {
                     $uibModalInstance.dismiss('cancel');
                 };
+
+                $scope.doClose = function () {
+                    $uibModalInstance.dismiss();
+                };
             }
         });
 
@@ -654,7 +662,7 @@ as.controller('AboutMeController', function ($scope,
     $scope.removeSkill = function (skill) {
         $http.post('/api/skill/remove/' + skill.id).then(function () {
             $log.log('delete skill ' + skill);
-            $scope.aboutme.skills.splice($scope.aboutme.skills.indexOf(skill), 1);
+            $scope.aboutMe.skills.splice($scope.aboutMe.skills.indexOf(skill), 1);
         });
     };
 
