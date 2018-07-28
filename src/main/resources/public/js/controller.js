@@ -451,7 +451,7 @@ as.controller('DetailsController', function ($scope,
     };
 
     $scope.doDeletePost = function (post) {
-        $http.post('api/comment/delete', post).then(function () {
+        $http.post('api/post/delete/' + post.id).then(function () {
             $log.log('delete post' + post);
 
             $location.path('/categories/' + $routeParams.categoryId + '/posts');
@@ -488,12 +488,13 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
         $scope.project.name = $scope.data.name;
         $scope.project.description = $scope.data.description;
         $scope.project.projectLink = $scope.data.projectLink;
+        $scope.project.logoPath = $scope.data.logoPath;
         $scope.logoPath = '/api/file/logo/' + $scope.data.logoPath;
     }
 
     var actionUrl = 'api/project/';
 
-    $scope.save = function (isValid) {
+    $scope.doSave = function (isValid) {
         $scope.submitted = true;
 
         if (isValid) {
@@ -559,12 +560,16 @@ as.controller('ProjectController', function ($scope,
     $scope.doOpenDetails = function (project) {
         $uibModal.open({
             templateUrl: 'projectDetails.html',
-            controller: function ($scope) {
+            controller: function ($scope, $uibModalInstance) {
                 $scope.details = project;
 
                 $scope.doEdit = function (project) {
                     DataService.set('NewProjectController', project);
                     $location.path('/projects/new');
+                };
+
+                $scope.doClose = function () {
+                    $uibModalInstance.close($scope.comment);
                 };
             }
         });

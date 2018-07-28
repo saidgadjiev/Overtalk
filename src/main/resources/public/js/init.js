@@ -210,7 +210,7 @@ as.run(function ($rootScope,
     $rootScope.$on(AUTH_EVENTS.signUpSuccess, function () {
         $rootScope.nickName = Session.nickName;
         $rootScope.authenticated = true;
-        if (LocationService.location) {
+        if (LocationService.location && !LocationService.location === '/signUp') {
             LocationService.gotoLast();
         } else {
             $location.path('/aboutme');

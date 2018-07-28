@@ -3,27 +3,29 @@
     Добавить новый проект
 </button>
 
-<div class="card mt-3 w-75 mx-auto" ng-repeat="project in projects">
-    <img class="card-img-top" ng-if="project.logoPath" ng-src="/api/file/logo/{{project.logoPath}}">
-    <img class="card-img-top" ng-if="!project.logoPath" ng-src="{{defaultUrl}}">
-    <div class="card-body">
-        <div class="card-title">
-            <span class="h5 font-weight-bold">{{project.name}}</span>
-            <ul class="d-inline-flex list-inline">
-                <li access="ROLE_ADMIN" class="list-inline-item">
-                    <i ng-click="doEdit(project)" class="text-primary fa fa-edit"></i>
-                </li>
-                <li ng-if="project.projectLink" class="list-inline-item">
-                    <a href="{{project.projectLink}}" target="_blank" class="card-link">
-                        <i class="text-secondary text-lg fa fa-github"></i>
-                    </a>
-                </li>
-            </ul>
+<div class="mb-3">
+    <div class="card mt-3 w-75 mx-auto" ng-repeat="project in projects">
+        <img class="card-img-top" ng-if="project.logoPath" ng-src="/api/file/logo/{{project.logoPath}}">
+        <img class="card-img-top" ng-if="!project.logoPath" ng-src="{{defaultUrl}}">
+        <div class="card-body">
+            <div class="card-title">
+                <span class="h5 font-weight-bold">{{project.name}}</span>
+                <ul class="d-inline-flex list-inline">
+                    <li access="ROLE_ADMIN" class="list-inline-item">
+                        <i ng-click="doEdit(project)" class="text-primary text-lg fa fa-edit"></i>
+                    </li>
+                    <li ng-if="project.projectLink" class="list-inline-item">
+                        <a href="{{project.projectLink}}" target="_blank" class="card-link">
+                            <i class="text-primary text-lg fa fa-github"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <p class="card-text text-ellipsis">{{project.description}}</p>
+            <button ng-click="doOpenDetails(project)" type="button" class="btn btn-outline-primary btn-sm">
+                Читать дальше →
+            </button>
         </div>
-        <p class="card-text text-ellipsis">{{project.description}}</p>
-        <button ng-click="doOpenDetails(project)" type="button" class="btn btn-outline-primary btn-sm">
-            Читать дальше →
-        </button>
     </div>
 </div>
 
@@ -36,11 +38,11 @@
             </li>
             <li ng-if="details.projectLink" class="list-inline-item">
                 <a href="{{details.projectLink}}" target="_blank" class="card-link">
-                    <i class="text-secondary fa fa-github"></i>
+                    <i class="text-primary fa fa-github"></i>
                 </a>
             </li>
         </ul>
-        <button type="button" class="close" data-dismiss="modal"
+        <button type="button" class="close" ng-click="doClose()"
                 aria-hidden="true">&times;
         </button>
     </div>

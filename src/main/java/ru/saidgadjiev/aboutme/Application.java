@@ -23,7 +23,6 @@ public class Application {
     private static final Logger logger = Logger.getLogger(Application.class);
 
     public static void main(String[] args) {
-        logger.debug("App(Test)");
         SpringApplication.run(Application.class, args);
     }
 
