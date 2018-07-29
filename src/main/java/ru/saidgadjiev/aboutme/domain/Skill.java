@@ -8,6 +8,7 @@ import ru.saidgajiev.ormnext.cache.Cacheable;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class Skill {
 
@@ -15,7 +16,7 @@ public class Skill {
     private Integer id;
 
     @NotNull
-    @Min(1)
+    @Size(min = 1)
     @DatabaseColumn(notNull = true)
     private String name;
 

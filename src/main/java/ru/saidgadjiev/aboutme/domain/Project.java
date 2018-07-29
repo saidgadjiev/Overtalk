@@ -7,6 +7,7 @@ import ru.saidgajiev.ormnext.cache.Cacheable;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Cacheable
 public class Project {
@@ -15,12 +16,12 @@ public class Project {
     private Integer id;
 
     @NotNull
-    @Min(1)
+    @Size(min = 1)
     @DatabaseColumn(notNull = true, unique = true)
     private String name;
 
     @NotNull
-    @Min(1)
+    @Size(min = 1)
     @DatabaseColumn(notNull = true, persisterClass = TextTypeDataPersister.class)
     private String description;
 

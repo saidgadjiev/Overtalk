@@ -1,18 +1,18 @@
 package ru.saidgadjiev.aboutme.model;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class CategoryDetails {
 
     private Integer id;
 
     @NotNull
-    @Min(1)
+    @Size(min = 1)
     private String name;
 
     @NotNull
-    @Min(1)
+    @Size(min = 1)
     private String description;
 
     private int postsCount;
