@@ -138,14 +138,32 @@
 
         <dependency>
             <groupId>ru.saidgadjiev.ormnext</groupId>
+            <artifactId>ormnext-core</artifactId>
+            <version>1.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.saidgadjiev.ormnext</groupId>
             <artifactId>ormnext-support</artifactId>
             <version>1.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ru.saidgadjiev.ormnext</groupId>
+                    <artifactId>ormnext-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>ru.saidgadjiev.ormnext</groupId>
             <artifactId>ormnext-cache</artifactId>
             <version>1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ru.saidgadjiev.ormnext</groupId>
+                    <artifactId>ormnext-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
