@@ -1,5 +1,6 @@
 package ru.saidgadjiev.aboutme.model;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.List;
@@ -11,15 +12,19 @@ import java.util.Set;
 public class UserDetails {
 
     @NotNull
+    @Min(1)
     private String userName;
 
     @NotNull
+    @Min(1)
     private String password;
 
     @NotNull
+    @Min(1)
     private String nickName;
 
     @NotNull
+    @Min(1)
     private String confirmPassword;
 
     private Set<String> roles = new HashSet<>();

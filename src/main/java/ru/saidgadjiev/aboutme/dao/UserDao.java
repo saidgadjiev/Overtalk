@@ -58,12 +58,23 @@ public class UserDao {
         }
     }
 
-    public boolean isExists(String userName) throws SQLException {
+    public boolean isExistUserName(String userName) throws SQLException {
         Session session = sessionManager.currentSession();
         SelectStatement<UserProfile> selectStatement = new SelectStatement<>(UserProfile.class);
 
         selectStatement
                 .where(new Criteria().add(Restrictions.eq("userName", userName)))
+                .countOff();
+
+        return session.queryForLong(selectStatement) > 0;
+    }
+
+    public boolean isExistNickName(String nickName) throws SQLException {
+        Session session = sessionManager.currentSession();
+        SelectStatement<UserProfile> selectStatement = new SelectStatement<>(UserProfile.class);
+
+        selectStatement
+                .where(new Criteria().add(Restrictions.eq("nickName", nickName)))
                 .countOff();
 
         return session.queryForLong(selectStatement) > 0;

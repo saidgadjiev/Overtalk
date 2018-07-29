@@ -5,6 +5,7 @@ import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgajiev.ormnext.cache.Cacheable;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Cacheable
@@ -14,10 +15,12 @@ public class Project {
     private Integer id;
 
     @NotNull
+    @Min(1)
     @DatabaseColumn(notNull = true, unique = true)
     private String name;
 
     @NotNull
+    @Min(1)
     @DatabaseColumn(notNull = true, persisterClass = TextTypeDataPersister.class)
     private String description;
 

@@ -6,6 +6,7 @@ import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgadjiev.ormnext.core.field.ForeignColumn;
 import ru.saidgajiev.ormnext.cache.Cacheable;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class Skill {
@@ -14,6 +15,7 @@ public class Skill {
     private Integer id;
 
     @NotNull
+    @Min(1)
     @DatabaseColumn(notNull = true)
     private String name;
 

@@ -52,8 +52,12 @@ public class UserService {
         return Collections.singleton(userRole);
     }
 
-    public boolean isExists(String userName) throws SQLException {
-        return userDao.isExists(userName);
+    public boolean isExistUserName(String userName) throws SQLException {
+        return userDao.isExistUserName(userName);
+    }
+
+    public boolean isExistNickName(String nickName) throws SQLException {
+        return userDao.isExistNickName(nickName);
     }
 
     public UserProfile getByUserName(String userName) throws SQLException {

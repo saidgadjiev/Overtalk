@@ -196,12 +196,6 @@ as.controller('LoginController', function ($scope, $http, $location, $log, AuthS
 });
 
 as.controller('RegistrationController', function ($scope, $http, $location, $log, AuthService) {
-    $scope.checkUsername = function () {
-        $scope.userNameExist = false;
-        $http.get('api/user/exist?userName=' + $scope.newUser.userName).catch(function (response) {
-            $scope.userNameExist = response.status === 302;
-        });
-    };
     $scope.inputPasswordType = 'password';
 
     $scope.hideShowPassword = function () {
@@ -224,9 +218,7 @@ as.controller('RegistrationController', function ($scope, $http, $location, $log
         if (isValid) {
             AuthService.signUp($scope.newUser)
                 .catch(function (response) {
-                    if (response.status === 409) {
-                        $scope.userNameExist = true;
-                    } else if (response.status === 400) {
+                    if (response.status === 400) {
                         $scope.somethingWentWrong = true;
                     }
 

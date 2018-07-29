@@ -1,5 +1,6 @@
 package ru.saidgadjiev.aboutme.model;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class CategoryDetails {
@@ -7,9 +8,11 @@ public class CategoryDetails {
     private Integer id;
 
     @NotNull
+    @Min(1)
     private String name;
 
     @NotNull
+    @Min(1)
     private String description;
 
     private int postsCount;
