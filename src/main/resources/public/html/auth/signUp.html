@@ -2,7 +2,7 @@
     <p class="help-block has-error" ng-show="somethingWentWrong">Что то пошло не так!</p>
     <div class="form-group">
         <label for="nickName">Ник:</label>
-        <input type="text" class="form-control" id="nickName" name="nickName" ng-model="newUser.nickName" required>
+        <input type="text" class="form-control" id="nickName" name="nickName" ng-model="newUser.nickName" required unique-nick-name>
         <div ng-messages="signUpForm.nickName.$error"
              ng-if="signUpForm.nickName.$touched || submitted" style="color:red">
             <p class="help-block" ng-message="required">Введите ник!</p>

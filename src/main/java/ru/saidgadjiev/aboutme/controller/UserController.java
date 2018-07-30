@@ -42,7 +42,7 @@ public class UserController {
         return ResponseEntity.ok(userDetails);
     }
 
-    @RequestMapping(value = "/username/exist/{userName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/userName/exist/{userName}", method = RequestMethod.GET)
     public ResponseEntity existUserName(@PathVariable(value = "userName") String userName) throws SQLException {
         if (userService.isExistUserName(userName)) {
             return ResponseEntity.status(HttpStatus.FOUND).build();
