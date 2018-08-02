@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import ru.saidgadjiev.aboutme.properties.DataSourceProperties;
 import ru.saidgadjiev.aboutme.properties.StorageProperties;
 import ru.saidgadjiev.aboutme.storage.StorageService;
@@ -19,8 +20,6 @@ import ru.saidgadjiev.aboutme.storage.StorageService;
 })
 @SpringBootApplication
 public class Application {
-
-    private static final Logger logger = Logger.getLogger(Application.class);
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

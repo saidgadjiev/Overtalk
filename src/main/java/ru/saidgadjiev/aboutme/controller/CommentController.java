@@ -20,24 +20,21 @@ import java.sql.SQLException;
 @RequestMapping(value = "/api/comment")
 public class CommentController {
 
-    private static final Logger LOGGER = Logger.getLogger(CommentController.class);
-
     @Autowired
     private BlogService blogService;
 
-    @RequestMapping(value = "/{id}/comments", method = RequestMethod.GET)
+    @GetMapping(value = "/{id}/comments")
     public ResponseEntity<Page<CommentDetails>> getCommentsByPost(
             @PathVariable("id") Integer id,
             @PageableDefault(page = 0, size = 10, sort = "createdDate", direction = Sort.Direction.DESC) Pageable page
     ) throws SQLException {
-        LOGGER.debug("getCommentsByPost(): " + id + ", " + page);
         Page<CommentDetails> commentDetails = blogService.getCommentsByPostId(id, page);
 
         return ResponseEntity.ok(commentDetails);
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/{id}/create", method = RequestMethod.POST)
+    @PostMapping(value = "/{id}/create")
     public ResponseEntity createCommentOfPost(
             @PathVariable("id") Integer id,
             @RequestBody @Valid CommentDetails commentDetails,
@@ -46,27 +43,24 @@ public class CommentController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        LOGGER.debug("create():" + commentDetails);
         blogService.createCommentOfPost(id, commentDetails);
 
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("@authorization.canEditComment(#commentDetails)")
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @PostMapping(value = "/update")
     public ResponseEntity<CommentDetails> updateComment(
             @RequestBody CommentDetails commentDetails
     ) throws SQLException {
-        LOGGER.debug("updateComment():" + commentDetails);
         blogService.updateComment(commentDetails);
 
         return ResponseEntity.ok(commentDetails);
     }
 
     @PreAuthorize("@authorization.canDeleteComment(#commentDetails)")
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @PostMapping(value = "/delete")
     public ResponseEntity<CommentDetails> deleteComment(@RequestBody CommentDetails commentDetails) throws SQLException {
-        LOGGER.debug("deleteComment():" + commentDetails);
         blogService.deleteCommentById(commentDetails.getId());
 
         return ResponseEntity.ok(commentDetails);

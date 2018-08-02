@@ -26,13 +26,20 @@ public class OpenSessionInViewFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        LOGGER.debug("Start open session in view");
-
-        try(Session ignored = sessionManager.currentSession()) {
+        if (request.getRequestURI().endsWith("js")
+                || request.getRequestURI().endsWith("css")
+                || request.getRequestURI().endsWith("html")
+                || request.getRequestURI().equals("/")) {
             filterChain.doFilter(request, response);
-        } catch (SQLException ex) {
-            throw new ServletException(ex);
+        } else {
+            LOGGER.debug("Start open session in view");
+
+            try (Session ignored = sessionManager.currentSession()) {
+                filterChain.doFilter(request, response);
+            } catch (SQLException ex) {
+                throw new ServletException(ex);
+            }
+            LOGGER.debug("Session in view closed");
         }
-        LOGGER.debug("Session in view closed");
     }
 }

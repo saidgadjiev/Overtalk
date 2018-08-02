@@ -1,13 +1,11 @@
 package ru.saidgadjiev.aboutme.controller;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.domain.Role;
 import ru.saidgadjiev.aboutme.model.UserDetails;
 import ru.saidgadjiev.aboutme.service.SecurityService;
@@ -34,7 +32,7 @@ public class AuthController {
         this.securityService = securityService;
     }
 
-    @RequestMapping(value = "/signUp", method = RequestMethod.POST)
+    @PostMapping(value = "/signUp")
     public ResponseEntity<org.springframework.security.core.userdetails.UserDetails> signUp(
             @RequestBody @Valid UserDetails userDetails, BindingResult bindingResult
     ) throws SQLException {
@@ -50,7 +48,7 @@ public class AuthController {
         return ResponseEntity.ok(securityService.findLoggedInUser());
     }
 
-    @RequestMapping(value = "/account", method = RequestMethod.GET)
+    @GetMapping(value = "/account")
     public ResponseEntity<org.springframework.security.core.userdetails.UserDetails> getAccount() {
         return ResponseEntity.ok(securityService.findLoggedInUser());
     }

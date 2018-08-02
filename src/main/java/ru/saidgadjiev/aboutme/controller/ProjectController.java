@@ -10,10 +10,7 @@ import org.springframework.validation.DataBinder;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.OptionalValidatorFactoryBean;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.saidgadjiev.aboutme.domain.Project;
 import ru.saidgadjiev.aboutme.service.ProjectService;
@@ -30,8 +27,6 @@ import java.util.Set;
 @RequestMapping(value = "/api/project")
 public class ProjectController {
 
-    private static final Logger LOGGER = Logger.getLogger(ProjectController.class);
-
     @Autowired
     private StorageService storageService;
 
@@ -41,18 +36,15 @@ public class ProjectController {
     @Autowired
     private javax.validation.Validator validator;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @GetMapping(value = "")
     public ResponseEntity<List<Project>> getAll() throws SQLException {
-        LOGGER.debug("getPostsByCategoryId()");
-
         return ResponseEntity.ok(service.getAll());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @PostMapping(value = "/create")
     public ResponseEntity create(@RequestPart(value="file", required = false) MultipartFile file,
                                  @RequestPart("data") String data) throws IOException, SQLException {
-        LOGGER.debug("create()");
         Project project = new ObjectMapper().readValue(data, Project.class);
 
         if (hasErrors(project)) {
@@ -64,15 +56,14 @@ public class ProjectController {
             project.setLogoPath(logoPath);
         }
         service.create(project);
-        LOGGER.debug("Added new project " + project);
+
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @PostMapping(value = "/update")
     public ResponseEntity<Project> update(@RequestPart(value="file", required = false) MultipartFile file,
                                  @RequestPart("data") String data) throws IOException, SQLException {
-        LOGGER.debug("create()");
         Project project = new ObjectMapper().readValue(data, Project.class);
 
         if (hasErrors(project)) {
@@ -83,8 +74,7 @@ public class ProjectController {
 
             project.setLogoPath(logoPath);
         }
-        int count = service.update(project);
-        LOGGER.debug("Update project " + count);
+        service.update(project);
 
         return ResponseEntity.ok(project);
     }

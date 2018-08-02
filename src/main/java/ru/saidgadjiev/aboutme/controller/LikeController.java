@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.model.LikeDetails;
 import ru.saidgadjiev.aboutme.service.LikeService;
 
@@ -22,7 +19,7 @@ public class LikeController {
     private LikeService likeService;
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/like/post", method = RequestMethod.POST)
+    @PostMapping(value = "/like/post")
     public ResponseEntity<LikeDetails> like(
             @RequestBody @Valid LikeDetails likeDetails,
             BindingResult bindingResult
@@ -38,7 +35,7 @@ public class LikeController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/dislike/post", method = RequestMethod.POST)
+    @PostMapping(value = "/dislike/post")
     public ResponseEntity<LikeDetails> dislike(
             @RequestBody @Valid LikeDetails likeDetails,
             BindingResult bindingResult

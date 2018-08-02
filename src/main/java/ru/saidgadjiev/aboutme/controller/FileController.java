@@ -13,8 +13,6 @@ import ru.saidgadjiev.aboutme.storage.StorageService;
 @RequestMapping("/api/file")
 public class FileController {
 
-    private static final Logger LOGGER = Logger.getLogger(FileController.class);
-
     private final StorageService storageService;
 
     @Autowired
@@ -22,7 +20,7 @@ public class FileController {
         this.storageService = storageService;
     }
 
-    @RequestMapping(value = "/logo/{name}", method = RequestMethod.GET)
+    @GetMapping(value = "/logo/{name}")
     public ResponseEntity<Resource> serverFile(@PathVariable("name") String filePath) {
         Resource resource = storageService.loadAsResource(filePath);
 
