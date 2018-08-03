@@ -55,9 +55,6 @@ public class Like {
     public String toString() {
         return "Like{" +
                 "id=" + id +
-                ", post=" + (post == null ? null : post.getId()) +
-                ", comment=" + (comment == null ? null : comment.getId()) +
-                ", user=" + (user == null ? null : user.getUserName()) +
                 '}';
     }
 }

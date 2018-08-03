@@ -74,7 +74,6 @@ public class Comment {
         return "Comment{" +
                 "id=" + id +
                 ", content='" + content + '\'' +
-                ", post=" + post +
                 ", createdDate=" + createdDate +
                 ", user=" + (user == null ? null : user.getUserName()) +
                 '}';
