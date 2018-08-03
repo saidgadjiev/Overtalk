@@ -194,7 +194,7 @@ as.run(function ($rootScope,
     $rootScope.$on(AUTH_EVENTS.signInSuccess, function () {
         $rootScope.nickName = Session.nickName;
         $rootScope.authenticated = true;
-        if (LocationService.location && !LocationService.location === '/signUp') {
+        if (LocationService.location && LocationService.location !== '/signUp') {
             LocationService.gotoLast();
         } else {
             $location.path('/aboutMe');
@@ -203,7 +203,7 @@ as.run(function ($rootScope,
     $rootScope.$on(AUTH_EVENTS.signUpSuccess, function () {
         $rootScope.nickName = Session.nickName;
         $rootScope.authenticated = true;
-        if (LocationService.location && !LocationService.location === '/signIn') {
+        if (LocationService.location && LocationService.location !== '/signIn') {
             LocationService.gotoLast();
         } else {
             $location.path('/aboutMe');
@@ -227,6 +227,10 @@ as.run(function ($rootScope,
             LocationService.saveLocation(previous.$$route.originalPath, previous.pathParams);
         }
     });
+
+    $rootScope.isAuthorized = function (roles) {
+        return AuthService.isAuthorized(roles);
+    };
 
     AuthService.getAccount();
 });

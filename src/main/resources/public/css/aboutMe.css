@@ -72,3 +72,7 @@ i {
 .cursor-pointer {
     cursor: pointer;
 }
+
+.has-error {
+    color: red;
+}

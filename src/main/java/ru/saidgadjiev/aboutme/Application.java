@@ -1,12 +1,10 @@
 package ru.saidgadjiev.aboutme;
 
-import org.apache.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import ru.saidgadjiev.aboutme.properties.DataSourceProperties;
 import ru.saidgadjiev.aboutme.properties.StorageProperties;
 import ru.saidgadjiev.aboutme.storage.StorageService;

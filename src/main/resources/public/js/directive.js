@@ -71,13 +71,17 @@ as.directive('access', [
             link: function (scope, element, attrs) {
                 var roles = attrs.access.split(',');
 
-                if (roles.length > 0) {
-                    if (AuthService.isAuthorized(roles)) {
-                        element.removeClass('hidden');
-                    } else {
-                        element.addClass('hidden');
-                    }
-                }
+                scope.$watch(
+                    function () {
+                        return AuthService.isAuthorized(roles)
+                    },
+                    function (newValue, oldValue) {
+                        if (newValue) {
+                            element.removeClass('hidden');
+                        } else {
+                            element.addClass('hidden');
+                        }
+                });
             }
         };
     }]
@@ -103,13 +107,13 @@ as.directive('ellipsis', function () {
 });
 
 as.directive('compile', function ($compile, HtmlEncoder) {
-    return function(scope, element, attrs) {
+    return function (scope, element, attrs) {
         scope.$watch(
-            function(scope) {
+            function (scope) {
                 // watch the 'compile' expression for changes
                 return scope.$eval(attrs.compile);
             },
-            function(value) {
+            function (value) {
                 // when the 'compile' expression changes
                 // assign it into the current DOM
                 value = HtmlEncoder.encode(value);

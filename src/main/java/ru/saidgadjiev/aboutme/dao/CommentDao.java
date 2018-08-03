@@ -1,6 +1,5 @@
 package ru.saidgadjiev.aboutme.dao;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.saidgadjiev.aboutme.domain.Comment;
@@ -21,8 +20,6 @@ import java.util.List;
 public class CommentDao {
 
     private SessionManager sessionManager;
-
-    private static final Logger LOGGER = Logger.getLogger(CommentDao.class);
 
     @Autowired
     public CommentDao(SessionManager sessionManager) {

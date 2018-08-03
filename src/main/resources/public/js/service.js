@@ -84,7 +84,7 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
             }
             if (authorizedRole === '*') {
                 isAuthorized = true;
-            } else if (!authService.authenticated) {
+            } else if (!authService.isAuthenticated()) {
                 isAuthorized = false;
             } else {
                 isAuthorized = Session.userRoles.indexOf(authorizedRole) !== -1;
@@ -92,23 +92,6 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
         });
 
         return isAuthorized;
-    };
-
-    authService.isAuthorizedRole = function (authorizedRoles) {
-        var isAuthorized = false;
-
-        angular.forEach(authorizedRoles, function (authorizedRole) {
-            if (isAuthorized) {
-                return;
-            }
-            if (authorizedRole === '*') {
-                isAuthorized = true;
-            } else if (!authService.authenticated) {
-                isAuthorized = false;
-            } else {
-                isAuthorized = Session.userRoles.indexOf(authorizedRole) !== -1;
-            }
-        });
     };
 
     authService.getAccount = function () {

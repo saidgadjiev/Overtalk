@@ -238,11 +238,6 @@ as.controller('PostController', function ($scope,
                                           DataService) {
     $scope.category = DataService.get('PostController');
 
-    if (!$scope.category) {
-        $http.get('api/category/' + $routeParams.id).then(function (value) {
-            $scope.category = value.data;
-        });
-    }
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
@@ -253,6 +248,11 @@ as.controller('PostController', function ($scope,
                     $log.log(response.data);
                     $scope.totalItems = response.data.totalElements;
                     $scope.posts = response.data.content;
+                    if (!$scope.category) {
+                        $http.get('api/category/' + $routeParams.id).then(function (value) {
+                            $scope.category = value.data;
+                        });
+                    }
                 })
         };
 
@@ -349,7 +349,7 @@ as.controller('DetailsController', function ($scope,
     $scope.newComment = {};
 
     $scope.canEdit = function (comment) {
-        if (AuthService.isAuthorizedRole('ROLE_ADMIN')) {
+        if (AuthService.isAuthorized('ROLE_ADMIN')) {
             return true;
         }
         if (Session.nickName === comment.nickName) {

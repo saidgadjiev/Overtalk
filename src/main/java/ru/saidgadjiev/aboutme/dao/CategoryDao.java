@@ -1,12 +1,10 @@
 package ru.saidgadjiev.aboutme.dao;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.saidgadjiev.aboutme.domain.Category;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
-import ru.saidgadjiev.ormnext.core.query.criteria.impl.Order;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.SelectStatement;
 
 import java.sql.SQLException;
@@ -14,8 +12,6 @@ import java.util.List;
 
 @Repository
 public class CategoryDao {
-
-    private static final Logger LOGGER = Logger.getLogger(CategoryDao.class);
 
     private final SessionManager sessionManager;
 

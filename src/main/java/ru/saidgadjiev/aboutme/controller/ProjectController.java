@@ -1,22 +1,15 @@
 package ru.saidgadjiev.aboutme.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.DataBinder;
-import org.springframework.validation.Validator;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.validation.beanvalidation.OptionalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.saidgadjiev.aboutme.domain.Project;
 import ru.saidgadjiev.aboutme.service.ProjectService;
 import ru.saidgadjiev.aboutme.storage.StorageService;
 
-import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintViolation;
 import java.io.IOException;
 import java.sql.SQLException;
