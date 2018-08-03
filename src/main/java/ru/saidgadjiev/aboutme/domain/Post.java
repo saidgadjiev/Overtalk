@@ -32,7 +32,7 @@ public class Post {
     @ForeignCollectionField(foreignFieldName = "post", fetchType = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
-    @ForeignCollectionField(foreignFieldName = "post")
+    @ForeignCollectionField(foreignFieldName = "post", fetchType = FetchType.LAZY)
     private List<Like> likes = new ArrayList<>();
 
     @ForeignColumn(foreignFieldName = "id", fetchType = FetchType.LAZY, onDelete = ReferenceAction.CASCADE, onUpdate = ReferenceAction.CASCADE)
