@@ -110,7 +110,6 @@ public class Post {
                 ", content='" + content + '\'' +
                 ", createdDate=" + createdDate +
                 ", user=" + (user == null ? null : user.getUserName()) +
-                ", likes=" + likes +
                 '}';
     }
 }

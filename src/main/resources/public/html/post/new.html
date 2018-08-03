@@ -2,17 +2,23 @@
     <h1>Пост</h1>
 </div>
 <form ng-submit="doSave(postForm.$valid)" name="postForm" novalidate>
-    <div class="form-group" ng-class="{'has-error':postForm.name.$invalid && (postForm.name.$touched || submitted)}">
+    <div class="form-group">
         <label for="title">Заголовок:</label>
-        <input id="title" class="form-control" type="text"
+        <input id="title" name="title" class="form-control" type="text"
                ng-model="newPost.title" ng-required="true"/>
-        <p class="help-block" ng-show="postForm.name.$invalid && (postForm.name.$touched || submitted)">Title is requiered!</p>
+        <div ng-messages="postForm.title.$error"
+             ng-if="postForm.title.$touched || submitted" style="color:red">
+            <p class="help-block" ng-message="required">Введите заголовок!</p>
+        </div>
     </div>
-    <div class="form-group" ng-class="{'has-error':postForm.content.$invalid && (postForm.content.$touched || submitted)}">
+    <div class="form-group">
         <label for="content">Контент:</label>
-        <textarea id="content" class="form-control" type="text"
+        <textarea id="content" name="content" class="form-control" type="text"
                   ng-model="newPost.content" ng-required="true" rows="8"></textarea>
-        <p class="help-block" ng-show="postForm.content.$invalid && (postForm.content.$touched || submitted)">At least 15 chars</p>
+        <div class="has-error" ng-messages="postForm.content.$error"
+             ng-if="postForm.content.$touched || submitted">
+            <p class="help-block" ng-message="required">Введите контент!</p>
+        </div>
     </div>
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Сохранить</button>
