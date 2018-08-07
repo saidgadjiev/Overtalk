@@ -16,28 +16,26 @@ as.service('Session', function () {
 });
 
 as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENTS) {
+
     var authService = {};
 
     authService.loginConfirmed = function (profile) {
-        Session.create(profile);
-        authService.authenticated = true;
-        $rootScope.$broadcast(AUTH_EVENTS.signInSuccess, {
-            data: profile
-        });
+        $rootScope.loadingAccount = false;
+
+        if (profile) {
+            Session.create(profile);
+            authService.authenticated = true;
+            $rootScope.$broadcast(AUTH_EVENTS.signInSuccess, {
+                data: profile
+            });
+        }
     };
 
     authService.signUp = function (user) {
         return $http.post('api/auth/signUp', user).then(function (response) {
             $log.debug(response);
-            var profile = response.data;
 
-            Session.create(profile);
-            authService.authenticated = true;
-            $rootScope.$broadcast(AUTH_EVENTS.signUpSuccess, {
-                data: profile
-            });
-
-            return response;
+            authService.loginConfirmed(response.data);
         });
     };
 
@@ -48,24 +46,21 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
     authService.signIn = function (user) {
         return $http.post('api/auth/signIn', user).then(function (response) {
             $log.log(response);
-            var profile = response.data;
 
-            authService.loginConfirmed(profile);
-
-            return response;
+            authService.loginConfirmed(response.data);
         });
     };
 
     authService.signOut = function () {
         return $http.post('api/auth/signOut').then(function (response) {
             $log.debug(response);
+
             Session.invalidate();
             authService.authenticated = false;
+
             $rootScope.$broadcast(AUTH_EVENTS.signOutSuccess, {
                 content: response
             });
-
-            return response;
         });
     };
 
@@ -95,20 +90,12 @@ as.service('AuthService', function ($rootScope, $http, Session, $log, AUTH_EVENT
     };
 
     authService.getAccount = function () {
-        $http.get('api/auth/account').then(function (response) {
+        $rootScope.loadingAccount = true;
+
+        return $http.get('api/auth/account').then(function (response) {
             $log.debug(response);
 
-            var profile = response.data;
-
-            if (profile) {
-                Session.create(profile);
-                authService.authenticated = true;
-                $rootScope.$broadcast(AUTH_EVENTS.accountRequestSuccess, {
-                    data: profile
-                });
-            }
-
-            return response;
+            authService.loginConfirmed(response.data);
         });
     };
 
@@ -127,9 +114,7 @@ as.service('LocationService', function ($location) {
     };
 
     locationService.gotoLast = function () {
-        if (locationService.location) {
-            $location.path(locationService.location);
-        }
+        $location.path(locationService.location);
     };
 
     locationService.replaceParamsInUrl = function (url, params) {

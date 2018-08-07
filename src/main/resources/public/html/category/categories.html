@@ -6,7 +6,7 @@
 <ul class="list-group list-group-flush mt-3">
     <li class="list-group-item" ng-repeat="category in categories|orderBy:name">
         <div class="d-flex w-100 justify-content-start mb-3">
-            <button class="btn btn-link p-0" ng-click="gotoPosts(category)"><u class="h1 text-dark font-weight-bold">{{category.name}}</u>
+            <button ng-cloak class="btn btn-link p-0" ng-click="gotoPosts(category)"><u class="h1 text-dark font-weight-bold">{{category.name}}</u>
             </button>
             <ul class="pl-3 align-self-center list-inline">
                 <li access="ROLE_ADMIN" class="list-inline-item">
@@ -17,11 +17,11 @@
                 </li>
             </ul>
         </div>
-        <p>{{category.description}}</p>
+        <p ng-cloak>{{category.description}}</p>
         <ul class="mt-3 d-inline-flex list-inline">
             <li class="list-inline-item">
                 <strong>Постов</strong>
-                <strong> {{category.postsCount}}</strong>
+                <strong ng-cloak> {{category.postsCount}}</strong>
             </li>
         </ul>
     </li>

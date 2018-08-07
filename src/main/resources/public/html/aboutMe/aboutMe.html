@@ -3,16 +3,16 @@
         Редактировать
     </button>
     <h4 class="font-weight-bold mt-3">ФИО</h4>
-    <h5 class="animate-right mb-0">{{aboutMe.fio}}</h5>
+    <h5 ng-cloak class="animate-right mb-0">{{aboutMe.fio}}</h5>
 
     <h4 class="font-weight-bold mt-3">Дата рождения</h4>
-    <h5 class="animate-right mb-0">{{aboutMe.dateOfBirth|date:'longDate'}}</h5>
+    <h5 ng-cloak class="animate-right mb-0">{{aboutMe.dateOfBirth|date:'longDate'}}</h5>
 
     <h4 class="font-weight-bold mt-3">Место проживания</h4>
-    <h5 class="mb-0 animate-right ">{{aboutMe.placeOfResidence}}</h5>
+    <h5 ng-cloak class="mb-0 animate-right ">{{aboutMe.placeOfResidence}}</h5>
 
     <h4 class="font-weight-bold mt-3">Должность</h4>
-    <h5 class="animate-right mb-0">{{aboutMe.post}}</h5>
+    <h5 ng-cloak class="animate-right mb-0">{{aboutMe.post}}</h5>
 </div>
 
 <div class="mt-5 animate-right">
@@ -23,8 +23,8 @@
     <div>
         <div ng-repeat="skill in aboutMe.skills">
             <div class="animate-right skillbar">
-                <strong class="skillbar-title">{{skill.name}}</strong>
-                <strong class="skill-bar-percent">{{skill.percentage}}%</strong>
+                <strong ng-cloak class="skillbar-title">{{skill.name}}</strong>
+                <strong ng-cloak class="skill-bar-percent">{{skill.percentage}}%</strong>
                 <div class="skillbar-bar bg-primary" style="width: {{skill.percentage}}%;"></div>
             </div>
             <ul class="mt-2 list-inline d-inline-flex">

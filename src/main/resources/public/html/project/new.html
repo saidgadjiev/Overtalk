@@ -27,7 +27,7 @@
         <input type="file" class="form-control-file" id="logo" file-model="logo">
     </div>
     <div class="form-group">
-        <img class="w-25" ng-if="logoPath" ng-src="{{logoPath}}" />
+        <img class="w-25" ng-src="/api/file/logo/{{logoPath}}" err-src="{{defaultUrl}}"/>
     </div>
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Сохранить</button>

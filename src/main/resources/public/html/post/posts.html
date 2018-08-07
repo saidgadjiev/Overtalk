@@ -6,7 +6,7 @@
 <ul class="list-group list-group-flush mt-3">
     <li class="list-group-item" ng-repeat="post in posts|orderBy:createdDate">
         <div class="d-flex w-100 justify-content-start">
-            <strong>{{post.createdDate|date:'dd.MM.yyyy в hh:mm'}}</strong>
+            <strong ng-cloak>{{post.createdDate|date:'dd.MM.yyyy в hh:mm'}}</strong>
             <ul class="pl-3 list-inline">
                 <li access="ROLE_ADMIN" class="list-inline-item">
                     <i ng-click="doEdit(post)" class="text-primary fa fa-edit"></i>
@@ -17,7 +17,7 @@
             </ul>
         </div>
         <div class="mt-3">
-            <h1 class="font-weight-bold">{{post.title}}</h1>
+            <h1 ng-cloak class="font-weight-bold">{{post.title}}</h1>
             <p class="text-ellipsis" compile="post.content"></p>
             <button ng-click="gotoComments(post)" class="btn mt-3 btn-outline-primary btn-sm">
                 Читать дальше →
@@ -30,13 +30,13 @@
             </li>
             <li class="list-inline-item">
                 <i ng-if="!post.liked" ng-click="doLike(post)" class="text-primary fa fa-thumbs-up"></i>
-                <strong>{{post.likesCount}}</strong>
+                <strong ng-cloak>{{post.likesCount}}</strongng-cloak>
             </li>
             <li class="list-inline-item pl-3">
                 <a href="#/categories/{{category.id}}/posts/{{post.id}}">
                     <i class="text-primary fa fa-comment"></i>
                 </a>
-                <strong>{{post.commentsCount}}</strong>
+                <strong ng-cloak>{{post.commentsCount}}</strong>
             </li>
         </ul>
     </li>

@@ -5,11 +5,10 @@
 
 <div class="mb-3">
     <div class="card mt-3 w-75 mx-auto" ng-repeat="project in projects">
-        <img class="card-img-top" ng-if="project.logoPath" ng-src="/api/file/logo/{{project.logoPath}}">
-        <img class="card-img-top" ng-if="!project.logoPath" ng-src="{{defaultUrl}}">
+        <img class="card-img-top" ng-src="/api/file/logo/{{project.logoPath}}" err-src="{{defaultUrl}}">
         <div class="card-body">
             <div class="card-title">
-                <span class="h5 font-weight-bold">{{project.name}}</span>
+                <span ng-cloak class="h5 font-weight-bold">{{project.name}}</span>
                 <ul class="d-inline-flex list-inline">
                     <li access="ROLE_ADMIN" class="list-inline-item">
                         <i ng-click="doEdit(project)" class="text-primary text-lg fa fa-edit"></i>
@@ -21,7 +20,7 @@
                     </li>
                 </ul>
             </div>
-            <p class="card-text text-ellipsis">{{project.description}}</p>
+            <p ng-cloak class="card-text text-ellipsis">{{project.description}}</p>
             <button ng-click="doOpenDetails(project)" type="button" class="btn btn-outline-primary btn-sm">
                 Читать дальше →
             </button>
@@ -47,8 +46,7 @@
         </button>
     </div>
     <div class="modal-body">
-        <img class="card-img-top" ng-if="details.logoPath" ng-src="/api/file/logo/{{details.logoPath}}">
-        <img class="card-img-top" ng-if="!details.logoPath" ng-src="{{defaultUrl}}">
-        <p class="h5 card-text mt-3">{{details.description}}</p>
+        <img class="card-img-top" ng-src="/api/file/logo/{{details.logoPath}}" err-src="{{defaultUrl}}">
+        <p ng-cloak class="h5 card-text mt-3">{{details.description}}</p>
     </div>
 </script>

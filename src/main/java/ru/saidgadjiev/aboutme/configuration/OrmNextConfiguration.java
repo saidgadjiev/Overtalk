@@ -13,6 +13,7 @@ import ru.saidgadjiev.ormnext.core.dao.TableOperation;
 import ru.saidgadjiev.ormnext.core.logger.LoggerFactory;
 import ru.saidgadjiev.ormnext.support.connection.source.PolledConnectionSource;
 import ru.saidgadjiev.ormnext.support.dialect.PgDialect;
+import ru.saidgajiev.ormnext.cache.CacheImpl;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -55,6 +56,9 @@ public class OrmNextConfiguration {
                         Skill.class
                 )
                 .build();
+
+        sessionManager.upgrade(new CacheImpl());
+        sessionManager.enableDefaultCache();
 
         return sessionManager;
     }

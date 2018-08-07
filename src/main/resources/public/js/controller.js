@@ -111,10 +111,9 @@ as.controller('MainController', function () {
     setInterval(draw, 10);
 });
 
-as.controller('AboutMeAppController', function ($scope, LocationService, AuthService, $location) {
+as.controller('AboutMeAppController', function ($scope, AuthService, $location) {
     $scope.signOut = function () {
         AuthService.signOut().then(function () {
-            LocationService.saveLocation('/');
             $location.path('/signIn');
         });
     };
@@ -322,7 +321,6 @@ as.controller('DetailsController', function ($scope,
                                              $log,
                                              $uibModal,
                                              Session,
-                                             LocationService,
                                              AuthService,
                                              LikeService,
                                              DataService) {
@@ -475,9 +473,10 @@ as.controller('UsersController', function ($scope, $http, $log) {
     };
 });
 
-as.controller('NewProjectController', function ($scope, $http, $log, $location, FileService, DataService) {
+as.controller('NewProjectController', function ($scope, $http, $log, $location, FileService, DataService, IMAGE) {
     $scope.data = DataService.get('NewProjectController');
     $scope.project = {};
+    $scope.defaultUrl = IMAGE.defaultUrl;
 
     if ($scope.data) {
         $scope.project.id = $scope.data.id;
@@ -485,7 +484,6 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
         $scope.project.description = $scope.data.description;
         $scope.project.projectLink = $scope.data.projectLink;
         $scope.project.logoPath = $scope.data.logoPath;
-        $scope.logoPath = '/api/file/logo/' + $scope.data.logoPath;
     }
 
     var actionUrl = 'api/project/';
@@ -556,7 +554,8 @@ as.controller('ProjectController', function ($scope,
     $scope.doOpenDetails = function (project) {
         $uibModal.open({
             templateUrl: 'projectDetails.html',
-            controller: function ($scope, $uibModalInstance) {
+            controller: function ($scope, $uibModalInstance, IMAGE) {
+                $scope.defaultUrl = IMAGE.defaultUrl;
                 $scope.details = project;
 
                 $scope.doEdit = function (project) {

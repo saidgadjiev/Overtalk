@@ -1,4 +1,4 @@
-var as = angular.module('AboutMeApp', ['ngRoute', 'ngMessages', 'ngSanitize', 'ui.bootstrap', 'AboutMeApp.controllers', 'AboutMeApp.services', 'AboutMeApp.directives']);
+var as = angular.module('AboutMeApp', ['ngRoute', 'ngMessages', 'ngSanitize', 'ui.bootstrap', 'angularSpinkit', 'AboutMeApp.controllers', 'AboutMeApp.services', 'AboutMeApp.directives']);
 
 as.constant('USER_ROLES', {
     all: '*',
@@ -11,17 +11,11 @@ as.constant('IMAGE', {
 });
 
 as.constant('AUTH_EVENTS', {
-    accountRequestSuccess: 'account-request-success',
-    signUpSuccess: 'auth-signUp-success',
     signInSuccess: 'auth-signIn-success',
     signInFailed: 'auth-signIn-failed',
     signOutSuccess: 'auth-signOut-success',
     accessDenied: '403-access-denied',
     unauthorized: '401-unauthorized'
-});
-
-as.constant('RESPONSE_ERROR_EVENTS', {
-    internalServerError: 'internal-server-error'
 });
 
 as.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
@@ -35,9 +29,9 @@ as.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
             console.log(response);
 
             if (response.status === 401) {
-                $rootScope.$broadcast(AUTH_EVENTS.unauthorized);
+                $rootScope.$broadcast(AUTH_EVENTS.unauthorized, {status: 401});
             } else if (response.status === 403) {
-                $rootScope.$broadcast(AUTH_EVENTS.accessDenied);
+                $rootScope.$broadcast(AUTH_EVENTS.accessDenied, {status: 403});
             }
 
             return $q.reject(response);
@@ -125,8 +119,8 @@ as.config(function ($routeProvider, $httpProvider, $locationProvider, USER_ROLES
             loginRequired: true,
             authorizedRoles: [USER_ROLES.admin]
         }
-    }).when('/test', {
-        templateUrl: 'html/test.html',
+    }).when('/loading', {
+        templateUrl: 'html/loading.html',
         access: {
             loginRequired: false,
             authorizedRoles: [USER_ROLES.all]
@@ -168,7 +162,6 @@ as.run(function ($rootScope,
                  $log,
                  LocationService,
                  AUTH_EVENTS,
-                 RESPONSE_ERROR_EVENTS,
                  Session,
                  AuthService) {
     $rootScope.$on('$routeChangeStart', function (event, next) {
@@ -179,52 +172,52 @@ as.run(function ($rootScope,
         //Если пользователь незалогинен и вьюшка требует логин то не даем перейти на страницу
         else if (next.access && next.access.loginRequired && !$rootScope.authenticated) {
             event.preventDefault();
+
             $rootScope.$broadcast(AUTH_EVENTS.unauthorized, {});
         } else if (next.access && !AuthService.isAuthorized(next.access.authorizedRoles)) {
             event.preventDefault();
+
             $rootScope.$broadcast(AUTH_EVENTS.accessDenied, {});
         }
     });
-    $rootScope.$on(AUTH_EVENTS.unauthorized, function () {
-        $location.path('/signIn');
+
+    $rootScope.$on(AUTH_EVENTS.unauthorized, function (data) {
+        if ($rootScope.loadingAccount && data.status !== 401) {
+            LocationService.saveLocation();
+
+            $location.path('/loading');
+        } else {
+            $location.path('/signIn');
+        }
     });
+
     $rootScope.$on(AUTH_EVENTS.accessDenied, function () {
         $location.path('/403');
     });
+
     $rootScope.$on(AUTH_EVENTS.signInSuccess, function () {
         $rootScope.nickName = Session.nickName;
         $rootScope.authenticated = true;
-        if (LocationService.location && LocationService.location !== '/signUp') {
-            LocationService.gotoLast();
-        } else {
-            $location.path('/aboutMe');
-        }
+
+        LocationService.gotoLast();
     });
-    $rootScope.$on(AUTH_EVENTS.signUpSuccess, function () {
-        $rootScope.nickName = Session.nickName;
-        $rootScope.authenticated = true;
-        if (LocationService.location && LocationService.location !== '/signIn') {
-            LocationService.gotoLast();
-        } else {
-            $location.path('/aboutMe');
-        }
-    });
-    $rootScope.$on(RESPONSE_ERROR_EVENTS.internalServerError, function () {
-        $location.path('/500');
-    });
+
     $rootScope.$on(AUTH_EVENTS.signOutSuccess, function () {
         $rootScope.authenticated = false;
         $rootScope.nickName = null;
+
         $location.path('/signIn');
-    });
-    $rootScope.$on(AUTH_EVENTS.accountRequestSuccess, function () {
-        $rootScope.nickName = Session.nickName;
-        $rootScope.authenticated = true;
     });
 
     $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
         if (previous && previous.$$route) {
-            LocationService.saveLocation(previous.$$route.originalPath, previous.pathParams);
+            var path = previous.$$route.originalPath;
+
+            if (path !== '/signIn' && path !== 'signUp' && path !== '/loading') {
+                LocationService.saveLocation(path, previous.pathParams);
+            } else {
+                LocationService.saveLocation('/aboutMe', {});
+            }
         }
     });
 
