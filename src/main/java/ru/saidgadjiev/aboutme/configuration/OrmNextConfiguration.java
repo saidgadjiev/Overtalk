@@ -10,6 +10,7 @@ import ru.saidgadjiev.aboutme.properties.DataSourceProperties;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 import ru.saidgadjiev.ormnext.core.dao.SessionManagerBuilder;
 import ru.saidgadjiev.ormnext.core.dao.TableOperation;
+import ru.saidgadjiev.ormnext.core.dialect.Dialect;
 import ru.saidgadjiev.ormnext.core.logger.LoggerFactory;
 import ru.saidgadjiev.ormnext.support.connection.source.PolledConnectionSource;
 import ru.saidgadjiev.ormnext.support.dialect.PgDialect;
@@ -41,7 +42,7 @@ public class OrmNextConfiguration {
         SessionManager sessionManager = new SessionManagerBuilder()
                 .connectionSource(new PolledConnectionSource(dataSource()))
                 .tableOperation(TableOperation.CREATE)
-                .dialect(new PgDialect())
+                .dialect(dialect())
                 .entities(
                         UserProfile.class,
                         UserProfile2.class,
@@ -76,5 +77,10 @@ public class OrmNextConfiguration {
         dataSource.setSslfactory("org.postgresql.ssl.NonValidatingFactory");
 
         return dataSource;
+    }
+
+    @Bean
+    public Dialect dialect() {
+        return new PgDialect();
     }
 }

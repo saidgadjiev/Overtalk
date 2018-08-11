@@ -7,9 +7,11 @@ import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.Criteria;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.Restrictions;
+import ru.saidgadjiev.ormnext.core.query.criteria.impl.SelectStatement;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.UpdateStatement;
 
 import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 public class AboutMeDao {
@@ -21,16 +23,16 @@ public class AboutMeDao {
         this.sessionManager = sessionManager;
     }
 
-    public void createOrUpdate(AboutMe aboutMe) throws SQLException {
+    public void create(AboutMe aboutMe) throws SQLException {
         Session session = sessionManager.currentSession();
 
-        session.createOrUpdate(aboutMe);
+        session.create(aboutMe);
     }
 
     public AboutMe getAboutMe() throws SQLException {
         Session session = sessionManager.currentSession();
 
-        return session.queryForAll(AboutMe.class).iterator().next();
+        return session.uniqueResult(new SelectStatement<>(AboutMe.class));
     }
 
     public int update(AboutMe aboutMe) throws SQLException {
