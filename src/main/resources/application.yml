@@ -1,0 +1,14 @@
+server:
+    port: 8089
+app:
+    upload:
+        dir: ${UPLOAD_DIR}
+    datasource:
+        host: ${DATABASE_HOST}
+        port: ${DATABASE_PORT}
+        databaseName: ${DATABASE_NAME}
+        username: ${DATABASE_USERNAME}
+        password: ${DATABASE_PASSWORD}
+spring:
+    profiles:
+        active: prod

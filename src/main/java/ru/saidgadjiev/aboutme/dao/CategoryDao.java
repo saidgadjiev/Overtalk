@@ -26,8 +26,10 @@ public class CategoryDao {
         session.create(category);
     }
 
-    public int update(Category category) throws SQLException {
+    public int update(Integer id, Category category) throws SQLException {
         Session session = sessionManager.currentSession();
+
+        category.setId(id);
 
         return session.update(category);
     }
@@ -40,13 +42,13 @@ public class CategoryDao {
 
     public List<Category> getCategories(int limit, long offset) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<Category> selectStatement = new SelectStatement<>(Category.class);
+        SelectStatement<Category> selectStatement = session.statementBuilder().createSelectStatement(Category.class);
 
         selectStatement
                 .limit(limit)
                 .offset((int) offset);
 
-        return session.list(selectStatement);
+        return selectStatement.list();
     }
 
     public Category getById(Integer id) throws SQLException {

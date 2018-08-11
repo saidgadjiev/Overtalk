@@ -1,6 +1,7 @@
 package ru.saidgadjiev.aboutme.dao;
 
 import org.springframework.stereotype.Repository;
+import ru.saidgadjiev.aboutme.domain.Comment;
 import ru.saidgadjiev.aboutme.domain.Like;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
@@ -30,7 +31,7 @@ public class LikeDao {
 
     public void delete(Like like) throws SQLException {
         Session session = sessionManager.currentSession();
-        DeleteStatement deleteStatement = new DeleteStatement(Like.class);
+        DeleteStatement deleteStatement = session.statementBuilder().createDeleteStatement(Like.class);
 
         deleteStatement
                 .where(new Criteria()
@@ -43,14 +44,14 @@ public class LikeDao {
 
     public long postLikes(Integer postId) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<Like> selectStatement = new SelectStatement<>(Like.class);
+        SelectStatement<Like> selectStatement = session.statementBuilder().createSelectStatement(Like.class);
 
         selectStatement
                 .countOff()
                 .where(new Criteria()
                         .add(eq("post", postId)));
 
-        return session.queryForLong(selectStatement);
+        return selectStatement.queryForLong();
     }
 
 }

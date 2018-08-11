@@ -24,12 +24,8 @@ public class SkillService {
         skillDao.create(skill);
     }
 
-    public int update(Skill skill) throws SQLException {
-        AboutMe aboutMe = new AboutMe();
-
-        aboutMe.setId(1);
-        skill.setAboutMe(aboutMe);
-        return skillDao.update(skill);
+    public int update(Integer id, Skill skill) throws SQLException {
+        return skillDao.update(id, skill);
     }
 
     public int removeById(Integer id) throws SQLException {

@@ -1,0 +1,6 @@
+app:
+    upload:
+        dir: upload-dir
+spring:
+    profiles:
+        active: test

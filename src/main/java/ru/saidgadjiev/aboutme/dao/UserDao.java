@@ -2,6 +2,7 @@ package ru.saidgadjiev.aboutme.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import ru.saidgadjiev.aboutme.domain.Comment;
 import ru.saidgadjiev.aboutme.domain.UserProfile;
 import ru.saidgadjiev.aboutme.domain.UserRole;
 import ru.saidgadjiev.ormnext.core.dao.Session;
@@ -28,11 +29,11 @@ public class UserDao {
 
     public UserProfile getByUserName(String userName) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<UserProfile> selectStatement = new SelectStatement<>(UserProfile.class);
+        SelectStatement<UserProfile> selectStatement = session.statementBuilder().createSelectStatement(UserProfile.class);
 
         selectStatement.where(new Criteria().add(Restrictions.eq("userName", userName)));
 
-        List<UserProfile> userProfiles = session.list(selectStatement);
+        List<UserProfile> userProfiles = selectStatement.list();
 
         if (userProfiles.isEmpty()) {
             return null;
@@ -60,33 +61,33 @@ public class UserDao {
 
     public boolean isExistUserName(String userName) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<UserProfile> selectStatement = new SelectStatement<>(UserProfile.class);
+        SelectStatement<UserProfile> selectStatement = session.statementBuilder().createSelectStatement(UserProfile.class);
 
         selectStatement
                 .where(new Criteria().add(Restrictions.eq("userName", userName)))
                 .countOff();
 
-        return session.queryForLong(selectStatement) > 0;
+        return selectStatement.queryForLong() > 0;
     }
 
     public boolean isExistNickName(String nickName) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<UserProfile> selectStatement = new SelectStatement<>(UserProfile.class);
+        SelectStatement<UserProfile> selectStatement = session.statementBuilder().createSelectStatement(UserProfile.class);
 
         selectStatement
                 .where(new Criteria().add(Restrictions.eq("nickName", nickName)))
                 .countOff();
 
-        return session.queryForLong(selectStatement) > 0;
+        return selectStatement.queryForLong() > 0;
     }
 
     public List<UserProfile> getList(int limit, long offset) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<UserProfile> selectStatement = new SelectStatement<>(UserProfile.class);
+        SelectStatement<UserProfile> selectStatement = session.statementBuilder().createSelectStatement(UserProfile.class);
 
         selectStatement.limit(limit).offset((int) offset);
 
-        return session.list(selectStatement);
+        return selectStatement.list();
     }
 
     public long countOff() throws SQLException {

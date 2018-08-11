@@ -33,13 +33,13 @@ public class PostDao {
 
     public List<Post> getPosts(int categoryId, int limit, long offset) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<Post> selectStatement = new SelectStatement<>(Post.class);
+        SelectStatement<Post> selectStatement = session.statementBuilder().createSelectStatement(Post.class);
 
         selectStatement.limit(limit).offset((int) offset);
         selectStatement.where(new Criteria()
                 .add(Restrictions.eq("category", categoryId)));
 
-        return session.list(selectStatement);
+        return selectStatement.list();
     }
 
     public Post getById(int id) throws SQLException {
@@ -50,19 +50,19 @@ public class PostDao {
 
     public long countOffPostsByCategoryId(Integer categoryId) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<Post> selectStatement = new SelectStatement<>(Post.class);
+        SelectStatement<Post> selectStatement = session.statementBuilder().createSelectStatement(Post.class);
 
         selectStatement
                 .withoutJoins(true)
                 .countOff()
                 .where(new Criteria().add(Restrictions.eq("category", categoryId)));
 
-        return session.queryForLong(selectStatement);
+        return selectStatement.queryForLong();
     }
 
     public int update(Post post) throws SQLException {
         Session session = sessionManager.currentSession();
-        UpdateStatement updateStatement = new UpdateStatement(Post.class);
+        UpdateStatement updateStatement = session.statementBuilder().createUpdateStatement(Post.class);
 
         updateStatement.set("title", post.getTitle());
         updateStatement.set("content", post.getContent());

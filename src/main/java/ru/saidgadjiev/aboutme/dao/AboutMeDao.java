@@ -11,7 +11,6 @@ import ru.saidgadjiev.ormnext.core.query.criteria.impl.SelectStatement;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.UpdateStatement;
 
 import java.sql.SQLException;
-import java.util.List;
 
 @Repository
 public class AboutMeDao {
@@ -23,26 +22,20 @@ public class AboutMeDao {
         this.sessionManager = sessionManager;
     }
 
-    public void create(AboutMe aboutMe) throws SQLException {
-        Session session = sessionManager.currentSession();
-
-        session.create(aboutMe);
-    }
-
     public AboutMe getAboutMe() throws SQLException {
         Session session = sessionManager.currentSession();
 
-        return session.uniqueResult(new SelectStatement<>(AboutMe.class));
+        return session.statementBuilder().createSelectStatement(AboutMe.class).uniqueResult();
     }
 
     public int update(AboutMe aboutMe) throws SQLException {
         Session session = sessionManager.currentSession();
-        UpdateStatement updateStatement = new UpdateStatement(AboutMe.class);
+        UpdateStatement updateStatement = session.statementBuilder().createUpdateStatement(AboutMe.class);
 
         updateStatement.set("post", aboutMe.getPost());
         updateStatement.set("placeOfResidence", aboutMe.getPlaceOfResidence());
         updateStatement.where(new Criteria().add(Restrictions.eq("id", 1)));
 
-        return session.update(updateStatement);
+        return updateStatement.update();
     }
 }

@@ -4,6 +4,7 @@ import org.postgresql.ds.PGPoolingDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import ru.saidgadjiev.aboutme.domain.*;
 import ru.saidgadjiev.aboutme.properties.DataSourceProperties;
@@ -65,6 +66,7 @@ public class OrmNextConfiguration {
     }
 
     @Bean
+    @Profile("prod")
     public DataSource dataSource() {
         PGPoolingDataSource dataSource = new PGPoolingDataSource();
 
@@ -80,6 +82,7 @@ public class OrmNextConfiguration {
     }
 
     @Bean
+    @Profile("prod")
     public Dialect dialect() {
         return new PgDialect();
     }

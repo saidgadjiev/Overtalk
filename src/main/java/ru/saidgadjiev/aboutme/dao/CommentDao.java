@@ -34,28 +34,28 @@ public class CommentDao {
 
     public List<Comment> getByPostId(Integer id, int limit, int offset) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<Comment> selectStatement = new SelectStatement<>(Comment.class);
+        SelectStatement<Comment> selectStatement = session.statementBuilder().createSelectStatement(Comment.class);
 
         selectStatement.where(new Criteria().add(Restrictions.eq("post", id))).limit(limit).offset(offset);
 
-        return session.list(selectStatement);
+        return selectStatement.list();
     }
 
     public long countOffByPostId(Integer id) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<Comment> selectStatement = new SelectStatement<>(Comment.class);
+        SelectStatement<Comment> selectStatement = session.statementBuilder().createSelectStatement(Comment.class);
 
         selectStatement
                 .withoutJoins(true)
                 .countOff()
                 .where(new Criteria().add(Restrictions.eq("post", id)));
 
-        return session.queryForLong(selectStatement);
+        return selectStatement.queryForLong();
     }
 
     public int update(Comment comment) throws SQLException {
         Session session = sessionManager.currentSession();
-        UpdateStatement updateStatement = new UpdateStatement(Comment.class);
+        UpdateStatement updateStatement = session.statementBuilder().createUpdateStatement(Comment.class);
 
         updateStatement.set("content", comment.getContent());
         updateStatement.where(new Criteria().add(Restrictions.eq("id", comment.getId())));

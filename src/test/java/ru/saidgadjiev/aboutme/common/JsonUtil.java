@@ -1,4 +1,4 @@
-package ru.saidgadjiev.aboutme.controller;
+package ru.saidgadjiev.aboutme.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

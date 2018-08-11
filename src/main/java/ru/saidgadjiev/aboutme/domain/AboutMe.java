@@ -1,5 +1,6 @@
 package ru.saidgadjiev.aboutme.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
 import ru.saidgadjiev.ormnext.core.field.Converter;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
@@ -21,6 +22,7 @@ public class AboutMe {
 
     @Converter(value = JavaDateToSqlDate.class)
     @DatabaseColumn(notNull = true)
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date dateOfBirth;
 
     @DatabaseColumn

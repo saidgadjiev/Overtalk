@@ -691,7 +691,7 @@ as.controller('AboutMeController', function ($scope,
         });
 
         editSkillModal.result.then(function (value) {
-            $http.post('/api/skill/update', value)
+            $http.post('/api/skill/update/' + value.id, value)
                 .then(function (response) {
                     $log.log(response);
 
@@ -787,7 +787,7 @@ as.controller('CategoryController', function ($scope,
         });
 
         editCategoryModal.result.then(function (value) {
-            $http.post(actionUrl + 'update', value)
+            $http.post(actionUrl + 'update/' + value.id, value)
                 .then(function (response) {
                     category.name = response.data.name;
                     category.description = response.data.description;

@@ -41,15 +41,20 @@ public class CategoryController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping(value = "/update")
+    @PostMapping(value = "/update/{id}")
     public ResponseEntity<CategoryDetails> update(
+            @PathVariable("id") Integer id,
             @RequestBody @Valid CategoryDetails categoryDetails, BindingResult bindingResult
     ) throws SQLException {
-        if (bindingResult.hasErrors() || categoryDetails.getId() == null) {
+        if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
 
-        int count = blogService.updateCategory(categoryDetails);
+        int count = blogService.updateCategory(id, categoryDetails);
+
+        if (count == 0) {
+            return ResponseEntity.notFound().build();
+        }
 
         return ResponseEntity.ok(categoryDetails);
     }

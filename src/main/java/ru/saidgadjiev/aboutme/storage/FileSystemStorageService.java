@@ -34,7 +34,7 @@ public class FileSystemStorageService implements StorageService {
 
     @Autowired
     public FileSystemStorageService(StorageProperties storageProperties) {
-        this.rootLocation = Paths.get(storageProperties.getUploadDir());
+        this.rootLocation = Paths.get(storageProperties.getDir());
     }
 
     @Override

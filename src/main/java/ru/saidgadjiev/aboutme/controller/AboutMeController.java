@@ -28,11 +28,7 @@ public class AboutMeController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/update")
     public ResponseEntity<AboutMe> update(@RequestBody AboutMe aboutMe) throws SQLException {
-        int updated = aboutMeService.update(aboutMe);
-
-        if (updated == 0) {
-            return ResponseEntity.notFound().build();
-        }
+        aboutMeService.update(aboutMe);
 
         return ResponseEntity.ok(aboutMe);
     }

@@ -127,10 +127,10 @@ public class BlogService {
         categoryDao.create(category);
     }
 
-    public int updateCategory(CategoryDetails categoryDetails) throws SQLException {
+    public int updateCategory(Integer id, CategoryDetails categoryDetails) throws SQLException {
         Category category = DTOUtils.convert(categoryDetails, Category.class);
 
-        return categoryDao.update(category);
+        return categoryDao.update(id, category);
     }
 
     public CategoryDetails getCategoryById(Integer id) throws SQLException {

@@ -2,7 +2,7 @@ package ru.saidgadjiev.aboutme.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("app.datasource")
+@ConfigurationProperties(prefix = "app.datasource")
 public class DataSourceProperties {
 
     private String host;

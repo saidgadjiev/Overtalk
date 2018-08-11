@@ -45,15 +45,16 @@ public class SkillController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping(value = "/update")
+    @PostMapping(value = "/update/{id}")
     public ResponseEntity<Skill> updateSkill(
+            @PathVariable("id") Integer id,
             @RequestBody @Valid Skill skill,
             BindingResult bindingResult
     ) throws SQLException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        int updated = skillService.update(skill);
+        int updated = skillService.update(id, skill);
 
         if (updated == 0) {
             return ResponseEntity.notFound().build();

@@ -2,14 +2,18 @@ package ru.saidgadjiev.aboutme.properties;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Profile;
 
-@ConfigurationProperties
+@ConfigurationProperties(prefix = "app.upload")
 public class StorageProperties {
 
-    @Value("${app.upload.dir}")
-    private String uploadDir = "upload-dir";
+    private String dir;
 
-    public String getUploadDir() {
-        return uploadDir;
+    public String getDir() {
+        return dir;
+    }
+
+    public void setDir(String dir) {
+        this.dir = dir;
     }
 }
