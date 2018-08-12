@@ -12,6 +12,7 @@ import ru.saidgadjiev.aboutme.dao.PostDao;
 import ru.saidgadjiev.aboutme.domain.Category;
 import ru.saidgadjiev.aboutme.domain.Comment;
 import ru.saidgadjiev.aboutme.domain.Post;
+import ru.saidgadjiev.aboutme.domain.UserProfile2;
 import ru.saidgadjiev.aboutme.model.CategoryDetails;
 import ru.saidgadjiev.aboutme.model.CommentDetails;
 import ru.saidgadjiev.aboutme.model.PostDetails;
@@ -19,6 +20,9 @@ import ru.saidgadjiev.aboutme.utils.DTOUtils;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by said on 08.03.2018.
@@ -43,21 +47,22 @@ public class BlogService {
     }
 
     public void createCommentOfPost(Integer postId, CommentDetails details) throws SQLException {
-        UserDetails authorizedUser = securityService.findLoggedInUser();
-
-        details.setUser(authorizedUser.getUsername());
         Comment comment = DTOUtils.convert(details, Comment.class);
         Post post = new Post();
 
         post.setId(postId);
+
+        UserDetails authorizedUser = securityService.findLoggedInUser();
+        UserProfile2 userProfile = new UserProfile2();
+
+        userProfile.setUserName(authorizedUser.getUsername());
+
+        comment.setUser(userProfile);
         comment.setPost(post);
         commentDao.create(comment);
     }
 
     public void createPostOfCategory(Integer categoryId, PostDetails postDetails) throws SQLException {
-        UserDetails authorizedUser = securityService.findLoggedInUser();
-
-        postDetails.setUserName(authorizedUser.getUsername());
         Post post = DTOUtils.convert(postDetails, Post.class);
         Category category = new Category();
 
@@ -74,8 +79,19 @@ public class BlogService {
         UserDetails userDetails = securityService.findLoggedInUser();
 
         if (userDetails != null) {
-            for (PostDetails postDetails : postDetailsList) {
-                postDetails.setLiked(postDetails.getLikeUsers().contains(userDetails.getUsername()));
+            Map<Integer, PostDetails> postDetailsMap = postDetailsList
+                    .stream()
+                    .collect(Collectors.toMap(PostDetails::getId, Function.identity()));
+
+            for (Post post : posts) {
+                List<String> likedUsers = post.getLikes()
+                        .stream()
+                        .map(like -> like.getUser().getUserName())
+                        .collect(Collectors.toList());
+
+                PostDetails postDetails = postDetailsMap.get(post.getId());
+
+                postDetails.setLiked(likedUsers.contains(userDetails.getUsername()));
             }
         }
 
@@ -95,22 +111,27 @@ public class BlogService {
         UserDetails userDetails = securityService.findLoggedInUser();
 
         if (userDetails != null) {
-            postDetails.setLiked(postDetails.getLikeUsers().contains(userDetails.getUsername()));
+            List<String> likedUsers = post.getLikes()
+                    .stream()
+                    .map(like -> like.getUser().getUserName())
+                    .collect(Collectors.toList());
+
+            postDetails.setLiked(likedUsers.contains(userDetails.getUsername()));
         }
 
         return postDetails;
     }
 
-    public int updatePost(PostDetails postDetails) throws SQLException {
+    public int updatePost(Integer id, PostDetails postDetails) throws SQLException {
         Post post = DTOUtils.convert(postDetails, Post.class);
 
-        return postDao.update(post);
+        return postDao.update(id, post);
     }
 
-    public int updateComment(CommentDetails commentDetails) throws SQLException {
+    public int updateComment(Integer id, CommentDetails commentDetails) throws SQLException {
         Comment comment = DTOUtils.convert(commentDetails, Comment.class);
 
-        return commentDao.update(comment);
+        return commentDao.update(id, comment);
     }
 
     public Page<CategoryDetails> getCategories(Pageable page) throws SQLException {
@@ -121,10 +142,12 @@ public class BlogService {
         return new PageImpl<>(postDetailsList, page, totalCount);
     }
 
-    public void createCategory(CategoryDetails categoryDetails) throws SQLException {
+    public CategoryDetails createCategory(CategoryDetails categoryDetails) throws SQLException {
         Category category = DTOUtils.convert(categoryDetails, Category.class);
 
         categoryDao.create(category);
+
+        return DTOUtils.convert(category, CategoryDetails.class);
     }
 
     public int updateCategory(Integer id, CategoryDetails categoryDetails) throws SQLException {

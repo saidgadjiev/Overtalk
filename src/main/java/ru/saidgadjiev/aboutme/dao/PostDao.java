@@ -60,7 +60,7 @@ public class PostDao {
         return selectStatement.queryForLong();
     }
 
-    public int update(Post post) throws SQLException {
+    public int update(Integer id, Post post) throws SQLException {
         Session session = sessionManager.currentSession();
         UpdateStatement updateStatement = session.statementBuilder().createUpdateStatement(Post.class);
 
@@ -68,9 +68,9 @@ public class PostDao {
         updateStatement.set("content", post.getContent());
 
         updateStatement.where(new Criteria()
-                .add(Restrictions.eq("id", post.getId())));
+                .add(Restrictions.eq("id", id)));
 
-        return session.update(updateStatement);
+        return updateStatement.update();
     }
 
     public int deleteById(Integer id) throws SQLException {

@@ -26,9 +26,6 @@ public class Post {
     @DatabaseColumn(notNull = true)
     private Date createdDate = new Date();
 
-    @ForeignColumn(foreignFieldName = "userName")
-    private UserProfile2 user;
-
     @ForeignCollectionField(foreignFieldName = "post", fetchType = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
@@ -70,14 +67,6 @@ public class Post {
         this.createdDate = createdDate;
     }
 
-    public UserProfile2 getUser() {
-        return user;
-    }
-
-    public void setUser(UserProfile2 user) {
-        this.user = user;
-    }
-
     public List<Comment> getComments() {
         return comments;
     }
@@ -109,7 +98,6 @@ public class Post {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", createdDate=" + createdDate +
-                ", user=" + (user == null ? null : user.getUserName()) +
                 '}';
     }
 }

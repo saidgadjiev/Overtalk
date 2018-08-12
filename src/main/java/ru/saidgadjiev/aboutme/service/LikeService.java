@@ -5,6 +5,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.saidgadjiev.aboutme.dao.LikeDao;
 import ru.saidgadjiev.aboutme.domain.Like;
+import ru.saidgadjiev.aboutme.domain.Post;
+import ru.saidgadjiev.aboutme.domain.UserProfile;
+import ru.saidgadjiev.aboutme.domain.UserProfile2;
 import ru.saidgadjiev.aboutme.model.LikeDetails;
 import ru.saidgadjiev.aboutme.utils.DTOUtils;
 
@@ -19,26 +22,51 @@ public class LikeService {
     @Autowired
     private LikeDao likeDao;
 
-    public void create(LikeDetails likeDetails) throws SQLException {
+    public LikeDetails postLike(Integer postId) throws SQLException {
         UserDetails authorizedUser = securityService.findLoggedInUser();
+        Like like = new Like();
+        Post post = new Post();
 
-        likeDetails.setUser(authorizedUser.getUsername());
+        post.setId(postId);
+        like.setPost(post);
 
-        Like like = DTOUtils.convert(likeDetails, Like.class);
+        UserProfile2 userProfile = new UserProfile2();
+
+        userProfile.setUserName(authorizedUser.getUsername());
+        like.setUser(userProfile);
 
         likeDao.create(like);
+
+        LikeDetails likeDetails = new LikeDetails();
+
+        likeDetails.setPostId(postId);
+        likeDetails.setLikesCount((int) likeDao.postLikes(postId));
+        likeDetails.setLiked(true);
+
+        return likeDetails;
     }
 
-    public void remove(LikeDetails likeDetails) throws SQLException {
+    public LikeDetails postDislike(Integer postId) throws SQLException {
         UserDetails authorizedUser = securityService.findLoggedInUser();
+        Like like = new Like();
+        Post post = new Post();
 
-        likeDetails.setUser(authorizedUser.getUsername());
-        Like like = DTOUtils.convert(likeDetails, Like.class);
+        post.setId(postId);
+        like.setPost(post);
 
-        likeDao.delete(like);
-    }
+        UserProfile2 userProfile = new UserProfile2();
 
-    public long postLikes(Integer postId) throws SQLException {
-        return likeDao.postLikes(postId);
+        userProfile.setUserName(authorizedUser.getUsername());
+        like.setUser(userProfile);
+
+        likeDao.deletePostLike(like);
+
+        LikeDetails likeDetails = new LikeDetails();
+
+        likeDetails.setPostId(postId);
+        likeDetails.setLikesCount((int) likeDao.postLikes(postId));
+        likeDetails.setLiked(false);
+
+        return likeDetails;
     }
 }

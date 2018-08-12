@@ -21,7 +21,7 @@ public class Skill {
     @DatabaseColumn(notNull = true)
     private String name;
 
-    @DatabaseColumn(defaultDefinition = "0")
+    @DatabaseColumn(defaultDefinition = "0", notNull = true)
     private int percentage;
 
     @JsonIgnore

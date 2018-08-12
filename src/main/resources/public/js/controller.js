@@ -577,10 +577,11 @@ as.controller('ProjectController', function ($scope,
 });
 
 as.controller('AboutMeController', function ($scope,
-                                             $http,
                                              $uibModal,
-                                             $log) {
-    $http.get('/api/aboutMe').then(function (response) {
+                                             $log,
+                                             AboutMeService,
+                                             SkillService) {
+    AboutMeService.getAboutMe(function (response) {
         $scope.aboutMe = response.data;
     });
 
@@ -613,11 +614,14 @@ as.controller('AboutMeController', function ($scope,
         });
 
         editAboutMeModal.result.then(function (value) {
-            $http.post('/api/aboutMe/update', value)
-                .then(function (response) {
+            AboutMeService.update(
+                value.post,
+                value.placeOfResidence,
+                function (response) {
                     aboutMe.placeOfResidence = response.data.placeOfResidence;
                     aboutMe.post = response.data.post;
-                });
+                }
+            );
         });
     };
 
@@ -647,18 +651,24 @@ as.controller('AboutMeController', function ($scope,
         });
 
         addSkillModal.result.then(function (value) {
-            $http.post('/api/skill/create', value)
-                .then(function (response) {
+            SkillService.create(
+                value.name,
+                value.percentage,
+                function (response) {
                     aboutMe.skills.push(response.data);
-                });
+                }
+            );
         });
     };
 
-    $scope.removeSkill = function (skill) {
-        $http.post('/api/skill/remove/' + skill.id).then(function () {
-            $log.log('delete skill ' + skill);
-            $scope.aboutMe.skills.splice($scope.aboutMe.skills.indexOf(skill), 1);
-        });
+    $scope.deleteSkill = function (skill) {
+        SkillService.delete(
+            skill.id,
+            function () {
+                $log.log('delete skill ' + skill);
+                $scope.aboutMe.skills.splice($scope.aboutMe.skills.indexOf(skill), 1);
+            }
+        );
     };
 
     $scope.skill = {};
@@ -691,34 +701,40 @@ as.controller('AboutMeController', function ($scope,
         });
 
         editSkillModal.result.then(function (value) {
-            $http.post('/api/skill/update/' + value.id, value)
-                .then(function (response) {
+            SkillService.update(
+                value.id,
+                value.name,
+                value.percentage,
+                function (response) {
                     $log.log(response);
 
                     skill.name = response.data.name;
                     skill.percentage = response.data.percentage;
-                });
+                }
+            );
         });
     };
 });
 
 as.controller('CategoryController', function ($scope,
                                               $location,
-                                              $http,
                                               $log,
                                               $uibModal,
-                                              DataService) {
+                                              DataService,
+                                              CategoryService) {
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
-    var actionUrl = 'api/category/';
-
     var loadCategories = function () {
-        $http.get('api/category?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).then(function (response) {
-            $log.log(response);
-            $scope.totalItems = response.data.totalElements;
-            $scope.categories = response.data.content;
-        })
+        CategoryService.getPage(
+            $scope.currentPage,
+            $scope.itemsPerPage,
+            function (response) {
+                $log.log(response);
+                $scope.totalItems = response.data.totalElements;
+                $scope.categories = response.data.content;
+            }
+        )
     };
 
     loadCategories();
@@ -754,10 +770,9 @@ as.controller('CategoryController', function ($scope,
         });
 
         createCategoryModal.result.then(function (value) {
-            $http.post(actionUrl + 'create', value)
-                .then(function () {
-                    loadCategories();
-                });
+            CategoryService.create(value.name, description, function () {
+                loadCategories();
+            })
         });
     };
 
@@ -787,16 +802,20 @@ as.controller('CategoryController', function ($scope,
         });
 
         editCategoryModal.result.then(function (value) {
-            $http.post(actionUrl + 'update/' + value.id, value)
-                .then(function (response) {
+            CategoryService.update(
+                category.id,
+                value.name,
+                value.description,
+                function (response) {
                     category.name = response.data.name;
                     category.description = response.data.description;
-                });
+                }
+            );
         });
     };
 
     $scope.delete = function (category) {
-        $http.post(actionUrl + 'delete/' + category.id).then(function () {
+        CategoryService.delete(category.id, function () {
             $log.log('delete category ' + category);
             $scope.categories.splice($scope.categories.indexOf(category), 1);
         });

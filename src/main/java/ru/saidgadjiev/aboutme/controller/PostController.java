@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -42,14 +41,15 @@ public class PostController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping(value = "/update")
+    @PostMapping(value = "/update/{id}")
     public ResponseEntity<PostDetails> update(
+            @PathVariable("id") Integer id,
             @RequestBody @Valid PostDetails postDetails, BindingResult errResult
     ) throws SQLException {
-        if (errResult.hasErrors() || postDetails.getId() == null) {
+        if (errResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        blogService.updatePost(postDetails);
+        blogService.updatePost(id, postDetails);
 
         return ResponseEntity.ok(postDetails);
     }
@@ -68,13 +68,17 @@ public class PostController {
     public ResponseEntity<PostDetails> getPost(@PathVariable("id") Integer id) throws SQLException {
         PostDetails post = blogService.getPostById(id);
 
-        return new ResponseEntity<>(post, HttpStatus.OK);
+        return ResponseEntity.ok(post);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/delete/{id}")
-    public ResponseEntity<PostDetails> deletePost(@PathVariable("id") Integer id) throws SQLException {
-        blogService.deletePostById(id);
+    public ResponseEntity<?> deletePost(@PathVariable("id") Integer id) throws SQLException {
+        int deleted = blogService.deletePostById(id);
+
+        if (deleted == 0) {
+            return ResponseEntity.notFound().build();
+        }
 
         return ResponseEntity.ok().build();
     }

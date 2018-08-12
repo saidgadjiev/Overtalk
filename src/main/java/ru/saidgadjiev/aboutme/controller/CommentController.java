@@ -47,21 +47,26 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("@authorization.canEditComment(#commentDetails)")
-    @PostMapping(value = "/update")
+    @PreAuthorize("@authorization.canEditComment(#id)")
+    @PostMapping(value = "/update/{id}")
     public ResponseEntity<CommentDetails> updateComment(
+            @PathVariable("id") Integer id,
             @RequestBody CommentDetails commentDetails
     ) throws SQLException {
-        blogService.updateComment(commentDetails);
+        blogService.updateComment(id, commentDetails);
 
         return ResponseEntity.ok(commentDetails);
     }
 
-    @PreAuthorize("@authorization.canDeleteComment(#commentDetails)")
-    @PostMapping(value = "/delete")
-    public ResponseEntity<CommentDetails> deleteComment(@RequestBody CommentDetails commentDetails) throws SQLException {
-        blogService.deleteCommentById(commentDetails.getId());
+    @PreAuthorize("@authorization.canDeleteComment(#id)")
+    @PostMapping(value = "/delete/{id}")
+    public ResponseEntity<?> deleteComment(@PathVariable("id") Integer id) throws SQLException {
+        int deleted = blogService.deleteCommentById(id);
 
-        return ResponseEntity.ok(commentDetails);
+        if (deleted == 0) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok().build();
     }
 }

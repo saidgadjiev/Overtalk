@@ -16,6 +16,9 @@ public class UserProfile2 {
     @DatabaseColumn(notNull = true, unique = true)
     private String nickName;
 
+    @DatabaseColumn(notNull = true)
+    private String password;
+
     public Integer getId() {
         return id;
     }
@@ -38,6 +41,14 @@ public class UserProfile2 {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

@@ -27,10 +27,13 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -64,39 +67,34 @@ public class AboutMeControllerIntegrationTest {
         mockMvc
                 .perform(get("/api/aboutMe").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(JsonUtil.toJson(aboutMe)));
+                .andExpect(jsonPath("$.fio", is("Гаджиев Саид Алиевич")))
+                .andExpect(jsonPath("$.placeOfResidence", is("Москва")))
+                .andExpect(jsonPath("$.educationLevel", is("Бакалавр")))
+                .andExpect(jsonPath("$.post", is("Java разработчик")))
+                .andExpect(jsonPath("$.skills", hasSize(1)))
+                .andExpect(jsonPath("$.skills[0].id", is(1)))
+                .andExpect(jsonPath("$.skills[0].name", is("Java")))
+                .andExpect(jsonPath("$.skills[0].percentage", is(90)));
     }
 
     @Test
     public void update() throws Exception {
         createAboutMe();
-        AboutMe request = getTestAboutMe();
-
-        request.setId(2);
-        request.setFio("Магомедова Зухра Ибрагимовна");
-        Calendar dateOfBirthCalendar = new GregorianCalendar(1996, 6, 2);
-
-        request.setDateOfBirth(dateOfBirthCalendar.getTime());
-        request.setPlaceOfResidence("Macha");
-        request.setPost("President");
-        request.setEducationLevel("Magistr");
-
-        String requestJson = JsonUtil.toJson(request);
 
         mockMvc.perform(post("/api/aboutMe/update")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(requestJson)
+                .content("{\"post\":\"Test2\",\"placeOfResidence\":\"Test1\"}")
                 .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
         )
                 .andExpect(status().isOk())
-                .andExpect(content().json(requestJson));
+                .andExpect(content().json("{\"post\":\"Test2\",\"placeOfResidence\":\"Test1\"}"));
 
         try (Session session = sessionManager.createSession()) {
             AboutMe result = session.statementBuilder().createSelectStatement(AboutMe.class).uniqueResult();
             AboutMe expect = getTestAboutMe();
 
-            expect.setPlaceOfResidence("Macha");
-            expect.setPost("President");
+            expect.setPlaceOfResidence("Test1");
+            expect.setPost("Test2");
 
             Assert.assertEquals(JsonUtil.toJson(expect), JsonUtil.toJson(result));
         }

@@ -9,8 +9,6 @@ public class LikeDetails {
 
     private Integer commentId;
 
-    private String user;
-
     private Integer likesCount;
 
     private boolean liked;
@@ -29,14 +27,6 @@ public class LikeDetails {
 
     public void setCommentId(Integer commentId) {
         this.commentId = commentId;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
     }
 
     public Integer getLikesCount() {

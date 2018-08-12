@@ -20,8 +20,6 @@ public class CommentDetails {
 
     private String nickName;
 
-    private String user;
-
     public Integer getId() {
         return id;
     }
@@ -54,14 +52,6 @@ public class CommentDetails {
         this.nickName = nickName;
     }
 
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
     @Override
     public String toString() {
         return "CommentDetails{" +
@@ -69,7 +59,6 @@ public class CommentDetails {
                 ", content='" + content + '\'' +
                 ", createdDate=" + createdDate +
                 ", nickName='" + nickName + '\'' +
-                ", user='" + user + '\'' +
                 '}';
     }
 }

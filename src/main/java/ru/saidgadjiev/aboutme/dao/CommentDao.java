@@ -53,20 +53,25 @@ public class CommentDao {
         return selectStatement.queryForLong();
     }
 
-    public int update(Comment comment) throws SQLException {
+    public int update(Integer id, Comment comment) throws SQLException {
         Session session = sessionManager.currentSession();
         UpdateStatement updateStatement = session.statementBuilder().createUpdateStatement(Comment.class);
 
         updateStatement.set("content", comment.getContent());
-        updateStatement.where(new Criteria().add(Restrictions.eq("id", comment.getId())));
-        long count = session.update(updateStatement);
+        updateStatement.where(new Criteria().add(Restrictions.eq("id", id)));
 
-        return (int) count;
+        return updateStatement.update();
     }
 
     public int deleteById(Integer id) throws SQLException {
         Session session = sessionManager.currentSession();
 
         return session.deleteById(Comment.class, id);
+    }
+
+    public Comment getById(Integer id) throws SQLException {
+        Session session = sessionManager.currentSession();
+
+        return session.queryForId(Comment.class, id);
     }
 }

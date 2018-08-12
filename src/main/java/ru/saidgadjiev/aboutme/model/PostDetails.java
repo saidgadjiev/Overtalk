@@ -23,17 +23,11 @@ public class PostDetails {
 
     private Date createdDate;
 
-    private String nickName;
-
     private Integer commentsCount;
 
     private Integer likesCount;
 
     private boolean liked = false;
-
-    private List<String> likeUsers;
-
-    private String userName;
 
     public Integer getId() {
         return id;
@@ -67,14 +61,6 @@ public class PostDetails {
         this.createdDate = createdDate;
     }
 
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
     public Integer getCommentsCount() {
         return commentsCount;
     }
@@ -99,22 +85,6 @@ public class PostDetails {
         this.liked = liked;
     }
 
-    public List<String> getLikeUsers() {
-        return likeUsers;
-    }
-
-    public void setLikeUsers(List<String> likeUsers) {
-        this.likeUsers = likeUsers;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     @Override
     public String toString() {
         return "PostDetails{" +
@@ -122,7 +92,6 @@ public class PostDetails {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", createdDate=" + createdDate +
-                ", nickName='" + nickName + '\'' +
                 ", commentsCount=" + commentsCount +
                 '}';
     }

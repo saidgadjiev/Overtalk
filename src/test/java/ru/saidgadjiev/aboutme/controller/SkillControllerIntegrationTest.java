@@ -2,6 +2,7 @@ package ru.saidgadjiev.aboutme.controller;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,31 +49,26 @@ public class SkillControllerIntegrationTest {
         try (Session session = sessionManager.createSession()) {
             session.clearTables(Skill.class, AboutMe.class);
             session.statementBuilder().createQuery("ALTER TABLE skill ALTER COLUMN id RESTART WITH 1").executeUpdate();
+            createAboutMe();
         }
     }
 
     @Test
-    public void createSkill() throws Exception {
-        createAboutMe();
-        Skill skill = getTestSkill();
-        Skill except = getTestSkill();
-
-        except.setId(1);
-
+    public void testCreateSkill() throws Exception {
         mockMvc
             .perform(post("/api/skill/create")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(JsonUtil.toJson(skill))
+                .content("{\"name\":\"Test2\",\"percentage\":90}")
                 .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
         )
                 .andExpect(status().isOk())
-                .andExpect(content().json(JsonUtil.toJson(except)));
+                .andExpect(content().json("{\"id\":1,\"name\":\"Test2\",\"percentage\":90}"));
 
         try (Session session = sessionManager.createSession()) {
             List<Skill> skills = session.queryForAll(Skill.class);
 
             Assert.assertEquals(skills.size(), 1);
-            Assert.assertEquals(JsonUtil.toJson(skills.get(0)), JsonUtil.toJson(except));
+            Assert.assertEquals(JsonUtil.toJson(skills.get(0)), "{\"id\":1,\"name\":\"Test2\",\"percentage\":90}");
         }
     }
 
@@ -108,12 +103,10 @@ public class SkillControllerIntegrationTest {
 
     @Test
     public void removeSkill() throws Exception {
-        Skill created = createSkill(createAboutMe());
-
+        createSkill();
         mockMvc
                 .perform(post("/api/skill/delete/1")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(JsonUtil.toJson(created))
                         .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
                 )
                 .andExpect(status().isOk());
@@ -127,26 +120,21 @@ public class SkillControllerIntegrationTest {
 
     @Test
     public void updateSkill() throws Exception {
-        Skill created = createSkill(createAboutMe());
-        Skill skill = getTestSkill();
-
-        skill.setId(created.getId());
-        skill.setName("Spring");
-        skill.setPercentage(100);
+        Skill created = createSkill();
 
         mockMvc
                 .perform(post("/api/skill/update/" + created.getId())
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(JsonUtil.toJson(skill))
+                        .content("{\"name\":\"Test2\",\"percentage\":100}")
                         .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
                 )
                 .andExpect(status().isOk())
-                .andExpect(content().json(JsonUtil.toJson(skill)));
+                .andExpect(content().json("{\"name\":\"Test2\",\"percentage\":100}"));
 
         try (Session session = sessionManager.createSession()) {
             Skill result = session.queryForId(Skill.class, created.getId());
 
-            Assert.assertEquals(JsonUtil.toJson(skill), JsonUtil.toJson(result));
+            Assert.assertEquals("{\"id\":1,\"name\":\"Test2\",\"percentage\":100}", JsonUtil.toJson(result));
         }
     }
 
@@ -185,10 +173,13 @@ public class SkillControllerIntegrationTest {
         }
     }
 
-    private Skill createSkill(AboutMe aboutMe) throws SQLException {
+    private Skill createSkill() throws SQLException {
         try (Session session = sessionManager.createSession()) {
             Skill skill = getTestSkill();
 
+            AboutMe aboutMe = new AboutMe();
+
+            aboutMe.setId(1);
             skill.setAboutMe(aboutMe);
 
             session.create(skill);

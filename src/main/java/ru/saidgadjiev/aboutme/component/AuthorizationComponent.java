@@ -4,17 +4,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import ru.saidgadjiev.aboutme.dao.CommentDao;
+import ru.saidgadjiev.aboutme.domain.Comment;
 import ru.saidgadjiev.aboutme.domain.Role;
-import ru.saidgadjiev.aboutme.model.CommentDetails;
 import ru.saidgadjiev.aboutme.service.SecurityService;
+
+import java.sql.SQLException;
 
 @Component("authorization")
 public class AuthorizationComponent {
 
     @Autowired
+    private CommentDao commentDao;
+
+    @Autowired
     private SecurityService securityService;
 
-    public boolean canEditComment(CommentDetails commentDetails) {
+    public boolean canEditComment(Integer id) throws SQLException {
+        Comment comment = commentDao.getById(id);
+
         UserDetails userDetails = securityService.findLoggedInUser();
 
         if (userDetails == null) {
@@ -26,10 +34,10 @@ public class AuthorizationComponent {
             }
         }
 
-        return userDetails.getUsername().equals(commentDetails.getUser());
+        return userDetails.getUsername().equals(comment.getUser().getUserName());
     }
 
-    public boolean canDeleteComment(CommentDetails commentDetails) {
-        return canEditComment(commentDetails);
+    public boolean canDeleteComment(Integer id) throws SQLException {
+        return canEditComment(id);
     }
 }

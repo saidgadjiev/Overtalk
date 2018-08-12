@@ -52,46 +52,6 @@ public final class DTOUtils {
 
             return context.getSource().getComments().size();
         };
-        Converter<Post, List<String>> postLikeUsersConverter = context -> {
-            if (context.getSource() == null) {
-                return null;
-            }
-
-            return context.getSource().getLikes()
-                    .stream()
-                    .map(like -> like.getUser().getUserName())
-                    .collect(Collectors.toList());
-        };
-        Converter<LikeDetails, Post> likeDetailsPostConverter = context -> {
-            if (context.getSource() == null) {
-                return null;
-            }
-            Post post = new Post();
-
-            post.setId(context.getSource().getPostId());
-
-            return post;
-        };
-        Converter<LikeDetails, Comment> likeDetailsCommentConverter = context -> {
-            if (context.getSource() == null) {
-                return null;
-            }
-            Comment comment = new Comment();
-
-            comment.setId(context.getSource().getCommentId());
-
-            return comment;
-        };
-        Converter<String, UserProfile2> userNameConverter = context -> {
-            if (context.getSource() == null) {
-                return null;
-            }
-            UserProfile2 userProfile = new UserProfile2();
-
-            userProfile.setUserName(context.getSource());
-
-            return userProfile;
-        };
         Converter<Category, Integer> postsCountConverter = context -> {
             if (context.getSource() == null) {
                 return null;
@@ -116,33 +76,19 @@ public final class DTOUtils {
             @Override
             protected void configure() {
                 skip(destination.getCreatedDate());
-                using(userNameConverter).map(source.getUserName(), destination.getUser());
             }
         });
         INSTANCE.addMappings(new PropertyMap<CommentDetails, Comment>() {
             @Override
             protected void configure() {
                 skip(destination.getCreatedDate());
-                using(userNameConverter).map(source.getUser(), destination.getUser());
             }
         });
         INSTANCE.addMappings(new PropertyMap<Post, PostDetails>() {
             @Override
             protected void configure() {
-                skip(destination.getUserName());
-                using(userNickNameConverter).map(source.getUser(), destination.getNickName());
                 using(commentCountConverter).map(source, destination.getCommentsCount());
                 using(postLikesCountConverter).map(source, destination.getLikesCount());
-                using(postLikeUsersConverter).map(source, destination.getLikeUsers());
-            }
-        });
-        INSTANCE.addMappings(new PropertyMap<LikeDetails, Like>() {
-            @Override
-            protected void configure() {
-                skip(destination.getId());
-                using(likeDetailsCommentConverter).map(source, destination.getComment());
-                using(likeDetailsPostConverter).map(source, destination.getPost());
-                using(userNameConverter).map(source.getUser(), destination.getUser());
             }
         });
 

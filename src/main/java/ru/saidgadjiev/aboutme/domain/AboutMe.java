@@ -25,10 +25,10 @@ public class AboutMe {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date dateOfBirth;
 
-    @DatabaseColumn
+    @DatabaseColumn(notNull = true)
     private String placeOfResidence;
 
-    @DatabaseColumn
+    @DatabaseColumn(notNull = true)
     private String educationLevel;
 
     @DatabaseColumn(notNull = true)

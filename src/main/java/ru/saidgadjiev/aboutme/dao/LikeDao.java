@@ -29,17 +29,16 @@ public class LikeDao {
         session.create(like);
     }
 
-    public void delete(Like like) throws SQLException {
+    public int deletePostLike(Like like) throws SQLException {
         Session session = sessionManager.currentSession();
         DeleteStatement deleteStatement = session.statementBuilder().createDeleteStatement(Like.class);
 
         deleteStatement
                 .where(new Criteria()
-                        .add(like.getPost().getId() != null ? eq("post", like.getPost().getId()) : isNull("post"))
-                        .add(like.getComment().getId() != null ? eq("comment", like.getComment().getId()) : isNull("comment"))
+                        .add(eq("post", like.getPost().getId()))
                         .add(eq("user", like.getUser().getUserName())));
 
-        session.delete(deleteStatement);
+        return deleteStatement.delete();
     }
 
     public long postLikes(Integer postId) throws SQLException {

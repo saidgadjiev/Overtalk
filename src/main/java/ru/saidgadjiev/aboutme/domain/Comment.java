@@ -22,7 +22,6 @@ public class Comment {
     private Post post;
 
     @Converter(value = JavaDateToSqlDate.class)
-    @Converter(value = JavaDateToSqlDate.class)
     @DatabaseColumn
     private Date createdDate = new Date();
 

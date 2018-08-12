@@ -353,3 +353,82 @@ as.service('HtmlEncoder', function () {
 
     return HtmlEncoder;
 });
+
+as.service('AboutMeService', function ($http) {
+    var service = {};
+
+    service.getAboutMe = function (callback) {
+        return $http.get('/api/aboutMe').then(callback);
+    };
+
+    service.update = function (post, placeOfResidence, callback) {
+        var json = {
+            post: post,
+            placeOfResidence: placeOfResidence
+        };
+
+        return $http.post('/api/aboutMe/update', json).then(callback);
+    };
+
+    return service;
+});
+
+as.service('SkillService', function ($http) {
+    var service = {};
+
+    service.create = function (name, percentage, callback) {
+        var json = {
+            name: name,
+            percentage: percentage
+        };
+
+        return $http.post('/api/skill/create', json).then(callback);
+    };
+
+    service.update = function (id, name, percentage, callback) {
+        var json = {
+            name: name,
+            percentage: percentage
+        };
+
+        $http.post('/api/skill/update/' + id, json).then(callback);
+    };
+
+    service.delete = function (id, callback) {
+        $http.post('/api/skill/delete/' + id).then(callback);
+    };
+
+    return service;
+});
+
+as.service('CategoryService', function ($http) {
+    var service = {};
+
+    service.getPage = function (page, size, callback) {
+        $http.get('api/category?page=' + (page - 1) + '&size=' + size).then(callback);
+    };
+
+    service.create = function (name, description, callback) {
+        var json = {
+            name: name,
+            description: description
+        };
+
+        $http.post('api/category/create', json).then(callback);
+    };
+
+    service.update = function (id, name, description, callback) {
+        var json = {
+            name: name,
+            description: description
+        };
+
+        $http.post('api/category/update/' + id, json).then(callback);
+    };
+
+    service.delete = function (id, callback) {
+        $http.post('api/category/delete/' + id).then(callback);
+    };
+
+    return service;
+});

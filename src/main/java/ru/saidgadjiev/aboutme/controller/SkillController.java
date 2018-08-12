@@ -20,7 +20,7 @@ public class SkillController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/create")
-    public ResponseEntity<Skill> createSkill(
+    public ResponseEntity<Skill> create(
             @RequestBody @Valid Skill skill,
             BindingResult bindingResult
     ) throws SQLException {
@@ -34,7 +34,7 @@ public class SkillController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/delete/{id}")
-    public ResponseEntity<?> removeSkill(@PathVariable("id") Integer id) throws SQLException {
+    public ResponseEntity<?> delete(@PathVariable("id") Integer id) throws SQLException {
         int removed = skillService.removeById(id);
 
         if (removed == 0) {
@@ -46,7 +46,7 @@ public class SkillController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/update/{id}")
-    public ResponseEntity<Skill> updateSkill(
+    public ResponseEntity<Skill> update(
             @PathVariable("id") Integer id,
             @RequestBody @Valid Skill skill,
             BindingResult bindingResult

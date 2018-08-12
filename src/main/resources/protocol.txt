@@ -1,0 +1,140 @@
+AboutMe ('/api/aboutMe')
+
+1. ('')
+request: {}
+response: {
+    fio: string,
+    dateOfBirth: date,
+    placeOfResidence: string,
+    educationLevel: string,
+    post: string,
+    additionalInformation: string | null,
+    skills : [
+        {
+            id: int,
+            name: string,
+            percentage: int
+        }
+        ...
+    ]
+}
+
+2. ('/update'). Update only post, placeOfResidence.
+request: {
+    post: string,
+    placeOfResidence: string
+}
+response: {
+    post: string,
+    placeOfResidence: string
+}
+
+Skill ('/api/skill')
+
+1. ('/create')
+request: {
+    name: string,
+    percentage: int
+}
+response: {
+    id: int,
+    name: string,
+    percentage: int
+}
+
+2. ('/delete/{id}')
+request /int: {}
+response: {}
+
+3. ('/update/{id}')
+request /int: {
+    name: string,
+    percentage: int
+}
+response: {
+    name: string,
+    percentage: int
+}
+
+Category ('/api/category')
+
+1. ('/create')
+request: {
+    name: string,
+    description: string
+}
+response: {
+    id: int,
+    name: string,
+    description: string,
+    postsCount: int
+}
+
+2. ('/update/{id}'). Update only name, description.
+request /int : {
+    name: string,
+    description: string
+}
+response: {
+    name: string,
+    description: string
+}
+
+3. ('')
+request ?page=int&size=int : {}
+response : {
+    content: [
+    {
+        id: int,
+        name: string,
+        description: string
+        postsCount: int
+    },
+    ...
+    ],
+    totalElements: int
+}
+
+4. ('/{id}')
+request /int : {}
+response : {
+    id: int,
+    name: string,
+    description: string
+    postsCount: int
+}
+
+5. ('/delete/{id}')
+request /int : {}
+response : {}
+
+Post ('/api/post')
+
+1. ('/{id}/create')
+request /int/create : {
+    title: string,
+    content: string
+}
+response: {}
+
+2. ('/update/{id}')
+request /int : {
+    title: string,
+    content: string
+}
+response /int : {
+    title: string,
+    content: string
+}
+
+3. ('/{id}')
+request /int : {}
+response : {
+    id: int,
+    title: string,
+    content: string,
+    createdDate: date,
+    commentsCount: int,
+    likesCount: int,
+    liked: bool
+}

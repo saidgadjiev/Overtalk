@@ -19,34 +19,18 @@ public class LikeController {
     private LikeService likeService;
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(value = "/like/post")
+    @PostMapping(value = "/like/post/{id}")
     public ResponseEntity<LikeDetails> like(
-            @RequestBody @Valid LikeDetails likeDetails,
-            BindingResult bindingResult
+            @PathVariable("id") Integer postId
     ) throws SQLException {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
-        }
-        likeService.create(likeDetails);
-        likeDetails.setLikesCount((int) likeService.postLikes(likeDetails.getPostId()));
-        likeDetails.setLiked(true);
-
-        return ResponseEntity.ok(likeDetails);
+        return ResponseEntity.ok(likeService.postLike(postId));
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(value = "/dislike/post")
+    @PostMapping(value = "/dislike/post/{id}")
     public ResponseEntity<LikeDetails> dislike(
-            @RequestBody @Valid LikeDetails likeDetails,
-            BindingResult bindingResult
+            @PathVariable("id") Integer id
     ) throws SQLException {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
-        }
-        likeService.remove(likeDetails);
-        likeDetails.setLikesCount((int) likeService.postLikes(likeDetails.getPostId()));
-        likeDetails.setLiked(false);
-
-        return ResponseEntity.ok(likeDetails);
+        return ResponseEntity.ok(likeService.postDislike(id));
     }
 }

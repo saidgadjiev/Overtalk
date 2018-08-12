@@ -28,16 +28,14 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/create")
-    public ResponseEntity create(
+    public ResponseEntity<CategoryDetails> create(
             @RequestBody @Valid CategoryDetails categoryDetails, BindingResult bindingResult
     ) throws SQLException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
 
-        blogService.createCategory(categoryDetails);
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(blogService.createCategory(categoryDetails));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -77,7 +75,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/delete/{id}")
-    public ResponseEntity<CategoryDetails> deleteCategory(@PathVariable("id") Integer id) throws SQLException {
+    public ResponseEntity<?> deleteCategory(@PathVariable("id") Integer id) throws SQLException {
         blogService.deleteCategoryById(id);
 
         return ResponseEntity.ok().build();
