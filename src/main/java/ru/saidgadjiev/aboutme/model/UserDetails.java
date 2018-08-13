@@ -1,5 +1,7 @@
 package ru.saidgadjiev.aboutme.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -18,6 +20,7 @@ public class UserDetails {
 
     @NotNull
     @Size(min = 1)
+    @JsonIgnore
     private String password;
 
     @NotNull
@@ -26,6 +29,7 @@ public class UserDetails {
 
     @NotNull
     @Size(min = 1)
+    @JsonIgnore
     private String confirmPassword;
 
     private Set<String> roles = new HashSet<>();

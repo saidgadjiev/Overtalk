@@ -12,12 +12,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.saidgadjiev.aboutme.common.JsonUtil;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
 import ru.saidgadjiev.aboutme.domain.*;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -78,8 +81,9 @@ public class CommentControllerTest {
 
     @Test
     public void getCommentsByPost() throws Exception {
-        createComment();
-        createComment();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Comment comment1 = createComment();
+        Comment comment2 = createComment();
 
         mockMvc
                 .perform(get("/api/comment/1/comments"))
@@ -88,9 +92,11 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.content[0].id", is(1)))
                 .andExpect(jsonPath("$.content[0].content", is("Test")))
                 .andExpect(jsonPath("$.content[0].nickName", is("test")))
+                .andExpect(jsonPath("$.content[0].createdDate", is(simpleDateFormat.format(comment1.getCreatedDate()))))
                 .andExpect(jsonPath("$.content[1].id", is(2)))
                 .andExpect(jsonPath("$.content[1].content", is("Test")))
                 .andExpect(jsonPath("$.content[1].nickName", is("test")))
+                .andExpect(jsonPath("$.content[1].createdDate", is(simpleDateFormat.format(comment2.getCreatedDate()))))
                 .andExpect(jsonPath("$.totalElements", is(2)));;
     }
 
@@ -149,7 +155,7 @@ public class CommentControllerTest {
         }
     }
 
-    private void createComment() throws SQLException {
+    private Comment createComment() throws SQLException {
         try (Session session = sessionManager.createSession()) {
             Comment comment = new Comment();
 
@@ -158,6 +164,8 @@ public class CommentControllerTest {
             comment.setUser(USER_PROFILE);
 
             session.create(comment);
+
+            return comment;
         }
     }
 

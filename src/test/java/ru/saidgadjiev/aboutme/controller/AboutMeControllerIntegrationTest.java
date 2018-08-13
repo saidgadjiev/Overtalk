@@ -70,6 +70,7 @@ public class AboutMeControllerIntegrationTest {
                 .andExpect(jsonPath("$.fio", is("Гаджиев Саид Алиевич")))
                 .andExpect(jsonPath("$.placeOfResidence", is("Москва")))
                 .andExpect(jsonPath("$.educationLevel", is("Бакалавр")))
+                .andExpect(jsonPath("$.dateOfBirth", is("01-07-1995")))
                 .andExpect(jsonPath("$.post", is("Java разработчик")))
                 .andExpect(jsonPath("$.skills", hasSize(1)))
                 .andExpect(jsonPath("$.skills[0].id", is(1)))
@@ -135,7 +136,7 @@ public class AboutMeControllerIntegrationTest {
 
         aboutMe.setId(1);
         aboutMe.setFio("Гаджиев Саид Алиевич");
-        Calendar dateOfBirthCalendar = new GregorianCalendar(1995, 7, 1);
+        Calendar dateOfBirthCalendar = new GregorianCalendar(1995, Calendar.JULY, 1);
 
         aboutMe.setDateOfBirth(dateOfBirthCalendar.getTime());
         aboutMe.setPlaceOfResidence("Москва");

@@ -1,5 +1,7 @@
 package ru.saidgadjiev.aboutme.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -16,6 +18,7 @@ public class CommentDetails {
     @Size(min = 1)
     private String content;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Moscow")
     private Date createdDate;
 
     private String nickName;

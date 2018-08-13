@@ -31,8 +31,10 @@ public class ProjectDao {
         session.create(project);
     }
 
-    public int update(Project project) throws SQLException {
+    public int update(Integer id, Project project) throws SQLException {
         Session session = sessionManager.currentSession();
+
+        project.setId(id);
 
         return session.update(project);
     }

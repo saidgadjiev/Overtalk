@@ -2,7 +2,7 @@ package ru.saidgadjiev.aboutme.domain;
 
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
-import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
+import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlTimeStamp;
 import ru.saidgadjiev.ormnext.core.field.*;
 import ru.saidgajiev.ormnext.cache.Cacheable;
 
@@ -21,8 +21,8 @@ public class Comment {
     @ForeignColumn(fetchType = FetchType.LAZY, onDelete = ReferenceAction.CASCADE, onUpdate = ReferenceAction.CASCADE)
     private Post post;
 
-    @Converter(value = JavaDateToSqlDate.class)
-    @DatabaseColumn
+    @Converter(value = JavaDateToSqlTimeStamp.class)
+    @DatabaseColumn(notNull = true, dataType = DataType.TIMESTAMP)
     private Date createdDate = new Date();
 
     @DatabaseColumn(notNull = true)

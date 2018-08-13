@@ -23,7 +23,7 @@ public class ProjectService {
         dao.create(project);
     }
 
-    public int update(Project project) throws SQLException {
-        return dao.update(project);
+    public int update(Integer id, Project project) throws SQLException {
+        return dao.update(id, project);
     }
 }

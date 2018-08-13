@@ -22,7 +22,7 @@ public class AboutMe {
 
     @Converter(value = JavaDateToSqlDate.class)
     @DatabaseColumn(notNull = true)
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Europe/Moscow")
     private Date dateOfBirth;
 
     @DatabaseColumn(notNull = true)

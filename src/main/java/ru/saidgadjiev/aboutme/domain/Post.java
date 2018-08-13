@@ -1,8 +1,10 @@
 package ru.saidgadjiev.aboutme.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
 import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
+import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlTimeStamp;
 import ru.saidgadjiev.ormnext.core.field.*;
 import ru.saidgajiev.ormnext.cache.Cacheable;
 
@@ -22,8 +24,8 @@ public class Post {
     @DatabaseColumn(notNull = true, persisterClass = TextTypeDataPersister.class)
     private String content;
 
-    @Converter(value = JavaDateToSqlDate.class)
-    @DatabaseColumn(notNull = true)
+    @Converter(value = JavaDateToSqlTimeStamp.class)
+    @DatabaseColumn(notNull = true, dataType = DataType.TIMESTAMP)
     private Date createdDate = new Date();
 
     @ForeignCollectionField(foreignFieldName = "post", fetchType = FetchType.LAZY)

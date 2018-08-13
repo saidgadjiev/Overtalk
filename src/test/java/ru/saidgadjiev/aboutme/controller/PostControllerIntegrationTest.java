@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -115,8 +116,10 @@ public class PostControllerIntegrationTest {
 
     @Test
     public void getPostsOfCategory() throws Exception {
-        createPost();
-        createPost();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+
+        Post post1 = createPost();
+        Post post2 = createPost();
 
         mockMvc
                 .perform(get("/api/post/1/posts?page=0&size=10")
@@ -129,18 +132,21 @@ public class PostControllerIntegrationTest {
                 .andExpect(jsonPath("$.content[0].commentsCount", is(0)))
                 .andExpect(jsonPath("$.content[0].likesCount", is(0)))
                 .andExpect(jsonPath("$.content[0].liked", is(false)))
+                .andExpect(jsonPath("$.content[0].createdDate", is(simpleDateFormat.format(post1.getCreatedDate()))))
                 .andExpect(jsonPath("$.content[1].id", is(2)))
                 .andExpect(jsonPath("$.content[1].title", is("Test")))
                 .andExpect(jsonPath("$.content[1].content", is("Test")))
                 .andExpect(jsonPath("$.content[1].commentsCount", is(0)))
                 .andExpect(jsonPath("$.content[1].likesCount", is(0)))
                 .andExpect(jsonPath("$.content[1].liked", is(false)))
+                .andExpect(jsonPath("$.content[1].createdDate", is(simpleDateFormat.format(post2.getCreatedDate()))))
                 .andExpect(jsonPath("$.totalElements", is(2)));
     }
 
     @Test
     public void getPost() throws Exception {
-        createPost();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Post post = createPost();
 
         mockMvc
                 .perform(get("/api/post/1")
@@ -152,7 +158,8 @@ public class PostControllerIntegrationTest {
                 .andExpect(jsonPath("$.content", is("Test")))
                 .andExpect(jsonPath("$.commentsCount", is(0)))
                 .andExpect(jsonPath("$.likesCount", is(0)))
-                .andExpect(jsonPath("$.liked", is(false)));
+                .andExpect(jsonPath("$.liked", is(false)))
+                .andExpect(jsonPath("$.createdDate", is(simpleDateFormat.format(post.getCreatedDate()))));
     }
 
     @Test
@@ -171,7 +178,7 @@ public class PostControllerIntegrationTest {
         }
     }
 
-    private void createPost() throws SQLException {
+    private Post createPost() throws SQLException {
         try (Session session = sessionManager.createSession()) {
             Post post = new Post();
 
@@ -180,6 +187,8 @@ public class PostControllerIntegrationTest {
             post.setCategory(CATEGORY);
 
             session.create(post);
+
+            return post;
         }
     }
 }

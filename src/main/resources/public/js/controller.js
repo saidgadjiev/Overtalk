@@ -271,10 +271,7 @@ as.controller('PostController', function ($scope,
     };
 
     $scope.doLike = function (post) {
-        $scope.likeInfo = {};
-        $scope.likeInfo.postId = post.id;
-
-        LikeService.doLike($scope.likeInfo)
+        LikeService.doLike(post.id)
             .then(function (response) {
                 post.liked = response.data.liked;
                 post.likesCount = response.data.likesCount;
@@ -282,10 +279,7 @@ as.controller('PostController', function ($scope,
     };
 
     $scope.doDislike = function (post) {
-        $scope.likeInfo = {};
-        $scope.likeInfo.postId = post.id;
-
-        LikeService.doDislike($scope.likeInfo)
+        LikeService.doDislike(post.id)
             .then(function (response) {
                 post.liked = response.data.liked;
                 post.likesCount = response.data.likesCount;
@@ -427,10 +421,7 @@ as.controller('DetailsController', function ($scope,
     };
 
     $scope.doDislike = function (post) {
-        $scope.likeInfo = {};
-        $scope.likeInfo.postId = post.id;
-
-        LikeService.doDislike($scope.likeInfo)
+        LikeService.doDislike(post.id)
             .then(function (response) {
                 post.liked = response.data.liked;
                 post.likesCount = response.data.likesCount;
@@ -498,7 +489,7 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
             fd.append('data', angular.toJson($scope.project));
 
             if ($scope.data) {
-                $http.post(actionUrl + 'update', fd, {
+                $http.post(actionUrl + 'update/' + $scope.project.id, fd, {
                     transformRequest: angular.identity,
                     headers: {'Content-Type': undefined}
                 })
