@@ -122,6 +122,16 @@ public class CommentControllerTest {
     }
 
     @Test
+    public void create401() throws Exception {
+        mockMvc
+                .perform(post("/api/category/create")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content("{\"name\":\"Test2\",\"description\":\"Test1\"}")
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     public void updateComment() throws Exception {
         createComment();
 
@@ -141,6 +151,16 @@ public class CommentControllerTest {
     }
 
     @Test
+    public void update401() throws Exception {
+        mockMvc
+                .perform(post("/api/comment/update/1")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content("{\"name\":\"Test2\",\"description\":\"Test1\"}")
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     public void deleteComment() throws Exception {
         createComment();
 
@@ -154,6 +174,7 @@ public class CommentControllerTest {
             Assert.assertTrue(session.queryForAll(Comment.class).isEmpty());
         }
     }
+
 
     private Comment createComment() throws SQLException {
         try (Session session = sessionManager.createSession()) {

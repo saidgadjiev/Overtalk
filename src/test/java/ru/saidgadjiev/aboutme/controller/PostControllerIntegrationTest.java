@@ -1,6 +1,5 @@
 package ru.saidgadjiev.aboutme.controller;
 
-import javafx.geometry.Pos;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,12 +12,17 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.saidgadjiev.aboutme.common.JsonUtil;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
-import ru.saidgadjiev.aboutme.domain.*;
+import ru.saidgadjiev.aboutme.domain.Category;
+import ru.saidgadjiev.aboutme.domain.Post;
+import ru.saidgadjiev.aboutme.domain.Role;
+import ru.saidgadjiev.aboutme.domain.UserProfile2;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -26,12 +30,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by said on 12.08.2018.
@@ -122,9 +120,7 @@ public class PostControllerIntegrationTest {
         Post post2 = createPost();
 
         mockMvc
-                .perform(get("/api/post/1/posts?page=0&size=10")
-                        .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
-                )
+                .perform(get("/api/post/1/posts?page=0&size=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(jsonPath("$.content[0].title", is("Test")))
@@ -149,9 +145,7 @@ public class PostControllerIntegrationTest {
         Post post = createPost();
 
         mockMvc
-                .perform(get("/api/post/1")
-                        .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
-                )
+                .perform(get("/api/post/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.title", is("Test")))

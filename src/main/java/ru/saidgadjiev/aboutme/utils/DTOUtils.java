@@ -4,7 +4,10 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import ru.saidgadjiev.aboutme.domain.*;
-import ru.saidgadjiev.aboutme.model.*;
+import ru.saidgadjiev.aboutme.model.CategoryDetails;
+import ru.saidgadjiev.aboutme.model.CommentDetails;
+import ru.saidgadjiev.aboutme.model.PostDetails;
+import ru.saidgadjiev.aboutme.model.UserDetails;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -70,6 +70,16 @@ public class CategoryControllerIntegrationTest {
     }
 
     @Test
+    public void create401() throws Exception {
+        mockMvc
+                .perform(post("/api/category/create")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content("{\"name\":\"Test2\",\"description\":\"Test1\"}")
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     public void update() throws Exception {
         createCategory();
 
@@ -88,6 +98,16 @@ public class CategoryControllerIntegrationTest {
             Assert.assertEquals(categories.size(), 1);
             Assert.assertEquals(JsonUtil.toJson(categories.get(0)), "{\"id\":1,\"name\":\"Test2\",\"description\":\"Test1\",\"posts\":[]}");
         }
+    }
+
+    @Test
+    public void update401() throws Exception {
+        mockMvc
+                .perform(post("/api/category/update/1")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content("{\"name\":\"Test2\",\"description\":\"Test1\"}")
+                )
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -146,6 +166,13 @@ public class CategoryControllerIntegrationTest {
 
             Assert.assertTrue(categories2.isEmpty());
         }
+    }
+
+    @Test
+    public void delete401() throws Exception {
+        mockMvc
+                .perform(post("/api/category/delete/1"))
+                .andExpect(status().isUnauthorized());
     }
 
     private void createCategory() throws SQLException {
