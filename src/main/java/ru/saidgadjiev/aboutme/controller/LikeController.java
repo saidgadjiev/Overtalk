@@ -1,14 +1,14 @@
 package ru.saidgadjiev.aboutme.controller;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.saidgadjiev.aboutme.model.LikeDetails;
+import ru.saidgadjiev.aboutme.domain.Like;
+import ru.saidgadjiev.aboutme.json.LikeJsonBuilder;
 import ru.saidgadjiev.aboutme.service.LikeService;
 
-import javax.validation.Valid;
 import java.sql.SQLException;
 
 @RestController
@@ -20,17 +20,33 @@ public class LikeController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/like/post/{id}")
-    public ResponseEntity<LikeDetails> like(
+    public ResponseEntity<ObjectNode> like(
             @PathVariable("id") Integer postId
     ) throws SQLException {
-        return ResponseEntity.ok(likeService.postLike(postId));
+        Like like = likeService.postLike(postId);
+
+        ObjectNode response = new LikeJsonBuilder()
+                .postId(like.getPost().getId())
+                .likesCount(likeService.postLikesCount(postId))
+                .liked(true)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/dislike/post/{id}")
-    public ResponseEntity<LikeDetails> dislike(
-            @PathVariable("id") Integer id
+    public ResponseEntity<ObjectNode> dislike(
+            @PathVariable("id") Integer postId
     ) throws SQLException {
-        return ResponseEntity.ok(likeService.postDislike(id));
+        Like like = likeService.postDislike(postId);
+
+        ObjectNode objectNode = new LikeJsonBuilder()
+                .postId(like.getPost().getId())
+                .likesCount(likeService.postLikesCount(postId))
+                .liked(false)
+                .build();
+
+        return ResponseEntity.ok(objectNode);
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.saidgadjiev.aboutme.common.JsonUtil;
+import ru.saidgadjiev.aboutme.utils.JsonUtils;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
 import ru.saidgadjiev.aboutme.domain.Category;
 import ru.saidgadjiev.aboutme.domain.Role;
@@ -65,7 +65,7 @@ public class CategoryControllerIntegrationTest {
             List<Category> categories = session.queryForAll(Category.class);
 
             Assert.assertEquals(categories.size(), 1);
-            Assert.assertEquals(JsonUtil.toJson(categories.get(0)), "{\"id\":1,\"name\":\"Test2\",\"description\":\"Test1\"}");
+            Assert.assertEquals(JsonUtils.toJson(categories.get(0)), "{\"id\":1,\"name\":\"Test2\",\"description\":\"Test1\",\"posts\":[]}");
         }
     }
 
@@ -86,7 +86,7 @@ public class CategoryControllerIntegrationTest {
             List<Category> categories = session.queryForAll(Category.class);
 
             Assert.assertEquals(categories.size(), 1);
-            Assert.assertEquals(JsonUtil.toJson(categories.get(0)), "{\"id\":1,\"name\":\"Test2\",\"description\":\"Test1\"}");
+            Assert.assertEquals(JsonUtils.toJson(categories.get(0)), "{\"id\":1,\"name\":\"Test2\",\"description\":\"Test1\",\"posts\":[]}");
         }
     }
 

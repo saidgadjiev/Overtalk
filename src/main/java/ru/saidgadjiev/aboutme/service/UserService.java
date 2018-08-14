@@ -1,9 +1,6 @@
 package ru.saidgadjiev.aboutme.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.saidgadjiev.aboutme.dao.RoleDao;
@@ -11,8 +8,7 @@ import ru.saidgadjiev.aboutme.dao.UserDao;
 import ru.saidgadjiev.aboutme.domain.Role;
 import ru.saidgadjiev.aboutme.domain.UserProfile;
 import ru.saidgadjiev.aboutme.domain.UserRole;
-import ru.saidgadjiev.aboutme.model.UserDetails;
-import ru.saidgadjiev.aboutme.utils.DTOUtils;
+import ru.saidgadjiev.aboutme.model.UserRequest;
 
 import java.sql.SQLException;
 import java.util.Collections;
@@ -39,12 +35,14 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Set<Role> create(UserDetails userDetails) throws SQLException {
-        UserProfile userProfile = DTOUtils.convert(userDetails, UserProfile.class);
+    public Set<Role> create(UserRequest userRequest) throws SQLException {
+        UserProfile userProfile = new UserProfile();
         Role userRole = roleDao.queryForId(1);
         Set<UserRole> userRoles = new HashSet<>();
 
-        userProfile.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        userProfile.setUserName(userRequest.getUserName());
+        userProfile.setNickName(userRequest.getNickName());
+        userProfile.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         userRoles.add(new UserRole(userProfile, userRole));
         userProfile.setUserRoles(userRoles);
         userDao.create(userProfile);
@@ -64,10 +62,11 @@ public class UserService {
         return userDao.getByUserName(userName);
     }
 
-    public Page<UserDetails> getAll(Pageable pageable) throws SQLException {
-        long totalCount = userDao.countOff();
-        List<UserProfile> userProfiles = userDao.getList(pageable.getPageSize(), pageable.getOffset());
+    public List<UserProfile> getAll(int limit, long offset) throws SQLException {
+        return userDao.getList(limit, offset);
+    }
 
-        return new PageImpl<>(DTOUtils.convert(userProfiles, UserDetails.class), pageable, totalCount);
+    public long countOff() throws SQLException {
+        return userDao.countOff();
     }
 }

@@ -32,7 +32,7 @@ public class CommentDao {
         session.create(comment);
     }
 
-    public List<Comment> getByPostId(Integer id, int limit, int offset) throws SQLException {
+    public List<Comment> getByPostId(Integer id, int limit, long offset) throws SQLException {
         Session session = sessionManager.currentSession();
         SelectStatement<Comment> selectStatement = session.statementBuilder().createSelectStatement(Comment.class);
 
@@ -53,11 +53,11 @@ public class CommentDao {
         return selectStatement.queryForLong();
     }
 
-    public int update(Integer id, Comment comment) throws SQLException {
+    public int update(Integer id, String content) throws SQLException {
         Session session = sessionManager.currentSession();
         UpdateStatement updateStatement = session.statementBuilder().createUpdateStatement(Comment.class);
 
-        updateStatement.set("content", comment.getContent());
+        updateStatement.set("content", content);
         updateStatement.where(new Criteria().add(Restrictions.eq("id", id)));
 
         return updateStatement.update();

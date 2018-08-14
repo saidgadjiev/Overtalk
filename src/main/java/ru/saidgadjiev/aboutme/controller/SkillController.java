@@ -1,11 +1,14 @@
 package ru.saidgadjiev.aboutme.controller;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.domain.Skill;
+import ru.saidgadjiev.aboutme.json.SkillJsonBuilder;
+import ru.saidgadjiev.aboutme.model.SkillRequest;
 import ru.saidgadjiev.aboutme.service.SkillService;
 
 import javax.validation.Valid;
@@ -20,16 +23,20 @@ public class SkillController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/create")
-    public ResponseEntity<Skill> create(
-            @RequestBody @Valid Skill skill,
+    public ResponseEntity<ObjectNode> create(
+            @RequestBody @Valid SkillRequest request,
             BindingResult bindingResult
     ) throws SQLException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        skillService.create(skill);
+        Skill skill = skillService.create(request);
 
-        return ResponseEntity.ok(skill);
+        return ResponseEntity.ok(new SkillJsonBuilder()
+                .id(skill.getId())
+                .name(skill.getName())
+                .percentage(skill.getPercentage())
+                .build());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -46,20 +53,23 @@ public class SkillController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/update/{id}")
-    public ResponseEntity<Skill> update(
+    public ResponseEntity<ObjectNode> update(
             @PathVariable("id") Integer id,
-            @RequestBody @Valid Skill skill,
+            @RequestBody @Valid SkillRequest request,
             BindingResult bindingResult
     ) throws SQLException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        int updated = skillService.update(id, skill);
+        int updated = skillService.update(id, request);
 
         if (updated == 0) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(skill);
+        return ResponseEntity.ok(new SkillJsonBuilder()
+                .name(request.getName())
+                .percentage(request.getPercentage())
+                .build());
     }
 }

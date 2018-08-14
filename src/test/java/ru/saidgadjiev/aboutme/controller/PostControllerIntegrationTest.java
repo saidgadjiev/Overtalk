@@ -1,6 +1,5 @@
 package ru.saidgadjiev.aboutme.controller;
 
-import javafx.geometry.Pos;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +12,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.saidgadjiev.aboutme.common.JsonUtil;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
 import ru.saidgadjiev.aboutme.domain.*;
 import ru.saidgadjiev.ormnext.core.dao.Session;
@@ -29,8 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.sql.SQLException;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by said on 12.08.2018.

@@ -1,17 +1,21 @@
-package ru.saidgadjiev.aboutme.common;
+package ru.saidgadjiev.aboutme.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.StringWriter;
 
-public class JsonUtil {
+/**
+ * Created by said on 14.08.2018.
+ */
+public class JsonUtils {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public static String toJson(Object object) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
         StringWriter writer = new StringWriter();
 
-        mapper.writeValue(writer, object);
+        OBJECT_MAPPER.writeValue(writer, object);
 
         return writer.toString();
     }

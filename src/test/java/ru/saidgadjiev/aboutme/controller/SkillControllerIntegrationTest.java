@@ -2,7 +2,6 @@ package ru.saidgadjiev.aboutme.controller;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.saidgadjiev.aboutme.common.JsonUtil;
+import ru.saidgadjiev.aboutme.utils.JsonUtils;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
 import ru.saidgadjiev.aboutme.domain.AboutMe;
 import ru.saidgadjiev.aboutme.domain.Role;
@@ -21,6 +20,7 @@ import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -68,7 +68,7 @@ public class SkillControllerIntegrationTest {
             List<Skill> skills = session.queryForAll(Skill.class);
 
             Assert.assertEquals(skills.size(), 1);
-            Assert.assertEquals(JsonUtil.toJson(skills.get(0)), "{\"id\":1,\"name\":\"Test2\",\"percentage\":90}");
+            Assert.assertEquals(JsonUtils.toJson(skills.get(0)), "{\"id\":1,\"name\":\"Test2\",\"percentage\":90}");
         }
     }
 
@@ -77,7 +77,7 @@ public class SkillControllerIntegrationTest {
         mockMvc
                 .perform(post("/api/skill/create")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(JsonUtil.toJson(getTestSkill()))
+                        .content(JsonUtils.toJson(getTestSkill()))
                 )
                 .andExpect(status().isUnauthorized());
     }
@@ -96,7 +96,7 @@ public class SkillControllerIntegrationTest {
         mockMvc
                 .perform(post("/api/skill/update/1")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(JsonUtil.toJson(getTestSkill()))
+                        .content(JsonUtils.toJson(getTestSkill()))
                 )
                 .andExpect(status().isUnauthorized());
     }
@@ -134,7 +134,7 @@ public class SkillControllerIntegrationTest {
         try (Session session = sessionManager.createSession()) {
             Skill result = session.queryForId(Skill.class, created.getId());
 
-            Assert.assertEquals("{\"id\":1,\"name\":\"Test2\",\"percentage\":100}", JsonUtil.toJson(result));
+            Assert.assertEquals("{\"id\":1,\"name\":\"Test2\",\"percentage\":100}", JsonUtils.toJson(result));
         }
     }
 
@@ -154,7 +154,7 @@ public class SkillControllerIntegrationTest {
         aboutMe.setFio("Гаджиев Саид Алиевич");
         Calendar dateOfBirthCalendar = new GregorianCalendar(1995, 7, 1);
 
-        aboutMe.setDateOfBirth(dateOfBirthCalendar.getTime());
+        aboutMe.setDateOfBirth(LocalDate.of(1995, 7, 1));
         aboutMe.setPlaceOfResidence("Москва");
         aboutMe.setPost("Java разработчик");
         aboutMe.setEducationLevel("Бакалавр");

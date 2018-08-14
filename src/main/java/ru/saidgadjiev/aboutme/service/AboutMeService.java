@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.saidgadjiev.aboutme.dao.AboutMeDao;
 import ru.saidgadjiev.aboutme.domain.AboutMe;
+import ru.saidgadjiev.aboutme.model.AboutMeRequest;
 
 import java.sql.SQLException;
 
@@ -17,7 +18,7 @@ public class AboutMeService {
         return aboutMeDao.getAboutMe();
     }
 
-    public int update(AboutMe aboutMe) throws SQLException {
-        return aboutMeDao.update(aboutMe);
+    public int update(AboutMeRequest aboutMeRequest) throws SQLException {
+        return aboutMeDao.update(aboutMeRequest.getPost(), aboutMeRequest.getPlaceOfResidence());
     }
 }
