@@ -36,7 +36,7 @@ public class    ProjectController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/create")
-    public ResponseEntity create(@RequestPart(value="file", required = false) MultipartFile file,
+    public ResponseEntity create(@RequestPart(value = "file", required = false) MultipartFile file,
                                  @RequestPart("data") String data) throws IOException, SQLException {
         Project project = new ObjectMapper().readValue(data, Project.class);
 
@@ -54,9 +54,12 @@ public class    ProjectController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping(value = "/update")
-    public ResponseEntity<Project> update(@RequestPart(value="file", required = false) MultipartFile file,
-                                 @RequestPart("data") String data) throws IOException, SQLException {
+    @PostMapping(value = "/update/{id}")
+    public ResponseEntity<Project> update(
+            @PathVariable("id") Integer id,
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @RequestPart("data") String data
+    ) throws IOException, SQLException {
         Project project = new ObjectMapper().readValue(data, Project.class);
 
         if (hasErrors(project)) {
@@ -67,7 +70,7 @@ public class    ProjectController {
 
             project.setLogoPath(logoPath);
         }
-        service.update(project);
+        service.update(id, project);
 
         return ResponseEntity.ok(project);
     }

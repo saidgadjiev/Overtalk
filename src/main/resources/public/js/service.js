@@ -188,12 +188,12 @@ as.service('FileService', function ($q, $log) {
 as.service('LikeService', function ($http) {
     var likeService = {};
 
-    likeService.doLike = function (post) {
-        return $http.post('api/like/post', post);
+    likeService.doLike = function (postId) {
+        return $http.post('api/like/post/' + postId);
     };
 
-    likeService.doDislike = function (post) {
-        return $http.post('api/dislike/post', post);
+    likeService.doDislike = function (postId) {
+        return $http.post('api/dislike/post/' + postId);
     };
 
     return likeService;

@@ -62,7 +62,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FOUND).build();
         }
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/nickName/exist/{nickName}")
@@ -71,6 +71,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FOUND).build();
         }
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
     }
 }
