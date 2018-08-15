@@ -7,16 +7,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
 import ru.saidgadjiev.aboutme.domain.*;
-import ru.saidgadjiev.aboutme.model.LikeDetails;
-import ru.saidgadjiev.aboutme.service.LikeService;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 
@@ -46,16 +42,22 @@ public class LikeControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private static final UserProfile2 USER_PROFILE = new UserProfile2();
+    private static final UserProfile2 TEST_USER_PROFILE_1 = new UserProfile2();
+
+    private static final UserProfile2 TEST_USER_PROFILE_2 = new UserProfile2();
 
     private static final Category CATEGORY = new Category();
 
     private static final Post POST = new Post();
 
     static {
-        USER_PROFILE.setNickName("test");
-        USER_PROFILE.setUserName("test");
-        USER_PROFILE.setPassword(new BCryptPasswordEncoder().encode("1"));
+        TEST_USER_PROFILE_1.setNickName("test");
+        TEST_USER_PROFILE_1.setUserName("test");
+        TEST_USER_PROFILE_1.setPassword(new BCryptPasswordEncoder().encode("1"));
+
+        TEST_USER_PROFILE_2.setNickName("test1");
+        TEST_USER_PROFILE_2.setUserName("test1");
+        TEST_USER_PROFILE_2.setPassword(new BCryptPasswordEncoder().encode("1"));
 
         CATEGORY.setName("Test");
         CATEGORY.setDescription("Test");
@@ -74,7 +76,8 @@ public class LikeControllerIntegrationTest {
             session.statementBuilder().createQuery("ALTER TABLE post ALTER COLUMN id RESTART WITH 1").executeUpdate();
             session.statementBuilder().createQuery("ALTER TABLE category ALTER COLUMN id RESTART WITH 1").executeUpdate();
 
-            session.create(USER_PROFILE);
+            session.create(TEST_USER_PROFILE_1);
+            session.create(TEST_USER_PROFILE_2);
             session.create(CATEGORY);
             session.create(POST);
         }
@@ -91,20 +94,34 @@ public class LikeControllerIntegrationTest {
                 .andExpect(jsonPath("$.likesCount", is(1)))
                 .andExpect(jsonPath("$.liked", is(true)));
 
+        mockMvc
+                .perform(post("/api/like/post/1")
+                        .with(user("test1").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.postId", is(1)))
+                .andExpect(jsonPath("$.likesCount", is(2)))
+                .andExpect(jsonPath("$.liked", is(true)));
+
         try (Session session = sessionManager.createSession()) {
             List<Like> all = session.queryForAll(Like.class);
 
-            Assert.assertEquals(all.size(), 1);
-            Like like = all.get(0);
+            Assert.assertEquals(all.size(), 2);
+            Like like1 = all.get(0);
 
-            Assert.assertEquals((int) like.getPost().getId(), 1);
-            Assert.assertEquals(like.getUser().getUserName(), "test");
+            Assert.assertEquals((int) like1.getPost().getId(), 1);
+            Assert.assertEquals(like1.getUser().getUserName(), "test");
+
+            Like like2 = all.get(1);
+
+            Assert.assertEquals((int) like2.getPost().getId(), 1);
+            Assert.assertEquals(like2.getUser().getUserName(), "test1");
         }
     }
 
     @Test
     public void dislike() throws Exception {
-        createLike();
+        createLike(TEST_USER_PROFILE_1);
 
         mockMvc
                 .perform(post("/api/dislike/post/1")
@@ -122,12 +139,12 @@ public class LikeControllerIntegrationTest {
         }
     }
 
-    private void createLike() throws SQLException {
+    private void createLike(UserProfile2 userProfile) throws SQLException {
         try (Session session = sessionManager.createSession()) {
             Like like = new Like();
             like.setPost(POST);
 
-            like.setUser(USER_PROFILE);
+            like.setUser(userProfile);
 
             session.create(like);
         }

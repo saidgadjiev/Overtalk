@@ -4,9 +4,14 @@ import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgadjiev.ormnext.core.field.FetchType;
 import ru.saidgadjiev.ormnext.core.field.ForeignColumn;
+import ru.saidgadjiev.ormnext.core.table.DatabaseEntity;
+import ru.saidgadjiev.ormnext.core.table.Unique;
 import ru.saidgajiev.ormnext.cache.Cacheable;
 
 @Cacheable
+@DatabaseEntity(uniqueConstraints = {
+        @Unique(columns = {"post", "user"})
+})
 public class Like {
 
     @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)
