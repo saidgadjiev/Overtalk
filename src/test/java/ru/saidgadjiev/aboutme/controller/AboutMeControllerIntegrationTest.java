@@ -11,19 +11,16 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.saidgadjiev.aboutme.common.JsonUtil;
+import ru.saidgadjiev.aboutme.utils.JsonUtils;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
 import ru.saidgadjiev.aboutme.domain.AboutMe;
 import ru.saidgadjiev.aboutme.domain.Role;
 import ru.saidgadjiev.aboutme.domain.Skill;
-import ru.saidgadjiev.aboutme.service.AboutMeService;
-import ru.saidgadjiev.aboutme.utils.DTOUtils;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
-import ru.saidgadjiev.ormnext.core.query.criteria.impl.Query;
-import ru.saidgadjiev.ormnext.core.query.criteria.impl.SelectStatement;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -70,7 +67,6 @@ public class AboutMeControllerIntegrationTest {
                 .andExpect(jsonPath("$.fio", is("Гаджиев Саид Алиевич")))
                 .andExpect(jsonPath("$.placeOfResidence", is("Москва")))
                 .andExpect(jsonPath("$.educationLevel", is("Бакалавр")))
-                .andExpect(jsonPath("$.dateOfBirth", is("01-07-1995")))
                 .andExpect(jsonPath("$.post", is("Java разработчик")))
                 .andExpect(jsonPath("$.skills", hasSize(1)))
                 .andExpect(jsonPath("$.skills[0].id", is(1)))
@@ -87,8 +83,7 @@ public class AboutMeControllerIntegrationTest {
                 .content("{\"post\":\"Test2\",\"placeOfResidence\":\"Test1\"}")
                 .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
         )
-                .andExpect(status().isOk())
-                .andExpect(content().json("{\"post\":\"Test2\",\"placeOfResidence\":\"Test1\"}"));
+                .andExpect(status().isOk());
 
         try (Session session = sessionManager.createSession()) {
             AboutMe result = session.statementBuilder().createSelectStatement(AboutMe.class).uniqueResult();
@@ -97,7 +92,7 @@ public class AboutMeControllerIntegrationTest {
             expect.setPlaceOfResidence("Test1");
             expect.setPost("Test2");
 
-            Assert.assertEquals(JsonUtil.toJson(expect), JsonUtil.toJson(result));
+            Assert.assertEquals(JsonUtils.toJson(expect), JsonUtils.toJson(result));
         }
     }
 
@@ -105,7 +100,7 @@ public class AboutMeControllerIntegrationTest {
     public void updateWithUnauthorized() throws Exception {
         mockMvc.perform(post("/api/aboutMe/update")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(JsonUtil.toJson(getTestAboutMe()))
+                .content(JsonUtils.toJson(getTestAboutMe()))
         )
                 .andExpect(status().isUnauthorized());
     }
@@ -136,9 +131,7 @@ public class AboutMeControllerIntegrationTest {
 
         aboutMe.setId(1);
         aboutMe.setFio("Гаджиев Саид Алиевич");
-        Calendar dateOfBirthCalendar = new GregorianCalendar(1995, Calendar.JULY, 1);
-
-        aboutMe.setDateOfBirth(dateOfBirthCalendar.getTime());
+        aboutMe.setDateOfBirth(LocalDate.of(1995, 7, 1));
         aboutMe.setPlaceOfResidence("Москва");
         aboutMe.setPost("Java разработчик");
         aboutMe.setEducationLevel("Бакалавр");

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.saidgadjiev.aboutme.dao.ProjectDao;
 import ru.saidgadjiev.aboutme.domain.Project;
-import ru.saidgadjiev.aboutme.utils.DTOUtils;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -16,7 +15,7 @@ public class ProjectService {
     private ProjectDao dao;
 
     public List<Project> getAll() throws SQLException {
-        return DTOUtils.convert(dao.getAll(), Project.class);
+        return dao.getAll();
     }
 
     public void create(Project project) throws SQLException {

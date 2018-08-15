@@ -1,13 +1,13 @@
 package ru.saidgadjiev.aboutme.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
-import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
-import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlTimeStamp;
+import ru.saidgadjiev.aboutme.domain.common.JavaLocalDateTimeToSqlDate;
+import ru.saidgadjiev.aboutme.domain.common.JavaLocalDateToSqlDate;
 import ru.saidgadjiev.ormnext.core.field.*;
 import ru.saidgajiev.ormnext.cache.Cacheable;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,9 +24,9 @@ public class Post {
     @DatabaseColumn(notNull = true, persisterClass = TextTypeDataPersister.class)
     private String content;
 
-    @Converter(value = JavaDateToSqlTimeStamp.class)
-    @DatabaseColumn(notNull = true, dataType = DataType.TIMESTAMP)
-    private Date createdDate = new Date();
+    @Converter(value = JavaLocalDateTimeToSqlDate.class)
+    @DatabaseColumn(notNull = true)
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @ForeignCollectionField(foreignFieldName = "post", fetchType = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
@@ -61,11 +61,11 @@ public class Post {
         this.content = content;
     }
 
-    public Date getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 

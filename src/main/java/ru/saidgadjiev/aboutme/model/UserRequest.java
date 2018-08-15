@@ -1,18 +1,12 @@
 package ru.saidgadjiev.aboutme.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Created by said on 18.03.2018.
  */
-public class UserDetails {
+public class UserRequest {
 
     @NotNull
     @Size(min = 1)
@@ -20,7 +14,6 @@ public class UserDetails {
 
     @NotNull
     @Size(min = 1)
-    @JsonIgnore
     private String password;
 
     @NotNull
@@ -29,10 +22,7 @@ public class UserDetails {
 
     @NotNull
     @Size(min = 1)
-    @JsonIgnore
     private String confirmPassword;
-
-    private Set<String> roles = new HashSet<>();
 
     public String getUserName() {
         return userName;
@@ -56,14 +46,6 @@ public class UserDetails {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
-    }
-
-    public Set<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
     }
 
     public String getNickName() {

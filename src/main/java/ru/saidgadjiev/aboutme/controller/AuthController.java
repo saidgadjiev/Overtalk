@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.domain.Role;
-import ru.saidgadjiev.aboutme.model.UserDetails;
+import ru.saidgadjiev.aboutme.model.UserRequest;
 import ru.saidgadjiev.aboutme.service.SecurityService;
 import ru.saidgadjiev.aboutme.service.UserService;
 
@@ -33,16 +33,15 @@ public class AuthController {
 
     @PostMapping(value = "/signUp")
     public ResponseEntity<org.springframework.security.core.userdetails.UserDetails> signUp(
-            @RequestBody @Valid UserDetails userDetails, BindingResult bindingResult
+            @RequestBody @Valid UserRequest userRequest, BindingResult bindingResult
     ) throws SQLException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        if (userService.isExistUserName(userDetails.getUserName())) {
+        if (userService.isExistUserName(userRequest.getUserName())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-        userDetails.setRoles(userService.create(userDetails).stream().map(Role::getName).collect(Collectors.toSet()));
-        securityService.login(userDetails.getUserName(), userDetails.getPassword());
+        securityService.login(userRequest.getUserName(), userRequest.getPassword());
 
         return ResponseEntity.ok(securityService.findLoggedInUser());
     }

@@ -2,10 +2,12 @@ package ru.saidgadjiev.aboutme.domain;
 
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
-import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlTimeStamp;
+import ru.saidgadjiev.aboutme.domain.common.JavaLocalDateTimeToSqlDate;
+import ru.saidgadjiev.aboutme.domain.common.JavaLocalDateToSqlDate;
 import ru.saidgadjiev.ormnext.core.field.*;
 import ru.saidgajiev.ormnext.cache.Cacheable;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Cacheable
@@ -21,9 +23,9 @@ public class Comment {
     @ForeignColumn(fetchType = FetchType.LAZY, onDelete = ReferenceAction.CASCADE, onUpdate = ReferenceAction.CASCADE)
     private Post post;
 
-    @Converter(value = JavaDateToSqlTimeStamp.class)
-    @DatabaseColumn(notNull = true, dataType = DataType.TIMESTAMP)
-    private Date createdDate = new Date();
+    @Converter(value = JavaLocalDateTimeToSqlDate.class)
+    @DatabaseColumn
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @DatabaseColumn(notNull = true)
     @ForeignColumn(foreignFieldName = "userName")
@@ -53,12 +55,8 @@ public class Comment {
         this.post = post;
     }
 
-    public Date getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
     }
 
     public UserProfile2 getUser() {

@@ -28,12 +28,12 @@ public class AboutMeDao {
         return session.statementBuilder().createSelectStatement(AboutMe.class).uniqueResult();
     }
 
-    public int update(AboutMe aboutMe) throws SQLException {
+    public int update(String post, String placeOfResidence) throws SQLException {
         Session session = sessionManager.currentSession();
         UpdateStatement updateStatement = session.statementBuilder().createUpdateStatement(AboutMe.class);
 
-        updateStatement.set("post", aboutMe.getPost());
-        updateStatement.set("placeOfResidence", aboutMe.getPlaceOfResidence());
+        updateStatement.set("post", post);
+        updateStatement.set("placeOfResidence", placeOfResidence);
         updateStatement.where(new Criteria().add(Restrictions.eq("id", 1)));
 
         return updateStatement.update();

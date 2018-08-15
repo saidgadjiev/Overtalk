@@ -27,13 +27,13 @@ public class SkillDao {
         session.create(skill);
     }
 
-    public int update(Integer id, Skill skill) throws SQLException {
+    public int update(Integer id, String name, int percentage) throws SQLException {
         Session session = sessionManager.currentSession();
 
         UpdateStatement updateStatement = session.statementBuilder().createUpdateStatement(Skill.class);
 
-        updateStatement.set("name", skill.getName());
-        updateStatement.set("percentage", skill.getPercentage());
+        updateStatement.set("name", name);
+        updateStatement.set("percentage", percentage);
         updateStatement.where(new Criteria().add(Restrictions.eq("id", id)));
 
         return updateStatement.update();

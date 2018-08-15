@@ -8,7 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ru.saidgadjiev.aboutme.model.UserDetails;
+import ru.saidgadjiev.aboutme.model.UserRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,9 +34,9 @@ public class RequestBodyReaderAuthenticationFilter extends UsernamePasswordAuthe
 
         try {
             requestBody = IOUtils.toString(request.getReader());
-            UserDetails userDetails = objectMapper.readValue(requestBody, UserDetails.class);
+            UserRequest userRequest = objectMapper.readValue(requestBody, UserRequest.class);
             UsernamePasswordAuthenticationToken token
-                    = new UsernamePasswordAuthenticationToken(userDetails.getUserName(), userDetails.getPassword());
+                    = new UsernamePasswordAuthenticationToken(userRequest.getUserName(), userRequest.getPassword());
 
             setDetails(request, token);
 

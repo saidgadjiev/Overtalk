@@ -6,10 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.saidgadjiev.aboutme.dao.LikeDao;
 import ru.saidgadjiev.aboutme.domain.Like;
 import ru.saidgadjiev.aboutme.domain.Post;
-import ru.saidgadjiev.aboutme.domain.UserProfile;
 import ru.saidgadjiev.aboutme.domain.UserProfile2;
-import ru.saidgadjiev.aboutme.model.LikeDetails;
-import ru.saidgadjiev.aboutme.utils.DTOUtils;
 
 import java.sql.SQLException;
 
@@ -22,7 +19,7 @@ public class LikeService {
     @Autowired
     private LikeDao likeDao;
 
-    public LikeDetails postLike(Integer postId) throws SQLException {
+    public Like postLike(Integer postId) throws SQLException {
         UserDetails authorizedUser = securityService.findLoggedInUser();
         Like like = new Like();
         Post post = new Post();
@@ -37,16 +34,10 @@ public class LikeService {
 
         likeDao.create(like);
 
-        LikeDetails likeDetails = new LikeDetails();
-
-        likeDetails.setPostId(postId);
-        likeDetails.setLikesCount((int) likeDao.postLikes(postId));
-        likeDetails.setLiked(true);
-
-        return likeDetails;
+        return like;
     }
 
-    public LikeDetails postDislike(Integer postId) throws SQLException {
+    public Like postDislike(Integer postId) throws SQLException {
         UserDetails authorizedUser = securityService.findLoggedInUser();
         Like like = new Like();
         Post post = new Post();
@@ -61,12 +52,10 @@ public class LikeService {
 
         likeDao.deletePostLike(like);
 
-        LikeDetails likeDetails = new LikeDetails();
+        return like;
+    }
 
-        likeDetails.setPostId(postId);
-        likeDetails.setLikesCount((int) likeDao.postLikes(postId));
-        likeDetails.setLiked(false);
-
-        return likeDetails;
+    public long postLikesCount(int postId) throws SQLException {
+        return likeDao.postLikes(postId);
     }
 }

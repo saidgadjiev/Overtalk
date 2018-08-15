@@ -26,10 +26,8 @@ public class CategoryDao {
         session.create(category);
     }
 
-    public int update(Integer id, Category category) throws SQLException {
+    public int update(Category category) throws SQLException {
         Session session = sessionManager.currentSession();
-
-        category.setId(id);
 
         return session.update(category);
     }

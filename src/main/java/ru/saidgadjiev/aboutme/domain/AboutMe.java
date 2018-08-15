@@ -1,14 +1,14 @@
 package ru.saidgadjiev.aboutme.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import ru.saidgadjiev.aboutme.domain.common.JavaDateToSqlDate;
+import ru.saidgadjiev.aboutme.domain.common.JavaLocalDateToSqlDate;
 import ru.saidgadjiev.ormnext.core.field.Converter;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgadjiev.ormnext.core.field.ForeignCollectionField;
 import ru.saidgajiev.ormnext.cache.Cacheable;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Cacheable
@@ -20,10 +20,9 @@ public class AboutMe {
     @DatabaseColumn(notNull = true)
     private String fio;
 
-    @Converter(value = JavaDateToSqlDate.class)
+    @Converter(value = JavaLocalDateToSqlDate.class)
     @DatabaseColumn(notNull = true)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Europe/Moscow")
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @DatabaseColumn(notNull = true)
     private String placeOfResidence;
@@ -64,11 +63,11 @@ public class AboutMe {
         this.fio = fio;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
