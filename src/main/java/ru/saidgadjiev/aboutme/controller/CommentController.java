@@ -1,5 +1,6 @@
 package ru.saidgadjiev.aboutme.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,12 +14,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.domain.Comment;
 import ru.saidgadjiev.aboutme.json.CommentJsonBuilder;
-import ru.saidgadjiev.aboutme.model.CommentRequest;
+import ru.saidgadjiev.aboutme.model.CommentDetails;
+import ru.saidgadjiev.aboutme.model.JsonViews;
 import ru.saidgadjiev.aboutme.service.BlogService;
+import ru.saidgadjiev.aboutme.utils.DTOUtils;
 
 import javax.validation.Valid;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,54 +31,52 @@ public class CommentController {
     private BlogService blogService;
 
     @GetMapping(value = "/{id}/comments")
-    public ResponseEntity<Page<ObjectNode>> getCommentsByPost(
+    public ResponseEntity<Page<CommentDetails>> getCommentsByPost(
             @PathVariable("id") Integer id,
-            @PageableDefault(page = 0, size = 10, sort = "createdDate", direction = Sort.Direction.DESC) Pageable page
+            @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC) Pageable page
     ) throws SQLException {
-        List<Comment> comments = blogService.getCommentsList(id, page.getPageSize(), page.getOffset());
-        long total = blogService.commentCountOff(id);
-        List<ObjectNode> content = new ArrayList<>();
+        Page<Comment> result = blogService.getCommentsList(id, page);
+        List<CommentDetails> converted = DTOUtils.convert(result.getContent(), CommentDetails.class);
 
-        for (Comment comment: comments) {
-            content.add(new CommentJsonBuilder()
-            .id(comment.getId())
-            .content(comment.getContent())
-            .createdDate(comment.getCreatedDate())
-            .nickName(comment.getUser().getNickName())
-            .build());
-        }
-
-        return ResponseEntity.ok(new PageImpl<>(content, page, total));
+        return ResponseEntity.ok(new PageImpl<>(converted, page, result.getTotalElements()));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/{id}/create")
-    public ResponseEntity createCommentOfPost(
+    public ResponseEntity<CommentDetails> createCommentOfPost(
             @PathVariable("id") Integer id,
-            @RequestBody @Valid CommentRequest commentRequest,
+            @JsonView(JsonViews.Rest.class) @RequestBody @Valid CommentDetails commentDetails,
             BindingResult bindingResult
     ) throws SQLException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        blogService.createCommentOfPost(id, commentRequest);
+        Comment comment = blogService.createCommentOfPost(id, commentDetails);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(DTOUtils.convert(comment, CommentDetails.class));
     }
 
     @PreAuthorize("@authorization.canEditComment(#id)")
-    @PostMapping(value = "/update/{id}")
+    @PatchMapping(value = "/update/{id}")
     public ResponseEntity<ObjectNode> updateComment(
             @PathVariable("id") Integer id,
-            @RequestBody CommentRequest commentRequest
+            @JsonView(JsonViews.Rest.class) @RequestBody CommentDetails commentDetails
     ) throws SQLException {
-        blogService.updateComment(id, commentRequest);
+        Comment comment = blogService.updateComment(id, commentDetails);
 
-        return ResponseEntity.ok(new CommentJsonBuilder().content(commentRequest.getContent()).build());
+        if (comment == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        ObjectNode response = new CommentJsonBuilder()
+                .content(comment.getContent())
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("@authorization.canDeleteComment(#id)")
-    @PostMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<?> deleteComment(@PathVariable("id") Integer id) throws SQLException {
         int deleted = blogService.deleteCommentById(id);
 

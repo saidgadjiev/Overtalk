@@ -24,8 +24,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -74,7 +73,7 @@ public class CategoryControllerIntegrationTest {
         createCategory();
 
         mockMvc
-                .perform(post("/api/category/update/1")
+                .perform(patch("/api/category/update/1")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content("{\"name\":\"Test2\",\"description\":\"Test1\"}")
                         .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
@@ -137,7 +136,7 @@ public class CategoryControllerIntegrationTest {
             Assert.assertEquals(categories1.size(), 1);
 
             mockMvc
-                    .perform(post("/api/category/delete/1")
+                    .perform(delete("/api/category/delete/1")
                             .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
                     )
                     .andExpect(status().isOk());

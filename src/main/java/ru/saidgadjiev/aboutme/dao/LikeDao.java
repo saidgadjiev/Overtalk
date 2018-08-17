@@ -29,19 +29,19 @@ public class LikeDao {
         session.create(like);
     }
 
-    public int deletePostLike(Like like) throws SQLException {
+    public int delete(Integer postId, String userName) throws SQLException {
         Session session = sessionManager.currentSession();
         DeleteStatement deleteStatement = session.statementBuilder().createDeleteStatement(Like.class);
 
         deleteStatement
                 .where(new Criteria()
-                        .add(eq("post", like.getPost().getId()))
-                        .add(eq("user", like.getUser().getUserName())));
+                        .add(eq("post", postId))
+                        .add(eq("user", userName)));
 
         return deleteStatement.delete();
     }
 
-    public long postLikes(Integer postId) throws SQLException {
+    public long countOffByPostId(Integer postId) throws SQLException {
         Session session = sessionManager.currentSession();
         SelectStatement<Like> selectStatement = session.statementBuilder().createSelectStatement(Like.class);
 

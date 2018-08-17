@@ -4,3 +4,6 @@ app:
 spring:
     profiles:
         active: test
+    jackson:
+        serialization:
+            write_dates_as_timestamps: false

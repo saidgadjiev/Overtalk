@@ -18,12 +18,12 @@ import java.util.List;
  * Created by said on 18.03.2018.
  */
 @Repository
-public class UserDao {
+public class UserProfileDao {
 
     private SessionManager sessionManager;
 
     @Autowired
-    public UserDao(SessionManager sessionManager) {
+    public UserProfileDao(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
     }
 

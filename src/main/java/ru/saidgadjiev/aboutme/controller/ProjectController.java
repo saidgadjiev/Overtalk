@@ -18,7 +18,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/api/project")
-public class    ProjectController {
+public class ProjectController {
 
     @Autowired
     private StorageService storageService;
@@ -54,8 +54,8 @@ public class    ProjectController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping(value = "/update/{id}")
-    public ResponseEntity<Project> update(
+    @PatchMapping(value = "/update/{id}")
+    public ResponseEntity update(
             @PathVariable("id") Integer id,
             @RequestPart(value = "file", required = false) MultipartFile file,
             @RequestPart("data") String data

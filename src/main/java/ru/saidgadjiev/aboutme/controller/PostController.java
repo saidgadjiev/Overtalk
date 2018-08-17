@@ -1,6 +1,8 @@
 package ru.saidgadjiev.aboutme.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import javafx.geometry.Pos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -13,13 +15,18 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.domain.Post;
 import ru.saidgadjiev.aboutme.json.PostJsonBuilder;
-import ru.saidgadjiev.aboutme.model.PostRequest;
+import ru.saidgadjiev.aboutme.model.JsonViews;
+import ru.saidgadjiev.aboutme.model.PostDetails;
 import ru.saidgadjiev.aboutme.service.BlogService;
+import ru.saidgadjiev.aboutme.utils.DTOUtils;
 
 import javax.validation.Valid;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by said on 12.02.2018.
@@ -35,63 +42,72 @@ public class PostController {
     @PostMapping(value = "/{id}/create")
     public ResponseEntity createPostOfCategory(
             @PathVariable("id") Integer categoryId,
-            @RequestBody @Valid PostRequest postRequest,
+            @JsonView(JsonViews.Rest.class) @RequestBody @Valid PostDetails postDetails,
             BindingResult bindingResult
     ) throws SQLException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        blogService.createPostOfCategory(categoryId, postRequest);
+        Post post = blogService.createPostOfCategory(categoryId, postDetails);
+        PostDetails response = DTOUtils.convert(post, PostDetails.class);
 
-        return ResponseEntity.ok().build();
+        response.setLiked(blogService.isLikedByCurrentUser(post));
+
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping(value = "/update/{id}")
+    @PatchMapping(value = "/update/{id}")
     public ResponseEntity<ObjectNode> update(
             @PathVariable("id") Integer id,
-            @RequestBody @Valid PostRequest postRequest, BindingResult errResult
+            @JsonView(JsonViews.Rest.class) @RequestBody @Valid PostDetails postDetails,
+            BindingResult errResult
     ) throws SQLException {
         if (errResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        int updated = blogService.updatePost(id, postRequest);
+        Post post = blogService.updatePost(id, postDetails);
 
-        if (updated == 0) {
+        if (post == null) {
             return ResponseEntity.notFound().build();
         }
+        ObjectNode response = new PostJsonBuilder()
+                .content(post.getContent())
+                .title(post.getTitle())
+                .build();
 
-        return ResponseEntity.ok(new PostJsonBuilder()
-                .title(postRequest.getTitle())
-                .content(postRequest.getContent())
-                .build());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping(value = "/{id}/posts")
-    public ResponseEntity<Page<ObjectNode>> getPostsOfCategory(
+    public ResponseEntity<Page<PostDetails>> getPostsOfCategory(
             @PathVariable("id") Integer categoryId,
             @PageableDefault(page = 0, size = 10, sort = "title", direction = Sort.Direction.DESC) Pageable page
     ) throws SQLException {
-        List<Post> posts = blogService.getPostsList(categoryId, page.getPageSize(), page.getOffset());
-        long total = blogService.postCountOff(categoryId);
-        List<ObjectNode> content = new ArrayList<>();
+        Page<Post> result = blogService.getPostsList(categoryId, page);
+        Map<Integer, PostDetails> response = DTOUtils.convert(result.getContent(), PostDetails.class)
+                .stream()
+                .collect(Collectors.toMap(PostDetails::getId, Function.identity()));
 
-        for (Post post : posts) {
-            content.add(toJson(post));
+        for (Post post : result.getContent()) {
+            response.get(post.getId()).setLiked(blogService.isLikedByCurrentUser(post));
         }
 
-        return ResponseEntity.ok(new PageImpl<>(content, page, total));
+        return ResponseEntity.ok(new PageImpl<>(new ArrayList<>(response.values()), page, result.getTotalElements()));
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<ObjectNode> getPost(@PathVariable("id") Integer id) throws SQLException {
+    public ResponseEntity<PostDetails> getPost(@PathVariable("id") Integer id) throws SQLException {
         Post post = blogService.getPostById(id);
+        PostDetails postDetails = DTOUtils.convert(post, PostDetails.class);
 
-        return ResponseEntity.ok(toJson(post));
+        postDetails.setLiked(blogService.isLikedByCurrentUser(post));
+
+        return ResponseEntity.ok(postDetails);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<?> deletePost(@PathVariable("id") Integer id) throws SQLException {
         int deleted = blogService.deletePostById(id);
 
@@ -100,17 +116,5 @@ public class PostController {
         }
 
         return ResponseEntity.ok().build();
-    }
-
-    private ObjectNode toJson(Post post) {
-        return new PostJsonBuilder()
-                .id(post.getId())
-                .content(post.getContent())
-                .title(post.getTitle())
-                .createdDate(post.getCreatedDate())
-                .commentsCount(post.getComments().size())
-                .likesCount(post.getLikes().size())
-                .liked(blogService.isLikedByCurrentUser(post))
-                .build();
     }
 }

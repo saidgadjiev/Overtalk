@@ -10,10 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.domain.UserProfile;
 import ru.saidgadjiev.aboutme.json.UserJsonBuilder;
 import ru.saidgadjiev.aboutme.service.UserService;
@@ -56,7 +53,7 @@ public class UserController {
         return ResponseEntity.ok(new PageImpl<>(content, page, total));
     }
 
-    @GetMapping(value = "/userName/exist/{userName}")
+    @RequestMapping(value = "/userName/exist/{userName}", method = RequestMethod.HEAD)
     public ResponseEntity existUserName(@PathVariable(value = "userName") String userName) throws SQLException {
         if (userService.isExistUserName(userName)) {
             return ResponseEntity.status(HttpStatus.FOUND).build();
@@ -65,7 +62,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/nickName/exist/{nickName}")
+    @RequestMapping(value = "/nickName/exist/{nickName}", method = RequestMethod.HEAD)
     public ResponseEntity existNickName(@PathVariable(value = "nickName") String nickName) throws SQLException {
         if (userService.isExistNickName(nickName)) {
             return ResponseEntity.status(HttpStatus.FOUND).build();

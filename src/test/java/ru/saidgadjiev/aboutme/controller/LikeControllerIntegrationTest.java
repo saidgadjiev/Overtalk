@@ -42,9 +42,9 @@ public class LikeControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private static final UserProfile2 TEST_USER_PROFILE_1 = new UserProfile2();
+    private static final UserProfile TEST_USER_PROFILE_1 = new UserProfile();
 
-    private static final UserProfile2 TEST_USER_PROFILE_2 = new UserProfile2();
+    private static final UserProfile TEST_USER_PROFILE_2 = new UserProfile();
 
     private static final Category CATEGORY = new Category();
 
@@ -139,7 +139,7 @@ public class LikeControllerIntegrationTest {
         }
     }
 
-    private void createLike(UserProfile2 userProfile) throws SQLException {
+    private void createLike(UserProfile userProfile) throws SQLException {
         try (Session session = sessionManager.createSession()) {
             Like like = new Like();
             like.setPost(POST);

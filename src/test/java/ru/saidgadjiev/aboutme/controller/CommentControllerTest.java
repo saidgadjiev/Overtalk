@@ -12,22 +12,22 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.saidgadjiev.aboutme.common.JsonUtil;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
 import ru.saidgadjiev.aboutme.domain.*;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,7 +45,7 @@ public class CommentControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private static final UserProfile2 USER_PROFILE = new UserProfile2();
+    private static final UserProfile USER_PROFILE = new UserProfile();
 
     private static final Category CATEGORY = new Category();
 
@@ -81,7 +81,7 @@ public class CommentControllerTest {
 
     @Test
     public void getCommentsByPost() throws Exception {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        DateTimeFormatter simpleDateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
         Comment comment1 = createComment();
         Comment comment2 = createComment();
 
@@ -108,7 +108,10 @@ public class CommentControllerTest {
                         .content("{\"content\":\"Test\"}")
                         .with(user("test").password("1").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.nickName", is("test")))
+                .andExpect(jsonPath("$.content", is("Test")));
 
         try (Session session = sessionManager.createSession()) {
             List<Comment> comments = session.queryForAll(Comment.class);
@@ -136,12 +139,13 @@ public class CommentControllerTest {
         createComment();
 
         mockMvc
-                .perform(post("/api/comment/update/1")
+                .perform(patch("/api/comment/update/1")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content("{\"content\":\"Test1\"}")
                         .with(user("test").password("1").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", is("Test1")));
 
         try (Session session = sessionManager.createSession()) {
             Comment comment = session.queryForId(Comment.class, 1);
@@ -153,7 +157,7 @@ public class CommentControllerTest {
     @Test
     public void update401() throws Exception {
         mockMvc
-                .perform(post("/api/comment/update/1")
+                .perform(patch("/api/comment/update/1")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content("{\"name\":\"Test2\",\"description\":\"Test1\"}")
                 )
@@ -165,7 +169,7 @@ public class CommentControllerTest {
         createComment();
 
         mockMvc
-                .perform(post("/api/comment/delete/1")
+                .perform(patch("/api/comment/delete/1")
                         .with(user("test").password("1").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
                 )
                 .andExpect(status().isOk());

@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -71,7 +72,7 @@ public class UserControllerIntegrationTest {
     public void existUserName() throws Exception {
         createUser("test", "test");
 
-        mockMvc.perform(get("/api/userName/exist/test"))
+        mockMvc.perform(head("/api/userName/exist/test"))
                 .andExpect(status().isFound());
 
         mockMvc.perform(get("/api/userName/exist/test1"))
@@ -82,7 +83,7 @@ public class UserControllerIntegrationTest {
     public void existNickName() throws Exception {
         createUser("test", "test");
 
-        mockMvc.perform(get("/api/nickName/exist/test"))
+        mockMvc.perform(head("/api/nickName/exist/test"))
                 .andExpect(status().isFound());
 
         mockMvc.perform(get("/api/nickName/exist/test1"))

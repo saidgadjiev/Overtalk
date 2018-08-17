@@ -53,14 +53,10 @@ public class CommentDao {
         return selectStatement.queryForLong();
     }
 
-    public int update(Integer id, String content) throws SQLException {
+    public int update(Comment comment) throws SQLException {
         Session session = sessionManager.currentSession();
-        UpdateStatement updateStatement = session.statementBuilder().createUpdateStatement(Comment.class);
 
-        updateStatement.set("content", content);
-        updateStatement.where(new Criteria().add(Restrictions.eq("id", id)));
-
-        return updateStatement.update();
+        return session.update(comment);
     }
 
     public int deleteById(Integer id) throws SQLException {

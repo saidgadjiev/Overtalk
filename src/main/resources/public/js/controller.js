@@ -403,8 +403,8 @@ as.controller('DetailsController', function ($scope,
 
         editCommentModal.result.then(function (editedComment) {
             $http.post(commentUrl + 'update', editedComment)
-                .then(function (response) {
-                    comment.content = response.data.content;
+                .then(function () {
+                    comment.content = editedComment.content;
                 });
         });
     };
@@ -608,9 +608,9 @@ as.controller('AboutMeController', function ($scope,
             AboutMeService.update(
                 value.post,
                 value.placeOfResidence,
-                function (response) {
-                    aboutMe.placeOfResidence = response.data.placeOfResidence;
-                    aboutMe.post = response.data.post;
+                function () {
+                    aboutMe.placeOfResidence = value.placeOfResidence;
+                    aboutMe.post = value.post;
                 }
             );
         });
@@ -797,9 +797,9 @@ as.controller('CategoryController', function ($scope,
                 category.id,
                 value.name,
                 value.description,
-                function (response) {
-                    category.name = response.data.name;
-                    category.description = response.data.description;
+                function () {
+                    category.name = value.name;
+                    category.description = value.description;
                 }
             );
         });

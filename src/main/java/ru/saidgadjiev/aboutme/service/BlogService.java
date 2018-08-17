@@ -1,18 +1,22 @@
 package ru.saidgadjiev.aboutme.service;
 
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.saidgadjiev.aboutme.dao.CategoryDao;
 import ru.saidgadjiev.aboutme.dao.CommentDao;
 import ru.saidgadjiev.aboutme.dao.PostDao;
+import ru.saidgadjiev.aboutme.dao.UserProfileDao;
 import ru.saidgadjiev.aboutme.domain.Category;
 import ru.saidgadjiev.aboutme.domain.Comment;
 import ru.saidgadjiev.aboutme.domain.Post;
-import ru.saidgadjiev.aboutme.domain.UserProfile2;
-import ru.saidgadjiev.aboutme.model.CategoryRequest;
-import ru.saidgadjiev.aboutme.model.CommentRequest;
-import ru.saidgadjiev.aboutme.model.PostRequest;
+import ru.saidgadjiev.aboutme.model.CategoryDetails;
+import ru.saidgadjiev.aboutme.model.CommentDetails;
+import ru.saidgadjiev.aboutme.model.PostDetails;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -32,100 +36,125 @@ public class BlogService {
 
     private SecurityService securityService;
 
+    private UserProfileDao userProfileDao;
+
     @Autowired
     public BlogService(PostDao postDao,
                        CommentDao commentDao,
                        CategoryDao categoryDao,
-                       SecurityService securityService) {
+                       SecurityService securityService,
+                       UserProfileDao userProfileDao) {
         this.postDao = postDao;
         this.commentDao = commentDao;
         this.categoryDao = categoryDao;
         this.securityService = securityService;
+        this.userProfileDao = userProfileDao;
     }
 
-    public void createCommentOfPost(Integer postId, CommentRequest commentRequest) throws SQLException {
+    public Comment createCommentOfPost(Integer postId, CommentDetails commentDetails) throws SQLException {
         Comment comment = new Comment();
 
-        comment.setContent(commentRequest.getContent());
-        Post post = new Post();
-
-        post.setId(postId);
-
+        comment.setContent(commentDetails.getContent());
+        comment.setPost(postDao.getById(postId));
         UserDetails authorizedUser = securityService.findLoggedInUser();
-        UserProfile2 userProfile = new UserProfile2();
 
-        userProfile.setUserName(authorizedUser.getUsername());
-
-        comment.setUser(userProfile);
-        comment.setPost(post);
+        comment.setUser(userProfileDao.getByUserName(authorizedUser.getUsername()));
 
         commentDao.create(comment);
+
+        return comment;
     }
 
-    public void createPostOfCategory(Integer categoryId, PostRequest postRequest) throws SQLException {
+    public Post createPostOfCategory(Integer categoryId, PostDetails postDetails) throws SQLException {
         Post post = new Post();
 
-        post.setTitle(postRequest.getTitle());
-        post.setContent(postRequest.getContent());
-        Category category = new Category();
-
-        category.setId(categoryId);
-        post.setCategory(category);
+        post.setTitle(postDetails.getTitle());
+        post.setContent(postDetails.getContent());
+        post.setCategory(categoryDao.getById(categoryId));
 
         postDao.create(post);
+
+        return post;
     }
 
-    public List<Post> getPostsList(Integer categoryId, int limit, long offset) throws SQLException {
-        return postDao.getPosts(categoryId, limit, offset);
+    public Page<Post> getPostsList(Integer categoryId, Pageable pageable) throws SQLException {
+        List<Post> posts = postDao.getPosts(categoryId, pageable.getPageSize(), pageable.getOffset());
+        long total = postDao.countOffPostsByCategoryId(categoryId);
+
+        return new PageImpl<>(posts, pageable, total);
     }
 
-    public List<Comment> getCommentsList(Integer postId, int limit, long offset) throws SQLException {
-        return commentDao.getByPostId(postId, limit, offset);
+    public Page<Comment> getCommentsList(Integer postId, Pageable pageable) throws SQLException {
+         List<Comment> comments = commentDao.getByPostId(postId, pageable.getPageSize(), pageable.getOffset());
+         long total = commentDao.countOffByPostId(postId);
+
+         return new PageImpl<>(comments, pageable, total);
     }
 
     public Post getPostById(Integer id) throws SQLException {
         return postDao.getById(id);
     }
 
-    public int updatePost(Integer id, PostRequest postRequest) throws SQLException {
-        return postDao.update(id, postRequest.getTitle(), postRequest.getContent());
+    public Post updatePost(Integer id, PostDetails postDetails) throws SQLException {
+        Post post = postDao.getById(id);
+
+        if (post == null) {
+            return null;
+        }
+        post.setContent(postDetails.getContent());
+        post.setTitle(postDetails.getTitle());
+
+        postDao.update(post);
+
+        return post;
     }
 
-    public int updateComment(Integer id, CommentRequest commentRequest) throws SQLException {
-        Comment comment = new Comment();
+    @Nullable
+    public Comment updateComment(Integer id, CommentDetails commentDetails) throws SQLException {
+        Comment comment = commentDao.getById(id);
 
-        comment.setContent(commentRequest.getContent());
-        Post post = new Post();
+        if (comment == null) {
+            return null;
+        }
+        comment.setContent(commentDetails.getContent());
 
-        post.setId(id);
-        comment.setPost(post);
+        commentDao.update(comment);
 
-        return commentDao.update(id, commentRequest.getContent());
+        return comment;
     }
 
-    public List<Category> getCategoriesList(int limit, long offset) throws SQLException {
-        return categoryDao.getCategories(limit, offset);
+    public Page<Category> getCategories(Pageable pageable) throws SQLException {
+        List<Category> categories = categoryDao.getCategories(pageable.getPageSize(), pageable.getOffset());
+        long total = categoryDao.countOff();
+
+        return new PageImpl<>(categories, pageable, total);
     }
 
-    public Category createCategory(CategoryRequest categoryRequest) throws SQLException {
+    public Category createCategory(CategoryDetails categoryDetails) throws SQLException {
         Category category = new Category();
 
-        category.setName(categoryRequest.getName());
-        category.setDescription(categoryRequest.getDescription());
+        category.setName(categoryDetails.getName());
+        category.setDescription(categoryDetails.getDescription());
 
         categoryDao.create(category);
 
         return category;
     }
 
-    public int updateCategory(Integer id, CategoryRequest categoryRequest) throws SQLException {
-        Category category = new Category();
+    @Nullable
+    public Category updateCategory(Integer id, CategoryDetails categoryDetails) throws SQLException {
+        Category category = categoryDao.getById(id);
 
-        category.setId(id);
-        category.setName(categoryRequest.getName());
-        category.setDescription(categoryRequest.getDescription());
+        if (category == null) {
+            return null;
+        }
 
-        return categoryDao.update(category);
+        category.setName(categoryDetails.getName());
+        category.setDescription(categoryDetails.getDescription());
+
+        categoryDao.update(category);
+
+        return category;
     }
 
     public Category getCategoryById(Integer id) throws SQLException {
@@ -142,14 +171,6 @@ public class BlogService {
 
     public int deleteCategoryById(Integer id) throws SQLException {
         return categoryDao.deleteById(id);
-    }
-
-    public long categoryCountOff() throws SQLException {
-        return categoryDao.countOff();
-    }
-
-    public long commentCountOff(int postId) throws SQLException {
-        return commentDao.countOffByPostId(postId);
     }
 
     public long postCountOff(int categoryId) throws SQLException {

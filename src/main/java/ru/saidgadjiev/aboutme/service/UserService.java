@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.saidgadjiev.aboutme.dao.RoleDao;
-import ru.saidgadjiev.aboutme.dao.UserDao;
+import ru.saidgadjiev.aboutme.dao.UserProfileDao;
 import ru.saidgadjiev.aboutme.domain.Role;
 import ru.saidgadjiev.aboutme.domain.UserProfile;
 import ru.saidgadjiev.aboutme.domain.UserRole;
@@ -22,15 +22,15 @@ import java.util.Set;
 @Service
 public class UserService {
 
-    private UserDao userDao;
+    private UserProfileDao userProfileDao;
 
     private RoleDao roleDao;
 
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserDao userDao, RoleDao roleDao, PasswordEncoder passwordEncoder) {
-        this.userDao = userDao;
+    public UserService(UserProfileDao userProfileDao, RoleDao roleDao, PasswordEncoder passwordEncoder) {
+        this.userProfileDao = userProfileDao;
         this.roleDao = roleDao;
         this.passwordEncoder = passwordEncoder;
     }
@@ -45,28 +45,28 @@ public class UserService {
         userProfile.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         userRoles.add(new UserRole(userProfile, userRole));
         userProfile.setUserRoles(userRoles);
-        userDao.create(userProfile);
+        userProfileDao.create(userProfile);
 
         return Collections.singleton(userRole);
     }
 
     public boolean isExistUserName(String userName) throws SQLException {
-        return userDao.isExistUserName(userName);
+        return userProfileDao.isExistUserName(userName);
     }
 
     public boolean isExistNickName(String nickName) throws SQLException {
-        return userDao.isExistNickName(nickName);
+        return userProfileDao.isExistNickName(nickName);
     }
 
     public UserProfile getByUserName(String userName) throws SQLException {
-        return userDao.getByUserName(userName);
+        return userProfileDao.getByUserName(userName);
     }
 
     public List<UserProfile> getAll(int limit, long offset) throws SQLException {
-        return userDao.getList(limit, offset);
+        return userProfileDao.getList(limit, offset);
     }
 
     public long countOff() throws SQLException {
-        return userDao.countOff();
+        return userProfileDao.countOff();
     }
 }

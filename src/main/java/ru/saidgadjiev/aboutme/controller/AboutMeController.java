@@ -2,6 +2,7 @@ package ru.saidgadjiev.aboutme.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -44,7 +45,7 @@ public class AboutMeController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping(value = "/update")
+    @PatchMapping(value = "/update")
     public ResponseEntity<ObjectNode> update(
             @RequestBody @Valid AboutMeRequest aboutMeRequest,
             BindingResult bindingResult
@@ -53,11 +54,11 @@ public class AboutMeController {
             return ResponseEntity.badRequest().build();
         }
 
-        aboutMeService.update(aboutMeRequest);
+        AboutMe aboutMe = aboutMeService.update(aboutMeRequest);
 
         ObjectNode response = new AboutMeJsonBuilder()
-                .post(aboutMeRequest.getPost())
-                .placeOfResidence(aboutMeRequest.getPlaceOfResidence())
+                .post(aboutMe.getPost())
+                .placeOfResidence(aboutMe.getPlaceOfResidence())
                 .build();
 
         return ResponseEntity.ok(response);

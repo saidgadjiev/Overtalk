@@ -42,7 +42,7 @@ public class PostControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private static final UserProfile2 USER_PROFILE = new UserProfile2();
+    private static final UserProfile USER_PROFILE = new UserProfile();
 
     private static final Category CATEGORY = new Category();
 

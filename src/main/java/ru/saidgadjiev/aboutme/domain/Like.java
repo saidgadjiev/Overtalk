@@ -24,7 +24,7 @@ public class Like {
     private Comment comment;
 
     @ForeignColumn(foreignFieldName = "userName", fetchType = FetchType.LAZY)
-    private UserProfile2 user;
+    private UserProfile user;
 
     public Integer getId() {
         return id;
@@ -50,11 +50,11 @@ public class Like {
         this.comment = comment;
     }
 
-    public UserProfile2 getUser() {
+    public UserProfile getUser() {
         return user;
     }
 
-    public void setUser(UserProfile2 user) {
+    public void setUser(UserProfile user) {
         this.user = user;
     }
 

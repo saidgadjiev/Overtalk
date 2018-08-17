@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.saidgadjiev.aboutme.dao.LikeDao;
+import ru.saidgadjiev.aboutme.dao.PostDao;
+import ru.saidgadjiev.aboutme.dao.UserProfileDao;
 import ru.saidgadjiev.aboutme.domain.Like;
-import ru.saidgadjiev.aboutme.domain.Post;
-import ru.saidgadjiev.aboutme.domain.UserProfile2;
 
 import java.sql.SQLException;
 
@@ -19,43 +19,30 @@ public class LikeService {
     @Autowired
     private LikeDao likeDao;
 
-    public Like postLike(Integer postId) throws SQLException {
+    @Autowired
+    private PostDao postDao;
+
+    @Autowired
+    private UserProfileDao userProfileDao;
+
+    public void postLike(Integer postId) throws SQLException {
         UserDetails authorizedUser = securityService.findLoggedInUser();
         Like like = new Like();
-        Post post = new Post();
 
-        post.setId(postId);
-        like.setPost(post);
+        like.setPost(postDao.getById(postId));
 
-        UserProfile2 userProfile = new UserProfile2();
-
-        userProfile.setUserName(authorizedUser.getUsername());
-        like.setUser(userProfile);
+        like.setUser(userProfileDao.getByUserName(authorizedUser.getUsername()));
 
         likeDao.create(like);
-
-        return like;
     }
 
-    public Like postDislike(Integer postId) throws SQLException {
+    public void postDislike(Integer postId) throws SQLException {
         UserDetails authorizedUser = securityService.findLoggedInUser();
-        Like like = new Like();
-        Post post = new Post();
 
-        post.setId(postId);
-        like.setPost(post);
-
-        UserProfile2 userProfile = new UserProfile2();
-
-        userProfile.setUserName(authorizedUser.getUsername());
-        like.setUser(userProfile);
-
-        likeDao.deletePostLike(like);
-
-        return like;
+        likeDao.delete(postId, authorizedUser.getUsername());
     }
 
     public long postLikesCount(int postId) throws SQLException {
-        return likeDao.postLikes(postId);
+        return likeDao.countOffByPostId(postId);
     }
 }

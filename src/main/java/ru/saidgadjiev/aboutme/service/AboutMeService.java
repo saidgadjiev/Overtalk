@@ -18,7 +18,14 @@ public class AboutMeService {
         return aboutMeDao.getAboutMe();
     }
 
-    public int update(AboutMeRequest aboutMeRequest) throws SQLException {
-        return aboutMeDao.update(aboutMeRequest.getPost(), aboutMeRequest.getPlaceOfResidence());
+    public AboutMe update(AboutMeRequest aboutMeRequest) throws SQLException {
+        AboutMe aboutMe = aboutMeDao.getAboutMe();
+
+        aboutMe.setPost(aboutMeRequest.getPost());
+        aboutMe.setPlaceOfResidence(aboutMeRequest.getPlaceOfResidence());
+
+        aboutMeDao.update(aboutMe);
+
+        return aboutMe;
     }
 }

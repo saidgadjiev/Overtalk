@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -78,12 +79,14 @@ public class AboutMeControllerIntegrationTest {
     public void update() throws Exception {
         createAboutMe();
 
-        mockMvc.perform(post("/api/aboutMe/update")
+        mockMvc.perform(patch("/api/aboutMe/update")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content("{\"post\":\"Test2\",\"placeOfResidence\":\"Test1\"}")
                 .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
         )
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.post", is("Test2")))
+                .andExpect(jsonPath("$.placeOfResidence", is("Test1")));
 
         try (Session session = sessionManager.createSession()) {
             AboutMe result = session.statementBuilder().createSelectStatement(AboutMe.class).uniqueResult();
@@ -98,7 +101,7 @@ public class AboutMeControllerIntegrationTest {
 
     @Test
     public void updateWithUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/aboutMe/update")
+        mockMvc.perform(patch("/api/aboutMe/update")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtils.toJson(getTestAboutMe()))
         )

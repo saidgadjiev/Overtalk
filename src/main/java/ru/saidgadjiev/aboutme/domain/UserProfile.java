@@ -24,7 +24,7 @@ public class UserProfile {
     @DatabaseColumn(notNull = true)
     private String password;
 
-    @ForeignCollectionField(foreignFieldName = "user")
+    @ForeignCollectionField(foreignFieldName = "user", fetchType = FetchType.LAZY)
     private Set<UserRole> userRoles = new HashSet<>();
 
     public Integer getId() {
