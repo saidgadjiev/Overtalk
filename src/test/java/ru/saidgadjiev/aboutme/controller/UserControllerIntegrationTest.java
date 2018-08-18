@@ -75,7 +75,7 @@ public class UserControllerIntegrationTest {
         mockMvc.perform(head("/api/userName/exist/test"))
                 .andExpect(status().isFound());
 
-        mockMvc.perform(get("/api/userName/exist/test1"))
+        mockMvc.perform(head("/api/userName/exist/test1"))
                 .andExpect(status().isOk());
     }
 
@@ -86,7 +86,7 @@ public class UserControllerIntegrationTest {
         mockMvc.perform(head("/api/nickName/exist/test"))
                 .andExpect(status().isFound());
 
-        mockMvc.perform(get("/api/nickName/exist/test1"))
+        mockMvc.perform(head("/api/nickName/exist/test1"))
                 .andExpect(status().isOk());
     }
 

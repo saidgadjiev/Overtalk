@@ -7,8 +7,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.saidgadjiev.aboutme.domain.Project;
+import ru.saidgadjiev.aboutme.model.JsonViews;
+import ru.saidgadjiev.aboutme.model.ProjectDetails;
 import ru.saidgadjiev.aboutme.service.ProjectService;
 import ru.saidgadjiev.aboutme.storage.StorageService;
+import ru.saidgadjiev.aboutme.utils.DTOUtils;
 
 import javax.validation.ConstraintViolation;
 import java.io.IOException;
@@ -36,47 +39,51 @@ public class ProjectController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/create")
-    public ResponseEntity create(@RequestPart(value = "file", required = false) MultipartFile file,
+    public ResponseEntity<ProjectDetails> create(@RequestPart(value = "file", required = false) MultipartFile file,
                                  @RequestPart("data") String data) throws IOException, SQLException {
-        Project project = new ObjectMapper().readValue(data, Project.class);
+        ProjectDetails projectDetails = new ObjectMapper().readValue(data, ProjectDetails.class);
 
-        if (hasErrors(project)) {
+        if (hasErrors(projectDetails)) {
             return ResponseEntity.badRequest().build();
         }
         if (file != null) {
             String logoPath = storageService.store(file);
 
-            project.setLogoPath(logoPath);
+            projectDetails.setLogoPath(logoPath);
         }
-        service.create(project);
+        Project project = service.create(projectDetails);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(DTOUtils.convert(project, ProjectDetails.class));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PatchMapping(value = "/update/{id}")
+    @PostMapping(value = "/update/{id}")
     public ResponseEntity update(
             @PathVariable("id") Integer id,
             @RequestPart(value = "file", required = false) MultipartFile file,
             @RequestPart("data") String data
     ) throws IOException, SQLException {
-        Project project = new ObjectMapper().readValue(data, Project.class);
+        ProjectDetails projectDetails = new ObjectMapper().readValue(data, ProjectDetails.class);
 
-        if (hasErrors(project)) {
+        if (hasErrors(projectDetails)) {
             return ResponseEntity.badRequest().build();
         }
         if (file != null) {
             String logoPath = storageService.store(file);
 
-            project.setLogoPath(logoPath);
+            projectDetails.setLogoPath(logoPath);
         }
-        service.update(id, project);
+        Project project = service.update(id, projectDetails);
 
-        return ResponseEntity.ok(project);
+        if (project == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(DTOUtils.convert(project, ProjectDetails.class));
     }
 
-    private boolean hasErrors(Project project) {
-        Set<ConstraintViolation<Project>> validations = validator.validate(project);
+    private boolean hasErrors(ProjectDetails project) {
+        Set<ConstraintViolation<ProjectDetails>> validations = validator.validate(project);
 
         return !validations.isEmpty();
     }

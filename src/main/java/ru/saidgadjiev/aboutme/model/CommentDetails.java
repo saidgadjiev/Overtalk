@@ -2,7 +2,9 @@ package ru.saidgadjiev.aboutme.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.format.annotation.DateTimeFormat;
+import ru.saidgadjiev.aboutme.json.LocalDateTimeSerializerddMMyyyyHHmm;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -22,11 +24,8 @@ public class CommentDetails {
     @Size(min = 1)
     private String content;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = "dd-MM-yyyy HH:mm")
+    @JsonSerialize(using = LocalDateTimeSerializerddMMyyyyHHmm.class)
     private LocalDateTime createdDate;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Moscow")
-    private Date date;
 
     @JsonView(JsonViews.Ui.class)
     private String nickName;
@@ -61,14 +60,6 @@ public class CommentDetails {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     @Override

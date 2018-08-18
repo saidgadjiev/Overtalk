@@ -2,6 +2,8 @@ package ru.saidgadjiev.aboutme.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import ru.saidgadjiev.aboutme.json.LocalDateTimeSerializerddMMyyyyHHmm;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -27,7 +29,7 @@ public class PostDetails {
     @Size(min = 1)
     private String content;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Moscow")
+    @JsonSerialize(using = LocalDateTimeSerializerddMMyyyyHHmm.class)
     private LocalDateTime createdDate;
 
     private Integer commentsCount;

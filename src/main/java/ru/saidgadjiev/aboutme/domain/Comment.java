@@ -2,13 +2,11 @@ package ru.saidgadjiev.aboutme.domain;
 
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
-import ru.saidgadjiev.aboutme.domain.common.JavaLocalDateTimeToSqlDate;
-import ru.saidgadjiev.aboutme.domain.common.JavaLocalDateToSqlDate;
+import ru.saidgadjiev.aboutme.domain.common.LocalDateTimeToSqlTimeStamp;
 import ru.saidgadjiev.ormnext.core.field.*;
 import ru.saidgajiev.ormnext.cache.Cacheable;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Cacheable
 public class Comment {
@@ -23,8 +21,8 @@ public class Comment {
     @ForeignColumn(fetchType = FetchType.LAZY, onDelete = ReferenceAction.CASCADE, onUpdate = ReferenceAction.CASCADE)
     private Post post;
 
-    @Converter(value = JavaLocalDateTimeToSqlDate.class)
-    @DatabaseColumn
+    @Converter(value = LocalDateTimeToSqlTimeStamp.class)
+    @DatabaseColumn(notNull = true, dataType = DataType.TIMESTAMP)
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @DatabaseColumn(notNull = true)

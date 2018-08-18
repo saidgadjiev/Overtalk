@@ -1,43 +1,33 @@
-package ru.saidgadjiev.aboutme.domain;
+package ru.saidgadjiev.aboutme.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
-import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
-import ru.saidgadjiev.aboutme.model.JsonViews;
-import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
-import ru.saidgajiev.ormnext.cache.Cacheable;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Cacheable
-public class Project {
+/**
+ * Created by said on 18.08.2018.
+ */
+public class ProjectDetails {
 
-    @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)
-    private Integer id;
+    private int id;
 
+    @JsonView(JsonViews.Rest.class)
     @NotNull
     @Size(min = 1)
-    @DatabaseColumn(notNull = true, unique = true)
     private String name;
 
-    @NotNull
-    @Size(min = 1)
-    @DatabaseColumn(persisterClass = TextTypeDataPersister.class)
     private String description;
 
-    @DatabaseColumn
     private String logoPath;
 
-    @DatabaseColumn(length = 1024)
     private String projectLink;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -75,7 +65,7 @@ public class Project {
 
     @Override
     public String toString() {
-        return "Project{" +
+        return "ProjectDetails{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

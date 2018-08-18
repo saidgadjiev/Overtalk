@@ -1,52 +1,77 @@
 package ru.saidgadjiev.aboutme.controller;
 
+import jdk.nashorn.internal.ir.ObjectNode;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.Transport;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
 import ru.saidgadjiev.aboutme.domain.*;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 
+import java.lang.reflect.Type;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingDeque;
 
-
-import static org.hamcrest.Matchers.hasSize;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 /**
  * Created by said on 12.08.2018.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = TestConfiguration.class)
+@SpringBootTest(classes = TestConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class LikeControllerIntegrationTest {
+public class LikeControllerWebSocketIntegrationTest {
 
-    @Autowired
-    private SessionManager sessionManager;
+    @LocalServerPort
+    private int port;
+
+    private String webSocketUrl;
+
+    private static final String WEBSOCKET_TOPIC = "/topic/likes";
+
+    private BlockingQueue<String> blockingQueue;
+
+    private WebSocketStompClient stompClient;
 
     @Autowired
     private MockMvc mockMvc;
 
-    private static final UserProfile TEST_USER_PROFILE_1 = new UserProfile();
+    @Autowired
+    private SessionManager sessionManager;
 
-    private static final UserProfile TEST_USER_PROFILE_2 = new UserProfile();
+    private static final UserProfile TEST_USER_PROFILE_1 = new UserProfile();
 
     private static final Category CATEGORY = new Category();
 
@@ -57,10 +82,6 @@ public class LikeControllerIntegrationTest {
         TEST_USER_PROFILE_1.setUserName("test");
         TEST_USER_PROFILE_1.setPassword(new BCryptPasswordEncoder().encode("1"));
 
-        TEST_USER_PROFILE_2.setNickName("test1");
-        TEST_USER_PROFILE_2.setUserName("test1");
-        TEST_USER_PROFILE_2.setPassword(new BCryptPasswordEncoder().encode("1"));
-
         CATEGORY.setName("Test");
         CATEGORY.setDescription("Test");
 
@@ -70,60 +91,57 @@ public class LikeControllerIntegrationTest {
     }
 
     @Before
-    public void before() throws SQLException {
+    public void setup() throws Exception {
         try (Session session = sessionManager.createSession()) {
-            session.clearTables(Like.class, Comment.class, UserProfile.class, Post.class, Category.class);
+            session.clearTables(Like.class, UserProfile.class, Post.class, Category.class);
             session.statementBuilder().createQuery("ALTER TABLE `like` ALTER COLUMN id RESTART WITH 1").executeUpdate();
             session.statementBuilder().createQuery("ALTER TABLE userprofile ALTER COLUMN id RESTART WITH 1").executeUpdate();
             session.statementBuilder().createQuery("ALTER TABLE post ALTER COLUMN id RESTART WITH 1").executeUpdate();
             session.statementBuilder().createQuery("ALTER TABLE category ALTER COLUMN id RESTART WITH 1").executeUpdate();
 
             session.create(TEST_USER_PROFILE_1);
-            session.create(TEST_USER_PROFILE_2);
             session.create(CATEGORY);
             session.create(POST);
         }
+
+        blockingQueue = new LinkedBlockingDeque<>();
+        stompClient = new WebSocketStompClient(new SockJsClient(
+                Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()))));
+        webSocketUrl = "ws://localhost:" + port + "/aboutMe";
     }
 
     @Test
-    public void like() throws Exception {
+    public void likeWebSocket() throws Exception {
+        StompSession session = stompClient
+                .connect(webSocketUrl, new StompSessionHandlerAdapter() {})
+                .get(1, SECONDS);
+
+        session.subscribe(WEBSOCKET_TOPIC, new DefaultStompFrameHandler());
         mockMvc
                 .perform(post("/api/like/post/1")
                         .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.postId", is(1)))
-                .andExpect(jsonPath("$.liked", is(true)));
+                );
 
-        try (Session session = sessionManager.createSession()) {
-            List<Like> all = session.queryForAll(Like.class);
-
-            Assert.assertEquals(all.size(), 1);
-            Like like1 = all.get(0);
-
-            Assert.assertEquals((int) like1.getPost().getId(), 1);
-            Assert.assertEquals(like1.getUser().getUserName(), "test");
-        }
+        Assert.assertEquals("{\"postId\":1,\"likesCount\":1}", blockingQueue.poll(1, SECONDS));
     }
 
     @Test
-    public void dislike() throws Exception {
+    public void dislikeWebSocket() throws Exception {
+        StompSession session = stompClient
+                .connect(webSocketUrl, new StompSessionHandlerAdapter() {})
+                .get(1, SECONDS);
+
+        session.subscribe(WEBSOCKET_TOPIC, new DefaultStompFrameHandler());
+
         createLike(TEST_USER_PROFILE_1);
 
         mockMvc
                 .perform(post("/api/dislike/post/1")
                         .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
                 )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.postId", is(1)))
-                .andExpect(jsonPath("$.likesCount", is(0)))
-                .andExpect(jsonPath("$.liked", is(false)));
+                .andExpect(status().isOk());
 
-        try (Session session = sessionManager.createSession()) {
-            List<Like> all = session.queryForAll(Like.class);
-
-            Assert.assertTrue(all.isEmpty());
-        }
+        Assert.assertEquals("{\"postId\":1,\"likesCount\":0}", blockingQueue.poll(1, SECONDS));
     }
 
     private void createLike(UserProfile userProfile) throws SQLException {
@@ -134,6 +152,18 @@ public class LikeControllerIntegrationTest {
             like.setUser(userProfile);
 
             session.create(like);
+        }
+    }
+
+    class DefaultStompFrameHandler implements StompFrameHandler {
+        @Override
+        public Type getPayloadType(StompHeaders stompHeaders) {
+            return byte[].class;
+        }
+
+        @Override
+        public void handleFrame(StompHeaders stompHeaders, Object o) {
+            blockingQueue.offer(new String((byte[]) o));
         }
     }
 

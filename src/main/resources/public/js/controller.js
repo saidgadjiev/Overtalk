@@ -129,7 +129,12 @@ as.controller('AboutMeAppController', function ($scope, AuthService, $location) 
     };
 });
 
-as.controller('NewPostController', function ($scope, $http, $location, $routeParams, $log, DataService) {
+as.controller('NewPostController', function ($scope,
+                                             $location,
+                                             $routeParams,
+                                             $log,
+                                             DataService,
+                                             PostService) {
     $scope.newPost = {};
     var data = DataService.get('NewPostController');
 
@@ -142,18 +147,16 @@ as.controller('NewPostController', function ($scope, $http, $location, $routePar
         $scope.newPost = {};
     }
 
-    var actionUrl = 'api/post/';
-
     $scope.doSave = function (isValid) {
         $scope.submitted = true;
 
         if (isValid) {
             if (!oldPost) {
-                $http.post(actionUrl + $routeParams.id + '/create', $scope.newPost).then(function (response) {
+                PostService.create($routeParams.id, $scope.newPost.title, $scope.newPost.content, function (response) {
                     $location.path(backUrl);
                 });
             } else {
-                $http.post(actionUrl + 'update', $scope.newPost).then(function (response) {
+                PostService.update($routeParams.id, $scope.newPost.title, $scope.newPost.content, function (response) {
                     $location.path(backUrl);
                 });
             }
@@ -164,7 +167,7 @@ as.controller('NewPostController', function ($scope, $http, $location, $routePar
     }
 });
 
-as.controller('LoginController', function ($scope, $http, $location, $log, AuthService) {
+as.controller('LoginController', function ($scope, $location, $log, AuthService) {
     $scope.inputPasswordType = 'password';
 
     $scope.hideShowPassword = function () {
@@ -194,7 +197,7 @@ as.controller('LoginController', function ($scope, $http, $location, $log, AuthS
     };
 });
 
-as.controller('RegistrationController', function ($scope, $http, $location, $log, AuthService) {
+as.controller('RegistrationController', function ($scope, $location, $log, AuthService) {
     $scope.inputPasswordType = 'password';
 
     $scope.hideShowPassword = function () {
@@ -228,32 +231,36 @@ as.controller('RegistrationController', function ($scope, $http, $location, $log
 });
 
 as.controller('PostController', function ($scope,
-                                          $http,
                                           $location,
                                           $log,
                                           $routeParams,
                                           $q,
                                           LikeService,
-                                          DataService) {
+                                          DataService,
+                                          PostService,
+                                          CategoryService,
+                                          WEB_SOCKET_EVENTS) {
     $scope.category = DataService.get('PostController');
 
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
-    var postUrl = 'api/post/',
-        loadPosts = function () {
-            $http.get(postUrl + $routeParams.id + '/posts?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage)
-                .then(function (response) {
-                    $log.log(response.data);
-                    $scope.totalItems = response.data.totalElements;
-                    $scope.posts = response.data.content;
-                    if (!$scope.category) {
-                        $http.get('api/category/' + $routeParams.id).then(function (value) {
-                            $scope.category = value.data;
-                        });
-                    }
-                })
-        };
+    var loadPosts = function () {
+        PostService.getPage(
+            $routeParams.id,
+            $scope.currentPage,
+            $scope.itemsPerPage,
+            function (response) {
+                $log.log(response.data);
+                $scope.totalItems = response.data.totalElements;
+                $scope.posts = response.data.content;
+                if (!$scope.category) {
+                    CategoryService($routeParams.id, function (value) {
+                        $scope.category = value.data;
+                    });
+                }
+            })
+    };
 
     loadPosts();
 
@@ -287,11 +294,13 @@ as.controller('PostController', function ($scope,
     };
 
     $scope.doDelete = function (post) {
-        $http.post(postUrl + 'delete/' + post.id).then(function () {
+        PostService.delete(post.id, function () {
             $log.log('delete post' + post);
+
             $scope.posts.splice($scope.posts.indexOf(post), 1);
         });
     };
+
     $scope.doEdit = function (post) {
         var data = {};
 
@@ -305,10 +314,30 @@ as.controller('PostController', function ($scope,
         DataService.set('DetailsController', post);
         $location.path('/categories/' + $scope.category.id + '/posts/' + post.id)
     };
+
+    $scope.$on(WEB_SOCKET_EVENTS.likeEvent, function (data) {
+        $log.log('likesChanged ' + data);
+        $scope.posts.forEach(function (item) {
+            if (item.id === data.postId) {
+                item.likesCount = data.likesCount;
+            }
+        })
+    });
+
+    $scope.$on(WEB_SOCKET_EVENTS.commentEvent, function (data) {
+        $log.log('commentEvent ' + data);
+
+        if (data.status === 201 || data.status === 204) {
+            $scope.posts.forEach(function (item) {
+                if (item.id === data.content.postId) {
+                    item.commentsCount = data.content.commentsCount;
+                }
+            })
+        }
+    });
 });
 
 as.controller('DetailsController', function ($scope,
-                                             $http,
                                              $routeParams,
                                              $location,
                                              $q,
@@ -317,24 +346,30 @@ as.controller('DetailsController', function ($scope,
                                              Session,
                                              AuthService,
                                              LikeService,
-                                             DataService) {
+                                             DataService,
+                                             CommentService,
+                                             PostService,
+                                             WEB_SOCKET_EVENTS) {
     $scope.post = DataService.get('DetailsController');
 
     if (!$scope.post) {
-        $http.get('api/post/' + $routeParams.postId).then(function (value) {
+        PostService.getById($routeParams.postId, function (value) {
             $scope.post = value.data;
         });
     }
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
-    var commentUrl = 'api/comment/',
-        loadComments = function () {
-            $http.get(commentUrl + $routeParams.postId + '/comments?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).then(function (response) {
+    var loadComments = function () {
+        CommentService.getPage(
+            $routeParams.postId,
+            $scope.currentPage,
+            $scope.itemsPerPage,
+            function (response) {
                 $scope.comments = response.data.content;
                 $scope.totalItems = response.data.totalElements;
             })
-        };
+    };
 
     loadComments();
 
@@ -353,12 +388,9 @@ as.controller('DetailsController', function ($scope,
 
     $scope.doCreateComment = function (valid) {
         if (valid) {
-            $http.post(commentUrl + $routeParams.postId + '/create', $scope.newComment)
-                .then(function (response) {
-                    loadComments();
-
-                    $scope.newComment = {};
-                });
+            CommentService.create($routeParams.postId, $scope.newComment.content, function (response) {
+                $scope.newComment = {};
+            });
         }
     };
 
@@ -402,10 +434,8 @@ as.controller('DetailsController', function ($scope,
         });
 
         editCommentModal.result.then(function (editedComment) {
-            $http.post(commentUrl + 'update', editedComment)
-                .then(function () {
-                    comment.content = editedComment.content;
-                });
+            CommentService.update($routeParams.postId, editedComment.id, editedComment.content, function (response) {
+            });
         });
     };
 
@@ -429,27 +459,59 @@ as.controller('DetailsController', function ($scope,
     };
 
     $scope.doDeleteComment = function (comment) {
-        $http.post(commentUrl + 'delete', comment).then(function () {
+        CommentService.delete($routeParams.postId, comment.id, function () {
             $log.log('delete comment' + comment);
-            $scope.comments.splice($scope.comments.indexOf(comment), 1);
         });
     };
 
     $scope.doDeletePost = function (post) {
-        $http.post('api/post/delete/' + post.id).then(function () {
+        PostService.delete(post.id, function () {
             $log.log('delete post' + post);
 
             $location.path('/categories/' + $routeParams.categoryId + '/posts');
         });
     };
+
+    $scope.$on(WEB_SOCKET_EVENTS.commentEvent, function (data) {
+        $log.log('commentEvent ' + data);
+
+        if (data.status === 201) {
+            var comment = {};
+
+            comment.id = data.content.commentId;
+            comment.content = data.content.content;
+            comment.createdDate = data.content.createdDate;
+            comment.nickName = data.content.nickName;
+
+            $scope.comments.push(comment);
+        } else if (data.status === 206) {
+            $scope.comments.forEach(function (item) {
+                if (item.id === data.content.commentId) {
+                    item.content = data.content.content;
+                }
+            })
+        } else if (data.status === 204) {
+            var commentIndex = $scope.comments.findIndex(function (item, index, array) {
+                if (item.id === data.content.commentId) {
+                    return true;
+                }
+
+                return false;
+            });
+
+            if (commentIndex !== -1) {
+                $scope.comments.splice(commentIndex, 1);
+            }
+        }
+    });
 });
 
-as.controller('UsersController', function ($scope, $http, $log) {
+as.controller('UsersController', function ($scope, UserService, $log) {
     $scope.currentPage = 1;
     $scope.itemsPerPage = 20;
 
     var loadUsers = function () {
-        $http.get('api/users?page=' + ($scope.currentPage - 1) + '&size=' + $scope.itemsPerPage).then(function (response) {
+        UserService.getPage($scope.currentPage, $scope.itemsPerPage, function (response) {
             $log.log(response);
             $scope.totalItems = response.data.totalElements;
             $scope.users = response.data.content;
@@ -464,7 +526,13 @@ as.controller('UsersController', function ($scope, $http, $log) {
     };
 });
 
-as.controller('NewProjectController', function ($scope, $http, $log, $location, FileService, DataService, IMAGE) {
+as.controller('NewProjectController', function ($scope,
+                                                $log,
+                                                $location,
+                                                FileService,
+                                                DataService,
+                                                ProjectService,
+                                                IMAGE) {
     $scope.data = DataService.get('NewProjectController');
     $scope.project = {};
     $scope.defaultUrl = IMAGE.defaultUrl;
@@ -477,38 +545,28 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
         $scope.project.logoPath = $scope.data.logoPath;
     }
 
-    var actionUrl = 'api/project/';
-
     $scope.doSave = function (isValid) {
         $scope.submitted = true;
 
         if (isValid) {
-            var fd = new FormData();
-
-            fd.append('file', $scope.logo);
-            fd.append('data', angular.toJson($scope.project));
-
             if ($scope.data) {
-                $http.post(actionUrl + 'update/' + $scope.project.id, fd, {
-                    transformRequest: angular.identity,
-                    headers: {'Content-Type': undefined}
-                })
-                    .then(function (response) {
+                ProjectService.update(
+                    $scope.project.id,
+                    $scope.logo,
+                    $scope.project.name,
+                    $scope.project.description,
+                    $scope.project.projectLink,
+                    function (response) {
                         $location.path('/projects');
-                    })
-                    .catch(function (reason) {
-                        $log.log(reason);
                     });
             } else {
-                $http.post(actionUrl + 'create', fd, {
-                    transformRequest: angular.identity,
-                    headers: {'Content-Type': undefined}
-                })
-                    .then(function () {
+                ProjectService.create(
+                    $scope.logo,
+                    $scope.project.name,
+                    $scope.project.description,
+                    $scope.project.projectLink,
+                    function (response) {
                         $location.path('/projects');
-                    })
-                    .catch(function (reason) {
-                        $log.log(reason);
                     });
             }
         }
@@ -525,15 +583,15 @@ as.controller('NewProjectController', function ($scope, $http, $log, $location, 
 });
 
 as.controller('ProjectController', function ($scope,
-                                             $http,
                                              $log,
                                              $location,
                                              $uibModal,
                                              IMAGE,
-                                             DataService) {
+                                             DataService,
+                                             ProjectService) {
     $scope.defaultUrl = IMAGE.defaultUrl;
 
-    $http.get('api/project').then(function (response) {
+    ProjectService.getAll(function (response) {
         $log.log(response);
         $scope.projects = response.data;
     });

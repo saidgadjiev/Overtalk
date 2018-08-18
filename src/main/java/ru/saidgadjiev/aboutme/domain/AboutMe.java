@@ -1,8 +1,10 @@
 package ru.saidgadjiev.aboutme.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import ru.saidgadjiev.aboutme.domain.common.JavaLocalDateToSqlDate;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import ru.saidgadjiev.aboutme.domain.common.LocalDateToSqlTimeStamp;
+import ru.saidgadjiev.aboutme.json.LocalDateSerializerddMMyyyy;
 import ru.saidgadjiev.ormnext.core.field.Converter;
+import ru.saidgadjiev.ormnext.core.field.DataType;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgadjiev.ormnext.core.field.ForeignCollectionField;
 import ru.saidgajiev.ormnext.cache.Cacheable;
@@ -20,9 +22,9 @@ public class AboutMe {
     @DatabaseColumn(notNull = true)
     private String fio;
 
-    @Converter(value = JavaLocalDateToSqlDate.class)
-    @DatabaseColumn(notNull = true)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Europe/Moscow")
+    @Converter(value = LocalDateToSqlTimeStamp.class)
+    @DatabaseColumn(notNull = true, dataType = DataType.TIMESTAMP)
+    @JsonSerialize(using = LocalDateSerializerddMMyyyy.class)
     private LocalDate dateOfBirth;
 
     @DatabaseColumn(notNull = true)

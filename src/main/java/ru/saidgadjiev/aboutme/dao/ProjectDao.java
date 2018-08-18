@@ -38,4 +38,10 @@ public class ProjectDao {
 
         return session.update(project);
     }
+
+    public Project getById(Integer id) throws SQLException {
+        Session session = sessionManager.currentSession();
+
+        return session.queryForId(Project.class, id);
+    }
 }

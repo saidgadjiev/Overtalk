@@ -127,7 +127,7 @@ public class CommentControllerTest {
     @Test
     public void create401() throws Exception {
         mockMvc
-                .perform(post("/api/category/create")
+                .perform(post("/api/comment/1/create")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content("{\"name\":\"Test2\",\"description\":\"Test1\"}")
                 )
@@ -139,7 +139,7 @@ public class CommentControllerTest {
         createComment();
 
         mockMvc
-                .perform(patch("/api/comment/update/1")
+                .perform(patch("/api/comment/1/update/1")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content("{\"content\":\"Test1\"}")
                         .with(user("test").password("1").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
@@ -157,7 +157,7 @@ public class CommentControllerTest {
     @Test
     public void update401() throws Exception {
         mockMvc
-                .perform(patch("/api/comment/update/1")
+                .perform(patch("/api/comment/1/update/1")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content("{\"name\":\"Test2\",\"description\":\"Test1\"}")
                 )
@@ -169,7 +169,7 @@ public class CommentControllerTest {
         createComment();
 
         mockMvc
-                .perform(patch("/api/comment/delete/1")
+                .perform(delete("/api/comment/1/delete/1")
                         .with(user("test").password("1").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
                 )
                 .andExpect(status().isOk());

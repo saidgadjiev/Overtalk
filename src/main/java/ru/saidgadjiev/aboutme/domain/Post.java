@@ -2,14 +2,12 @@ package ru.saidgadjiev.aboutme.domain;
 
 import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.aboutme.dao.TextTypeDataPersister;
-import ru.saidgadjiev.aboutme.domain.common.JavaLocalDateTimeToSqlDate;
-import ru.saidgadjiev.aboutme.domain.common.JavaLocalDateToSqlDate;
+import ru.saidgadjiev.aboutme.domain.common.LocalDateTimeToSqlTimeStamp;
 import ru.saidgadjiev.ormnext.core.field.*;
 import ru.saidgajiev.ormnext.cache.Cacheable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Cacheable
@@ -24,8 +22,8 @@ public class Post {
     @DatabaseColumn(notNull = true, persisterClass = TextTypeDataPersister.class)
     private String content;
 
-    @Converter(value = JavaLocalDateTimeToSqlDate.class)
-    @DatabaseColumn(notNull = true)
+    @Converter(value = LocalDateTimeToSqlTimeStamp.class)
+    @DatabaseColumn(notNull = true, dataType = DataType.TIMESTAMP)
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @ForeignCollectionField(foreignFieldName = "post", fetchType = FetchType.LAZY)

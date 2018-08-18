@@ -30,12 +30,15 @@ public class LikeController {
             @PathVariable("id") Integer postId
     ) throws SQLException {
         likeService.postLike(postId);
+        long likesCount = likeService.postLikesCount(postId);
 
         ObjectNode response = new LikeJsonBuilder()
                 .postId(postId)
-                .likesCount(likeService.postLikesCount(postId))
+                .likesCount(likesCount)
                 .liked(true)
                 .build();
+
+        sendLikesCountChanged(postId, likesCount);
 
         return ResponseEntity.ok(response);
     }
@@ -46,13 +49,25 @@ public class LikeController {
             @PathVariable("id") Integer postId
     ) throws SQLException {
         likeService.postDislike(postId);
+        long likesCount = likeService.postLikesCount(postId);
 
         ObjectNode objectNode = new LikeJsonBuilder()
                 .postId(postId)
-                .likesCount(likeService.postLikesCount(postId))
+                .likesCount(likesCount)
                 .liked(false)
                 .build();
 
+        sendLikesCountChanged(postId, likesCount);
+
         return ResponseEntity.ok(objectNode);
+    }
+
+    private void sendLikesCountChanged(Integer postId, long likesCount) {
+        ObjectNode webSocketResponse = new LikeJsonBuilder()
+                .postId(postId)
+                .likesCount(likesCount)
+                .build();
+
+        messagingTemplate.convertAndSend("/topic/likes", webSocketResponse);
     }
 }

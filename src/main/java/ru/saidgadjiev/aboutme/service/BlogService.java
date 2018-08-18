@@ -173,10 +173,6 @@ public class BlogService {
         return categoryDao.deleteById(id);
     }
 
-    public long postCountOff(int categoryId) throws SQLException {
-        return postDao.countOffPostsByCategoryId(categoryId);
-    }
-
     public boolean isLikedByCurrentUser(Post post) {
         UserDetails userDetails = securityService.findLoggedInUser();
 
@@ -190,5 +186,9 @@ public class BlogService {
         }
 
         return false;
+    }
+
+    public long commentCountOff(Integer postId) throws SQLException {
+        return commentDao.countOffByPostId(postId);
     }
 }

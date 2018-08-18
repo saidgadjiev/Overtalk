@@ -18,7 +18,7 @@ public class Category {
     @DatabaseColumn(notNull = true)
     private String name;
 
-    @DatabaseColumn(notNull = true)
+    @DatabaseColumn
     private String description;
     
     @DatabaseColumn()

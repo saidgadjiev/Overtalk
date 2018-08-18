@@ -185,8 +185,9 @@ as.service('FileService', function ($q, $log) {
     return fileService;
 });
 
-as.service('LikeService', function ($http) {
+as.service('LikeService', function ($http, SETTINGS) {
     var likeService = {};
+
 
     likeService.doLike = function (postId) {
         return $http.post('api/like/post/' + postId);
@@ -417,6 +418,10 @@ as.service('CategoryService', function ($http) {
         $http.post('api/category/create', json).then(callback);
     };
 
+    service.getById = function (id, callback) {
+        $http.post('api/category/' + id).then(callback);
+    };
+
     service.update = function (id, name, description, callback) {
         var json = {
             name: name,
@@ -428,6 +433,154 @@ as.service('CategoryService', function ($http) {
 
     service.delete = function (id, callback) {
         $http.post('api/category/delete/' + id).then(callback);
+    };
+
+    return service;
+});
+
+as.service('PostService', function ($http) {
+    var service = {};
+
+    service.getPage = function (categoryId, page, size, callback) {
+        $http.get('api/post/' + categoryId + '?page=' + (page - 1) + '&size=' + size).then(callback);
+    };
+
+    service.create = function (categoryId, title, content, callback) {
+        var json = {
+            title: title,
+            content: content
+        };
+
+        $http.post('api/post/' + categoryId + '/create', json).then(callback);
+    };
+
+    service.getById = function (id, callback) {
+        $http.post('api/post/' + id).then(callback);
+    };
+
+    service.update = function (categoryId, id, title, content, callback) {
+        var json = {
+            title: title,
+            content: content
+        };
+
+        $http.post('api/post/' + categoryId + '/update/' + id, json).then(callback);
+    };
+
+    service.delete = function (id, callback) {
+        $http.post('api/post/delete/' + id).then(callback);
+    };
+
+    return service;
+});
+
+as.service('CommentService', function ($http) {
+    var service = {};
+
+    service.getPage = function (postId, page, size, callback) {
+        $http.get('api/comment/' + postId + '?page=' + (page - 1) + '&size=' + size).then(callback);
+    };
+
+    service.create = function (postId, content, callback) {
+        var json = {
+            content: content
+        };
+
+        $http.post('api/comment/' + postId + '/create', json).then(callback);
+    };
+
+    service.update = function (postId, id, content, callback) {
+        var json = {
+            content: content
+        };
+
+        $http.post('api/comment/' + postId + '/update/' + id, json).then(callback);
+    };
+
+    service.delete = function (postId, id, callback) {
+        $http.post('api/comment/' + postId + '/delete/' + id).then(callback);
+    };
+
+    return service;
+});
+
+as.service('ProjectService', function ($http) {
+    var service = {};
+
+    service.getAll = function (callback) {
+        $http.get('api/project').then(callback);
+    };
+
+    service.create = function (logo, name, description, projectLink, callback) {
+        var json = {
+            name: name,
+            description: description,
+            projectLink: projectLink
+        };
+        var fd = new FormData();
+
+        fd.append('file', logo);
+        fd.append('data', angular.toJson(json));
+
+        $http.post('api/project/create', json).then(callback);
+    };
+
+    service.update = function (id, logo, name, description, projectLink, callback) {
+        var json = {
+            name: name,
+            description: description,
+            projectLink: projectLink
+        };
+        var fd = new FormData();
+
+        fd.append('file', logo);
+        fd.append('data', angular.toJson(json));
+
+
+        $http.post('api/project/update' + id, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        }).then(callback);
+    };
+
+    return service;
+});
+
+as.service('UserService', function ($http) {
+    var service = {};
+
+    service.getPage = function (page, size, callback) {
+        $http.get('api/users?page=' + (page - 1) + '&size=' + size).then(callback);
+    };
+
+    return service;
+});
+
+
+as.service('WebSocket', function ($rootScope, SETTINGS, WEB_SOCKET_EVENTS) {
+    var service = {}, socket = {
+        client: null,
+        stomp: null
+    };
+
+    var startListener = function() {
+        socket.stomp.subscribe(SETTINGS.likeTopic, function(data) {
+            $rootScope.$broadcast(WEB_SOCKET_EVENTS.likeEvent, {
+                data: data
+            });
+        });
+
+        socket.stomp.subscribe(SETTINGS.commentTopic, function(data) {
+            $rootScope.$broadcast(WEB_SOCKET_EVENTS.commentEvent, {
+                data: data
+            });
+        });
+    };
+
+    service.initialize = function() {
+        socket.client = new SockJS(SETTINGS.webSocketUrl);
+        socket.stomp = Stomp.over(socket.client);
+        socket.stomp.connect({}, startListener);
     };
 
     return service;

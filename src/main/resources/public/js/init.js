@@ -6,8 +6,19 @@ as.constant('USER_ROLES', {
     user: 'ROLE_USER'
 });
 
+as.constant('SETTINGS', {
+    webSocketUrl: 'ws://localhost:8080/aboutMe',
+    likeTopic: '/topic/likes',
+    commentTopic: '/topic/comments'
+});
+
 as.constant('IMAGE', {
     defaultUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPcAAADMCAMAAACY78UPAAAAM1BMVEW8vsDn6Onq6+y5u73CxMbIycvh4uPW2NnR09Tc3d/AwsTk5ebU1dfg4eK9v8HBw8XMzc+TddevAAADGElEQVR4nO3c63KqMBRAYZINKiLo+z/tEblIMKng8cJO1venMx1xWEOKQUKzDAAAAAAAAAAAAAAAAAASJ9IUhcivd+Pb5FDZq7pIq7yprbmxp5TCZWcGKYXLyZp7ePHr3fkaMVP7ZA54YZ3wZLoPTrfNf70/3zLrPv56f74l1XHeJHpeS/VzLJMquXlLV5ncPFX6zv66pOyvS46HuPOltJc+XLKi6I9+JvXw6zhds6/nsYfC23kujze8zTaP4d3p3UYb3mU/fHLJvv91pOFj9nyiInXM4eNhfZyfxRwul2B2G24iDZf+GiwwTxm+iYgtfDzaoelZE2X4k6Pduod/c8c+65rd+Wsy3pjuNSai8Kb/uWQMN83z1wDAtxSftN3zvFT2g7b7vevkNucH0L01dNNNN910x9f9rtmKsu5T/ia1qm77rvt8UtJN98bQPe+Wm1feUnV3c6qryuzP6/dcc7cUxr46+jV35+PkY/1qDs3d5m71XSDF3Zfpqsy1O6+3e7LnrXS6q2m2f/FxuCiWbuO96xe+T6q42xnnlW+VRxlem6u32zmv+b78b9dCVMG31NvtDHTPMD/awGqf28Z6u5/MW7qNQiNdc7fk1a3cGl/2sAbfX6W5u/0TLo0tD75thsEQmLvr7u4vRH2bjH/8/ims9u7QFpMPOd9HXFTdk1P99Ikq7yqviLqlGkd08/TBwYi6d+PSPKmNwzPSo+nulmPfwsV9XtI70mPpHlaht+HnWbZvpEfSLeNkPZ89BR4Y6XF037OvhfuHw+0Z6XF055NU97I8NNKj6D56U1272Q2HGLoXZD/M7PV3L1wN4X4Dp7978SIQZ6Sr7/aevv0H3Ll2V969PNsd6cq75bI82xnpurvXZQe+hVbYveSD2wkfR7rq7vPK7MlI19wt/inpnwd82F5x90urN+2531htt5Qvrc+spd9aa/ewmGmtflvF3f/1lnTTvTV0p9pt3tata919ss9ZfADdW0M33XTTTXck3Yn+X4vs/K6nQn2S+bfZAAAAAAAAAAAAAAAAAAAAAAAAAAAAANL0D2K5KQJNX8MVAAAAAElFTkSuQmCC'
+});
+
+as.constant('WEB_SOCKET_EVENTS', {
+    likeEvent: 'like-event',
+    commentEvent: 'comment-event'
 });
 
 as.constant('AUTH_EVENTS', {
@@ -157,13 +168,20 @@ as.config(function ($routeProvider, $httpProvider, $locationProvider, USER_ROLES
     $locationProvider.hashPrefix('');
 });
 
+function initWebSocket() {
+
+}
+
 as.run(function ($rootScope,
                  $location,
                  $log,
                  LocationService,
                  AUTH_EVENTS,
                  Session,
-                 AuthService) {
+                 AuthService,
+                 WebSocket) {
+    WebSocket.initialize();
+
     $rootScope.$on('$routeChangeStart', function (event, next) {
         //Если пользователь уже залогинен то он не может перейти на страницу логину
         if (next.originalPath === "/login" && $rootScope.authenticated) {

@@ -74,8 +74,20 @@ public class JsonBuilder {
         return this;
     }
 
+    public JsonBuilder add(String key, Object pojo) {
+        objectNode.putPOJO(key, pojo);
+
+        return this;
+    }
+
     public JsonBuilder add(String key, boolean value) {
         objectNode.put(key, value);
+
+        return this;
+    }
+
+    public JsonBuilder add(String key, ObjectNode objectNode) {
+        this.objectNode.putRawValue(key, new RawValue(objectNode));
 
         return this;
     }

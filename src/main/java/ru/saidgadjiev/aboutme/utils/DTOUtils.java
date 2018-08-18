@@ -59,7 +59,7 @@ public final class DTOUtils {
                     public Integer convert(MappingContext<Post, Integer> context) {
                         return context.getSource().getLikes().size();
                     }
-                });
+                }).map(source, destination.getLikesCount());
             }
         });
     }

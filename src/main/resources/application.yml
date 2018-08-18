@@ -12,5 +12,3 @@ app:
 spring:
     profiles:
         active: prod
-    jackson:
-        serializationwrite_dates_as_timestamps: false

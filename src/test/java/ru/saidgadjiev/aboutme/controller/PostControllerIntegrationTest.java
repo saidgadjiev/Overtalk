@@ -21,8 +21,7 @@ import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.sql.SQLException;
@@ -93,7 +92,7 @@ public class PostControllerIntegrationTest {
         createPost();
 
         mockMvc
-                .perform(post("/api/post/update/1")
+                .perform(patch("/api/post/update/1")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content("{\"title\":\"Test2\",\"content\":\"Test1\"}")
                         .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
@@ -156,7 +155,7 @@ public class PostControllerIntegrationTest {
         createPost();
 
         mockMvc
-                .perform(post("/api/post/delete/1")
+                .perform(delete("/api/post/delete/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
                 )

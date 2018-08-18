@@ -22,8 +22,6 @@ public class CategoryDetails {
     private String name;
 
     @JsonView({JsonViews.Rest.class, JsonViews.Ui.class})
-    @NotNull
-    @Size(min = 1)
     private String description;
 
     public int getId() {
