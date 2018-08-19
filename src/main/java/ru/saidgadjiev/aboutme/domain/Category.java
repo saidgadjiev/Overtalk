@@ -21,7 +21,7 @@ public class Category {
     @DatabaseColumn
     private String description;
     
-    @DatabaseColumn()
+    @DatabaseColumn
     private int index;
 
     @ForeignCollectionField(foreignFieldName = "category", fetchType = FetchType.LAZY)

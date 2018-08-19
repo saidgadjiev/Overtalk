@@ -7,7 +7,7 @@ as.constant('USER_ROLES', {
 });
 
 as.constant('SETTINGS', {
-    webSocketUrl: 'ws://localhost:8080/aboutMe',
+    webSocketUrl: '/aboutMe',
     likeTopic: '/topic/likes',
     commentTopic: '/topic/comments'
 });

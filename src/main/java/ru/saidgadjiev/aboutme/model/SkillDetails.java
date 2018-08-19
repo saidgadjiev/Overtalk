@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 /**
  * Created by said on 04.03.2018.
  */
-public class SkillRequest {
+public class SkillDetails {
 
     @NotNull
     @Size(min = 1)
@@ -35,7 +35,7 @@ public class SkillRequest {
 
     @Override
     public String toString() {
-        return "SkillRequest{" +
+        return "SkillDetails{" +
                 "name='" + name + '\'' +
                 ", percentage='" + percentage + '\'' +
                 '}';

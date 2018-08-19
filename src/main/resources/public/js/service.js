@@ -368,7 +368,7 @@ as.service('AboutMeService', function ($http) {
             placeOfResidence: placeOfResidence
         };
 
-        return $http.post('/api/aboutMe/update', json).then(callback);
+        return $http.patch('/api/aboutMe/update', json).then(callback);
     };
 
     return service;
@@ -392,11 +392,11 @@ as.service('SkillService', function ($http) {
             percentage: percentage
         };
 
-        $http.post('/api/skill/update/' + id, json).then(callback);
+        $http.patch('/api/skill/update/' + id, json).then(callback);
     };
 
     service.delete = function (id, callback) {
-        $http.post('/api/skill/delete/' + id).then(callback);
+        $http.delete('/api/skill/delete/' + id).then(callback);
     };
 
     return service;
@@ -419,7 +419,7 @@ as.service('CategoryService', function ($http) {
     };
 
     service.getById = function (id, callback) {
-        $http.post('api/category/' + id).then(callback);
+        $http.get('api/category/' + id).then(callback);
     };
 
     service.update = function (id, name, description, callback) {
@@ -428,11 +428,11 @@ as.service('CategoryService', function ($http) {
             description: description
         };
 
-        $http.post('api/category/update/' + id, json).then(callback);
+        $http.patch('api/category/update/' + id, json).then(callback);
     };
 
     service.delete = function (id, callback) {
-        $http.post('api/category/delete/' + id).then(callback);
+        $http.delete('api/category/delete/' + id).then(callback);
     };
 
     return service;
@@ -442,7 +442,7 @@ as.service('PostService', function ($http) {
     var service = {};
 
     service.getPage = function (categoryId, page, size, callback) {
-        $http.get('api/post/' + categoryId + '?page=' + (page - 1) + '&size=' + size).then(callback);
+        $http.get('api/post/' + categoryId + '/posts?page=' + (page - 1) + '&size=' + size).then(callback);
     };
 
     service.create = function (categoryId, title, content, callback) {
@@ -455,7 +455,7 @@ as.service('PostService', function ($http) {
     };
 
     service.getById = function (id, callback) {
-        $http.post('api/post/' + id).then(callback);
+        $http.get('api/post/' + id).then(callback);
     };
 
     service.update = function (categoryId, id, title, content, callback) {
@@ -464,11 +464,11 @@ as.service('PostService', function ($http) {
             content: content
         };
 
-        $http.post('api/post/' + categoryId + '/update/' + id, json).then(callback);
+        $http.patch('api/post/' + categoryId + '/update/' + id, json).then(callback);
     };
 
     service.delete = function (id, callback) {
-        $http.post('api/post/delete/' + id).then(callback);
+        $http.delete('api/post/delete/' + id).then(callback);
     };
 
     return service;
@@ -478,7 +478,7 @@ as.service('CommentService', function ($http) {
     var service = {};
 
     service.getPage = function (postId, page, size, callback) {
-        $http.get('api/comment/' + postId + '?page=' + (page - 1) + '&size=' + size).then(callback);
+        $http.get('api/comment/' + postId + '/comments?page=' + (page - 1) + '&size=' + size).then(callback);
     };
 
     service.create = function (postId, content, callback) {
@@ -494,11 +494,11 @@ as.service('CommentService', function ($http) {
             content: content
         };
 
-        $http.post('api/comment/' + postId + '/update/' + id, json).then(callback);
+        $http.patch('api/comment/' + postId + '/update/' + id, json).then(callback);
     };
 
     service.delete = function (postId, id, callback) {
-        $http.post('api/comment/' + postId + '/delete/' + id).then(callback);
+        $http.delete('api/comment/' + postId + '/delete/' + id).then(callback);
     };
 
     return service;
@@ -536,8 +536,7 @@ as.service('ProjectService', function ($http) {
         fd.append('file', logo);
         fd.append('data', angular.toJson(json));
 
-
-        $http.post('api/project/update' + id, fd, {
+        $http.patch('api/project/update' + id, fd, {
             transformRequest: angular.identity,
             headers: {'Content-Type': undefined}
         }).then(callback);
@@ -565,15 +564,11 @@ as.service('WebSocket', function ($rootScope, SETTINGS, WEB_SOCKET_EVENTS) {
 
     var startListener = function() {
         socket.stomp.subscribe(SETTINGS.likeTopic, function(data) {
-            $rootScope.$broadcast(WEB_SOCKET_EVENTS.likeEvent, {
-                data: data
-            });
+            $rootScope.$broadcast(WEB_SOCKET_EVENTS.likeEvent, angular.fromJson(data.body));
         });
 
         socket.stomp.subscribe(SETTINGS.commentTopic, function(data) {
-            $rootScope.$broadcast(WEB_SOCKET_EVENTS.commentEvent, {
-                data: data
-            });
+            $rootScope.$broadcast(WEB_SOCKET_EVENTS.commentEvent, angular.fromJson(data.body));
         });
     };
 

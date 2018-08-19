@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfiguration.class)
 @AutoConfigureMockMvc
-public class CommentControllerTest {
+public class CommentControllerIntegrationTest {
 
     @Autowired
     private SessionManager sessionManager;

@@ -2,14 +2,13 @@ package ru.saidgadjiev.aboutme.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.saidgadjiev.aboutme.domain.AboutMe;
 import ru.saidgadjiev.aboutme.json.AboutMeJsonBuilder;
-import ru.saidgadjiev.aboutme.model.AboutMeRequest;
+import ru.saidgadjiev.aboutme.model.AboutMeDetails;
 import ru.saidgadjiev.aboutme.service.AboutMeService;
 
 import javax.validation.Valid;
@@ -47,14 +46,14 @@ public class AboutMeController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping(value = "/update")
     public ResponseEntity<ObjectNode> update(
-            @RequestBody @Valid AboutMeRequest aboutMeRequest,
+            @RequestBody @Valid AboutMeDetails aboutMeDetails,
             BindingResult bindingResult
     ) throws SQLException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
 
-        AboutMe aboutMe = aboutMeService.update(aboutMeRequest);
+        AboutMe aboutMe = aboutMeService.update(aboutMeDetails);
 
         ObjectNode response = new AboutMeJsonBuilder()
                 .post(aboutMe.getPost())

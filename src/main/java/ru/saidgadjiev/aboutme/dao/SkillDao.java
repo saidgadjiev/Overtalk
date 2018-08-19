@@ -5,9 +5,6 @@ import org.springframework.stereotype.Repository;
 import ru.saidgadjiev.aboutme.domain.Skill;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
-import ru.saidgadjiev.ormnext.core.query.criteria.impl.Criteria;
-import ru.saidgadjiev.ormnext.core.query.criteria.impl.Restrictions;
-import ru.saidgadjiev.ormnext.core.query.criteria.impl.UpdateStatement;
 
 import java.sql.SQLException;
 
@@ -27,16 +24,17 @@ public class SkillDao {
         session.create(skill);
     }
 
-    public int update(Integer id, String name, int percentage) throws SQLException {
+    public int update(Skill skill) throws SQLException {
         Session session = sessionManager.currentSession();
 
-        UpdateStatement updateStatement = session.statementBuilder().createUpdateStatement(Skill.class);
+        return session.update(skill);
+    }
 
-        updateStatement.set("name", name);
-        updateStatement.set("percentage", percentage);
-        updateStatement.where(new Criteria().add(Restrictions.eq("id", id)));
 
-        return updateStatement.update();
+    public Skill getById(Integer id) throws SQLException {
+        Session session = sessionManager.currentSession();
+
+        return session.queryForId(Skill.class, id);
     }
 
     public int removeById(Integer id) throws SQLException {

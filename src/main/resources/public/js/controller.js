@@ -255,7 +255,7 @@ as.controller('PostController', function ($scope,
                 $scope.totalItems = response.data.totalElements;
                 $scope.posts = response.data.content;
                 if (!$scope.category) {
-                    CategoryService($routeParams.id, function (value) {
+                    CategoryService.getById($routeParams.id, function (value) {
                         $scope.category = value.data;
                     });
                 }
@@ -315,24 +315,28 @@ as.controller('PostController', function ($scope,
         $location.path('/categories/' + $scope.category.id + '/posts/' + post.id)
     };
 
-    $scope.$on(WEB_SOCKET_EVENTS.likeEvent, function (data) {
+    $scope.$on(WEB_SOCKET_EVENTS.likeEvent, function (event, data) {
         $log.log('likesChanged ' + data);
-        $scope.posts.forEach(function (item) {
-            if (item.id === data.postId) {
-                item.likesCount = data.likesCount;
-            }
-        })
+        $scope.$apply(function () {
+            $scope.posts.forEach(function (item) {
+                if (item.id === data.postId) {
+                    item.likesCount = data.likesCount;
+                }
+            });
+        });
     });
 
-    $scope.$on(WEB_SOCKET_EVENTS.commentEvent, function (data) {
+    $scope.$on(WEB_SOCKET_EVENTS.commentEvent, function (event, data) {
         $log.log('commentEvent ' + data);
 
         if (data.status === 201 || data.status === 204) {
-            $scope.posts.forEach(function (item) {
-                if (item.id === data.content.postId) {
-                    item.commentsCount = data.content.commentsCount;
-                }
-            })
+            $scope.$apply(function () {
+                $scope.posts.forEach(function (item) {
+                    if (item.id === data.content.postId) {
+                        item.commentsCount = data.content.commentsCount;
+                    }
+                });
+            });
         }
     });
 });
@@ -472,24 +476,28 @@ as.controller('DetailsController', function ($scope,
         });
     };
 
-    $scope.$on(WEB_SOCKET_EVENTS.commentEvent, function (data) {
+    $scope.$on(WEB_SOCKET_EVENTS.commentEvent, function (event, data) {
         $log.log('commentEvent ' + data);
 
         if (data.status === 201) {
-            var comment = {};
+            $scope.$apply(function () {
+                var comment = {};
 
-            comment.id = data.content.commentId;
-            comment.content = data.content.content;
-            comment.createdDate = data.content.createdDate;
-            comment.nickName = data.content.nickName;
+                comment.id = data.content.commentId;
+                comment.content = data.content.content;
+                comment.createdDate = data.content.createdDate;
+                comment.nickName = data.content.nickName;
 
-            $scope.comments.push(comment);
+                $scope.comments.push(comment);
+            });
         } else if (data.status === 206) {
-            $scope.comments.forEach(function (item) {
-                if (item.id === data.content.commentId) {
-                    item.content = data.content.content;
-                }
-            })
+            $scope.$apply(function () {
+                $scope.comments.forEach(function (item) {
+                    if (item.id === data.content.commentId) {
+                        item.content = data.content.content;
+                    }
+                })
+            });
         } else if (data.status === 204) {
             var commentIndex = $scope.comments.findIndex(function (item, index, array) {
                 if (item.id === data.content.commentId) {
@@ -500,9 +508,20 @@ as.controller('DetailsController', function ($scope,
             });
 
             if (commentIndex !== -1) {
-                $scope.comments.splice(commentIndex, 1);
+                $scope.$apply(function () {
+                    $scope.comments.splice(commentIndex, 1);
+                })
             }
         }
+    });
+
+    $scope.$on(WEB_SOCKET_EVENTS.likeEvent, function (event, data) {
+        $log.log('likesChanged ' + data);
+        $scope.$apply(function () {
+            if ($scope.post.id === data.postId) {
+                $scope.post.likesCount = data.likesCount;
+            }
+        });
     });
 });
 

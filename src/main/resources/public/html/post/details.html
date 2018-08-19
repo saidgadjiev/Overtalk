@@ -27,7 +27,7 @@
 <div class="mt-3">
     <h1 ng-cloak class="font-weight-bold">Комментарии {{comments.length}}</h1>
     <ul class="list-group list-group-flush">
-        <li class="list-group-item pl-0" ng-repeat="comment in comments|orderBy:createdDate">
+        <li class="list-group-item pl-0" ng-repeat="comment in comments|orderBy:'-createdDate'">
             <div class="d-flex w-100 justify-content-start mb-3">
                 <strong ng-cloak class="text-info">{{comment.nickName}}</strong>
                 <strong ng-cloak class="pl-3">{{comment.createdDate|date:'dd.MM.yyyy в hh:mm'}}</strong>

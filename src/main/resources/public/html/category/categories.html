@@ -54,10 +54,7 @@
             <div class="form-group">
                 <label for="description">Описание:</label>
                 <input id="description" class="form-control" type="text" name="description"
-                       ng-model="category.description" ng-required="true"/>
-                <div ng-messages="categoryForm.description.$error"
-                     ng-if="categoryForm.description.$touched || submitted" style="color:red">
-                    <p class="help-block" ng-message="required">Введите описание!</p>
+                       ng-model="category.description"/>
                 </div>
             </div>
         </form>

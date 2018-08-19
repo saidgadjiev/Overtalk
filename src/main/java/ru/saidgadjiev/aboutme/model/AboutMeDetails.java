@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 /**
  * Created by said on 14.08.2018.
  */
-public class AboutMeRequest {
+public class AboutMeDetails {
 
     @NotNull
     @Size(min = 1)
