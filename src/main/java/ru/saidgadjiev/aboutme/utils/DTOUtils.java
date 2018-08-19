@@ -1,17 +1,18 @@
 package ru.saidgadjiev.aboutme.utils;
 
-import javafx.geometry.Pos;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.spi.MappingContext;
-import ru.saidgadjiev.aboutme.domain.*;
-import ru.saidgadjiev.aboutme.model.*;
+import ru.saidgadjiev.aboutme.domain.Category;
+import ru.saidgadjiev.aboutme.domain.Comment;
+import ru.saidgadjiev.aboutme.domain.Post;
+import ru.saidgadjiev.aboutme.model.CategoryDetails;
+import ru.saidgadjiev.aboutme.model.CommentDetails;
+import ru.saidgadjiev.aboutme.model.PostDetails;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Created by said on 04.03.2018.
