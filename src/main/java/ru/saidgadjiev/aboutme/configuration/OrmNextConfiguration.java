@@ -74,8 +74,6 @@ public class OrmNextConfiguration {
         dataSource.setDatabaseName(dataSourceProperties.getDatabaseName());
         dataSource.setUser(dataSourceProperties.getUsername());
         dataSource.setPassword(dataSourceProperties.getPassword());
-        dataSource.setSsl(true);
-        dataSource.setSslfactory("org.postgresql.ssl.NonValidatingFactory");
 
         return dataSource;
     }
