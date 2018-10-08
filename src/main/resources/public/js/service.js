@@ -536,7 +536,7 @@ as.service('ProjectService', function ($http) {
         fd.append('file', logo);
         fd.append('data', angular.toJson(json));
 
-        $http.patch('api/project/update' + id, fd, {
+        $http.patch('api/project/update/' + id, fd, {
             transformRequest: angular.identity,
             headers: {'Content-Type': undefined}
         }).then(callback);

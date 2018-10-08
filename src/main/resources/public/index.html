@@ -9,6 +9,7 @@
     <script type="text/javascript" src="js/lib/angular/angular-route-1.7.2.js"></script>
     <script type="text/javascript" src="js/lib/angular/angular-messages-1.7.2.js"></script>
     <script type="text/javascript" src="js/lib/angular/angular-locale_ru-ru.js"></script>
+    <script type="text/javascript" src="js/lib/angular/angular-filter.js"></script>
     <script type="text/javascript" src="js/lib/highlight.min.js"></script>
     <script type="text/javascript" src="js/lib/bootstrap-4.1.2.min.js"></script>
     <script type="text/javascript" src="js/lib/angular/ui-bootsrap-tpls-3.0.4.js"></script>
@@ -74,10 +75,8 @@
     </nav>
 </header>
 <main class="container-fluid" role="main">
-    <div class="row w-100 justify-content-around">
-        <div class="col col-lg-8 col-sm-12">
-            <ng-view></ng-view>
-        </div>
+    <div class="row justify-content-around">
+        <ng-view class="w-100"></ng-view>
     </div>
 </main>
 <footer class="footer">

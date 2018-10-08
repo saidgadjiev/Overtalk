@@ -550,18 +550,15 @@ as.controller('NewProjectController', function ($scope,
                                                 $location,
                                                 FileService,
                                                 DataService,
-                                                ProjectService,
-                                                IMAGE) {
+                                                ProjectService) {
     $scope.data = DataService.get('NewProjectController');
     $scope.project = {};
-    $scope.defaultUrl = IMAGE.defaultUrl;
 
     if ($scope.data) {
         $scope.project.id = $scope.data.id;
         $scope.project.name = $scope.data.name;
         $scope.project.description = $scope.data.description;
         $scope.project.projectLink = $scope.data.projectLink;
-        $scope.project.logoPath = $scope.data.logoPath;
     }
 
     $scope.doSave = function (isValid) {
@@ -590,14 +587,8 @@ as.controller('NewProjectController', function ($scope,
             }
         }
     };
-    $scope.cancel = function () {
+    $scope.doCancel = function () {
         $location.path("/projects");
-    };
-    $scope.upload = function () {
-        FileService.readAsDataURL($scope.logo, $scope)
-            .then(function (result) {
-                $scope.logoPath = result;
-            });
     };
 });
 

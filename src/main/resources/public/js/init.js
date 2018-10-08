@@ -1,4 +1,4 @@
-var as = angular.module('AboutMeApp', ['ngRoute', 'ngMessages', 'ngSanitize', 'ui.bootstrap', 'angularSpinkit', 'AboutMeApp.controllers', 'AboutMeApp.services', 'AboutMeApp.directives']);
+var as = angular.module('AboutMeApp', ['ngRoute', 'ngMessages', 'ngSanitize', 'ui.bootstrap', 'angular.filter', 'angularSpinkit', 'AboutMeApp.controllers', 'AboutMeApp.services', 'AboutMeApp.directives']);
 
 as.constant('USER_ROLES', {
     all: '*',

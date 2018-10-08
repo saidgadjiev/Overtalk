@@ -4,26 +4,31 @@
 </button>
 
 <div class="mb-3">
-    <div class="card mt-3 w-75 mx-auto" ng-repeat="project in projects">
-        <img class="card-img-top" ng-src="/api/file/logo/{{project.logoPath}}" err-src="{{defaultUrl}}">
-        <div class="card-body">
-            <div class="card-title">
-                <span ng-cloak class="h5 font-weight-bold">{{project.name}}</span>
-                <ul class="d-inline-flex list-inline">
-                    <li access="ROLE_ADMIN" class="list-inline-item">
-                        <i ng-click="doEdit(project)" class="text-primary text-lg fa fa-edit"></i>
-                    </li>
-                    <li ng-if="project.projectLink" class="list-inline-item">
-                        <a href="{{project.projectLink}}" target="_blank" class="card-link">
-                            <i class="text-primary text-lg fa fa-github"></i>
-                        </a>
-                    </li>
-                </ul>
+    <div ng-repeat="projectChunk in projects |  chunkBy: 2 ">
+        <div class="row justify-content-around">
+            <div ng-repeat="project in projectChunk" class="card align-self-start col-12 col-sm-4">
+            <div ng-repeat="project in projectChunk" class="card align-self-start col-12 col-sm-4">
+                <img class="card-img-top" ng-src="/api/file/logo/{{project.logoPath}}" err-src="{{defaultUrl}}">
+                <div class="card-body">
+                    <div class="card-title">
+                        <span ng-cloak class="h5 font-weight-bold">{{project.name}}</span>
+                        <ul class="d-inline-flex list-inline">
+                            <li access="ROLE_ADMIN" class="list-inline-item">
+                                <i ng-click="doEdit(project)" class="text-primary text-lg fa fa-edit"></i>
+                            </li>
+                            <li ng-if="project.projectLink" class="list-inline-item">
+                                <a href="{{project.projectLink}}" target="_blank" class="card-link">
+                                    <i class="text-primary text-lg fa fa-github"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <p ng-cloak class="card-text text-ellipsis">{{project.description}}</p>
+                    <button ng-click="doOpenDetails(item)" type="button" class="btn btn-outline-primary btn-sm">
+                        Читать дальше →
+                    </button>
+                </div>
             </div>
-            <p ng-cloak class="card-text text-ellipsis">{{project.description}}</p>
-            <button ng-click="doOpenDetails(project)" type="button" class="btn btn-outline-primary btn-sm">
-                Читать дальше →
-            </button>
         </div>
     </div>
 </div>
