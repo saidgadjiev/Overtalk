@@ -5,9 +5,8 @@
 
 <div class="mb-3">
     <div ng-repeat="projectChunk in projects |  chunkBy: 2 ">
-        <div class="row justify-content-around">
-            <div ng-repeat="project in projectChunk" class="card align-self-start col-12 col-sm-4">
-            <div ng-repeat="project in projectChunk" class="card align-self-start col-12 col-sm-4">
+        <div class="d-flex justify-content-around">
+            <div ng-repeat="project in projectChunk" class="card align-self-start">
                 <img class="card-img-top" ng-src="/api/file/logo/{{project.logoPath}}" err-src="{{defaultUrl}}">
                 <div class="card-body">
                     <div class="card-title">
