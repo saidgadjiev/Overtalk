@@ -26,6 +26,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -85,7 +87,7 @@ public class SkillControllerIntegrationTest {
     @Test
     public void removeSkillUnauthorized() throws Exception {
         mockMvc
-                .perform(post("/api/skill/delete/1")
+                .perform(delete("/api/skill/delete/1")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                 )
                 .andExpect(status().isUnauthorized());
@@ -94,7 +96,7 @@ public class SkillControllerIntegrationTest {
     @Test
     public void updateSkillUnauthorized() throws Exception {
         mockMvc
-                .perform(post("/api/skill/update/1")
+                .perform(patch("/api/skill/update/1")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content(JsonUtils.toJson(getTestSkill()))
                 )
@@ -105,7 +107,7 @@ public class SkillControllerIntegrationTest {
     public void removeSkill() throws Exception {
         createSkill();
         mockMvc
-                .perform(post("/api/skill/delete/1")
+                .perform(delete("/api/skill/delete/1")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
                 )
@@ -123,7 +125,7 @@ public class SkillControllerIntegrationTest {
         Skill created = createSkill();
 
         mockMvc
-                .perform(post("/api/skill/update/" + created.getId())
+                .perform(patch("/api/skill/update/" + created.getId())
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content("{\"name\":\"Test2\",\"percentage\":100}")
                         .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))

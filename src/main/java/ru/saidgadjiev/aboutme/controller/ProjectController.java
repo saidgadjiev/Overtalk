@@ -57,7 +57,7 @@ public class ProjectController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PatchMapping(value = "/update/{id}")
+    @PostMapping(value = "/update/{id}")
     public ResponseEntity update(
             @PathVariable("id") Integer id,
             @RequestPart(value = "file", required = false) MultipartFile file,

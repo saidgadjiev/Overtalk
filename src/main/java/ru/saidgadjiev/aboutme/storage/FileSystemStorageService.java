@@ -55,8 +55,7 @@ public class FileSystemStorageService implements StorageService {
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, rootLocation.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new StorageException("Failed to store file " + fileName, e);
         }
 
@@ -71,13 +70,10 @@ public class FileSystemStorageService implements StorageService {
 
             if (resource.exists() || resource.isReadable()) {
                 return resource;
+            } else {
+                throw new StorageFileNotFoundException("Could not read file: " + fileName);
             }
-            else {
-                throw new StorageFileNotFoundException(
-                        "Could not read file: " + fileName);
-            }
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new StorageFileNotFoundException("Could not read file: " + fileName, e);
         }
     }
@@ -91,8 +87,7 @@ public class FileSystemStorageService implements StorageService {
     public void init() {
         try {
             Files.createDirectories(rootLocation);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new StorageException("Could not initialize storage", e);
         }
     }
