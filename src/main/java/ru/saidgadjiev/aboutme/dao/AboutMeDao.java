@@ -2,7 +2,7 @@ package ru.saidgadjiev.aboutme.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import ru.saidgadjiev.aboutme.domain.AboutMe;
+import ru.saidgadjiev.aboutme.domain.Aboutme;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 
@@ -18,15 +18,15 @@ public class AboutMeDao {
         this.sessionManager = sessionManager;
     }
 
-    public AboutMe getAboutMe() throws SQLException {
+    public Aboutme getAboutMe() throws SQLException {
         Session session = sessionManager.currentSession();
 
-        return session.statementBuilder().createSelectStatement(AboutMe.class).uniqueResult();
+        return session.statementBuilder().createSelectStatement(Aboutme.class).uniqueResult();
     }
 
-    public int update(AboutMe aboutMe) throws SQLException {
+    public int update(Aboutme aboutme) throws SQLException {
         Session session = sessionManager.currentSession();
 
-        return session.update(aboutMe);
+        return session.update(aboutme);
     }
 }

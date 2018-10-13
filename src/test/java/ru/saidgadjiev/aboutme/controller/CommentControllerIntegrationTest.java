@@ -18,10 +18,7 @@ import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -45,15 +42,15 @@ public class CommentControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private static final UserProfile USER_PROFILE = new UserProfile();
+    private static final Userprofile USER_PROFILE = new Userprofile();
 
     private static final Category CATEGORY = new Category();
 
     private static final Post POST = new Post();
 
     static {
-        USER_PROFILE.setNickName("test");
-        USER_PROFILE.setUserName("test");
+        USER_PROFILE.setNickname("test");
+        USER_PROFILE.setUsername("test");
         USER_PROFILE.setPassword(new BCryptPasswordEncoder().encode("1"));
 
         CATEGORY.setName("Test");
@@ -67,7 +64,7 @@ public class CommentControllerIntegrationTest {
     @Before
     public void before() throws SQLException {
         try (Session session = sessionManager.createSession()) {
-            session.clearTables(Comment.class, UserProfile.class, Post.class, Category.class);
+            session.clearTables(Comment.class, Userprofile.class, Post.class, Category.class);
             session.statementBuilder().createQuery("ALTER TABLE userprofile ALTER COLUMN id RESTART WITH 1").executeUpdate();
             session.statementBuilder().createQuery("ALTER TABLE post ALTER COLUMN id RESTART WITH 1").executeUpdate();
             session.statementBuilder().createQuery("ALTER TABLE category ALTER COLUMN id RESTART WITH 1").executeUpdate();
@@ -91,11 +88,11 @@ public class CommentControllerIntegrationTest {
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(jsonPath("$.content[0].id", is(1)))
                 .andExpect(jsonPath("$.content[0].content", is("Test")))
-                .andExpect(jsonPath("$.content[0].nickName", is("test")))
+                .andExpect(jsonPath("$.content[0].nickname", is("test")))
                 .andExpect(jsonPath("$.content[0].createdDate", is(simpleDateFormat.format(comment1.getCreatedDate()))))
                 .andExpect(jsonPath("$.content[1].id", is(2)))
                 .andExpect(jsonPath("$.content[1].content", is("Test")))
-                .andExpect(jsonPath("$.content[1].nickName", is("test")))
+                .andExpect(jsonPath("$.content[1].nickname", is("test")))
                 .andExpect(jsonPath("$.content[1].createdDate", is(simpleDateFormat.format(comment2.getCreatedDate()))))
                 .andExpect(jsonPath("$.totalElements", is(2)));;
     }
@@ -110,7 +107,7 @@ public class CommentControllerIntegrationTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.nickName", is("test")))
+                .andExpect(jsonPath("$.nickname", is("test")))
                 .andExpect(jsonPath("$.content", is("Test")));
 
         try (Session session = sessionManager.createSession()) {

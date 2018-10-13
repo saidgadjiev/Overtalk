@@ -9,5 +9,5 @@ public interface SecurityService {
 
     UserDetails findLoggedInUser();
 
-    void login(String userName, String password);
+    void login(String username, String password);
 }

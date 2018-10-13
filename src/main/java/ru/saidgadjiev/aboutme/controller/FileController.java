@@ -1,6 +1,7 @@
 package ru.saidgadjiev.aboutme.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +16,11 @@ public class FileController {
     private final StorageService storageService;
 
     @Autowired
-    public FileController(StorageService storageService) {
+    public FileController(@Qualifier("resourceStorageService") StorageService storageService) {
         this.storageService = storageService;
     }
 
-    @GetMapping(value = "/logo/{name}")
+    @GetMapping(value = "/{name}")
     public ResponseEntity<Resource> serverFile(@PathVariable("name") String filePath) {
         Resource resource = storageService.loadAsResource(filePath);
 

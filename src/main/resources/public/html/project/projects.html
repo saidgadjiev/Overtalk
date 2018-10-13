@@ -3,11 +3,11 @@
     Добавить новый проект
 </button>
 
-<div class="mb-3">
+<div>
     <div ng-repeat="projectChunk in projects |  chunkBy: 2 ">
-        <div class="d-flex justify-content-around">
-            <div ng-repeat="project in projectChunk" class="card align-self-start">
-                <img class="card-img-top" ng-src="/api/file/logo/{{project.logoPath}}" err-src="{{defaultUrl}}">
+        <div class="row justify-content-around">
+            <div ng-repeat="project in projectChunk" class="col-12 col-sm-4 mb-3 card p-0">
+                <img class="card-img-top" ng-src="/api/file/{{project.logoPath}}" err-src="{{defaultUrl}}">
                 <div class="card-body">
                     <div class="card-title">
                         <span ng-cloak class="h5 font-weight-bold">{{project.name}}</span>
@@ -22,7 +22,9 @@
                             </li>
                         </ul>
                     </div>
-                    <p ng-cloak class="card-text text-ellipsis">{{project.description}}</p>
+                    <p ng-cloak class="mw-100 card-text text-ellipsis">{{project.description}}</p>
+                    <p ng-if="project.technologies" ng-cloak class="card-text text-ellipsis">Технологии: {{project.technologies}}</p>
+                    <p ng-if="project.features" ng-cloak class="card-text text-ellipsis">Фичи: {{project.features}}</p>
                     <button ng-click="doOpenDetails(item)" type="button" class="btn btn-outline-primary btn-sm">
                         Читать дальше →
                     </button>
@@ -50,7 +52,9 @@
         </button>
     </div>
     <div class="modal-body">
-        <img class="card-img-top" ng-src="/api/file/logo/{{details.logoPath}}" err-src="{{defaultUrl}}">
+        <img class="card-img-top" ng-src="/api/file/{{details.logoPath}}" err-src="{{defaultUrl}}">
         <p ng-cloak class="h5 card-text mt-3">{{details.description}}</p>
+        <p ng-if="project.technologies" ng-cloak class="h5 card-text mt-3">Технологии: {{details.description}}</p>
+        <p ng-if="project.features" ng-cloak class="h5 card-text mt-3">Фичи: {{details.description}}</p>
     </div>
 </script>

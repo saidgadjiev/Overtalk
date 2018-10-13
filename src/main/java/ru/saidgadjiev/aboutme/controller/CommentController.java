@@ -71,7 +71,7 @@ public class CommentController {
                                 .add("commentId", result.getId())
                                 .add("content", result.getContent())
                                 .add("createdDate", result.getCreatedDate())
-                                .add("nickName", result.getNickName())
+                                .add("nickname", result.getNickname())
                                 .add("postId", id)
                                 .add("commentsCount", blogService.commentCountOff(id))
                                 .build()

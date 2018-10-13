@@ -34,7 +34,7 @@ public class AuthorizationComponent {
             }
         }
 
-        return userDetails.getUsername().equals(comment.getUser().getUserName());
+        return userDetails.getUsername().equals(comment.getUser().getUsername());
     }
 
     public boolean canDeleteComment(Integer id) throws SQLException {

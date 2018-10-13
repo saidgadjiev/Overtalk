@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,6 +26,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -71,12 +73,10 @@ public class ProjectControllerIntegrationTest {
 
     @Test
     public void create() throws Exception {
-        byte[] json = "{\"name\":\"Test2\",\"description\":\"Test1\"}".getBytes(StandardCharsets.UTF_8);
-        MockMultipartFile dataPart = new MockMultipartFile("data", "data", "application/json", json);
-
         mockMvc
-                .perform(multipart("/api/project/create")
-                        .file(dataPart)
+                .perform(post("/api/project/create")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content("{\"name\":\"Test2\",\"description\":\"Test1\"}")
                         .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN))))
                 .andExpect(status().isOk());
 
@@ -92,12 +92,10 @@ public class ProjectControllerIntegrationTest {
     public void update() throws Exception {
         createProject("Test");
 
-        byte[] json = "{\"name\":\"Test2\",\"description\":\"Test1\"}".getBytes(StandardCharsets.UTF_8);
-        MockMultipartFile dataPart = new MockMultipartFile("data", "data", "application/json", json);
-
         mockMvc
                 .perform(multipart("/api/project/update/1")
-                        .file(dataPart)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content("{\"name\":\"Test2\",\"description\":\"Test1\"}")
                         .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Test2")))

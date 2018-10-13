@@ -6,12 +6,11 @@ import org.springframework.stereotype.Service;
 import ru.saidgadjiev.aboutme.dao.RoleDao;
 import ru.saidgadjiev.aboutme.dao.UserProfileDao;
 import ru.saidgadjiev.aboutme.domain.Role;
-import ru.saidgadjiev.aboutme.domain.UserProfile;
-import ru.saidgadjiev.aboutme.domain.UserRole;
+import ru.saidgadjiev.aboutme.domain.Userprofile;
+import ru.saidgadjiev.aboutme.domain.UserprofileRole;
 import ru.saidgadjiev.aboutme.model.UserRequest;
 
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,34 +34,32 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Set<Role> create(UserRequest userRequest) throws SQLException {
-        UserProfile userProfile = new UserProfile();
+    public void create(UserRequest userRequest) throws SQLException {
+        Userprofile userprofile = new Userprofile();
         Role userRole = roleDao.queryForId(1);
-        Set<UserRole> userRoles = new HashSet<>();
+        Set<UserprofileRole> userprofileRoles = new HashSet<>();
 
-        userProfile.setUserName(userRequest.getUserName());
-        userProfile.setNickName(userRequest.getNickName());
-        userProfile.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-        userRoles.add(new UserRole(userProfile, userRole));
-        userProfile.setUserRoles(userRoles);
-        userProfileDao.create(userProfile);
-
-        return Collections.singleton(userRole);
+        userprofile.setUsername(userRequest.getUsername());
+        userprofile.setNickname(userRequest.getNickname());
+        userprofile.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        userprofileRoles.add(new UserprofileRole(userprofile, userRole));
+        userprofile.setUserprofileRoles(userprofileRoles);
+        userProfileDao.create(userprofile);
     }
 
-    public boolean isExistUserName(String userName) throws SQLException {
-        return userProfileDao.isExistUserName(userName);
+    public boolean isExistUserName(String username) throws SQLException {
+        return userProfileDao.isExistUsername(username);
     }
 
-    public boolean isExistNickName(String nickName) throws SQLException {
-        return userProfileDao.isExistNickName(nickName);
+    public boolean isExistNickName(String nickname) throws SQLException {
+        return userProfileDao.isExistNickName(nickname);
     }
 
-    public UserProfile getByUserName(String userName) throws SQLException {
-        return userProfileDao.getByUserName(userName);
+    public Userprofile getByUserName(String username) throws SQLException {
+        return userProfileDao.getByUserName(username);
     }
 
-    public List<UserProfile> getAll(int limit, long offset) throws SQLException {
+    public List<Userprofile> getAll(int limit, long offset) throws SQLException {
         return userProfileDao.getList(limit, offset);
     }
 

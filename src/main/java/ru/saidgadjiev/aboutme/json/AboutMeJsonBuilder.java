@@ -70,7 +70,6 @@ public class AboutMeJsonBuilder {
             RawValue rawValue = new RawValue(new SkillJsonBuilder()
                     .id(skill.getId())
                     .name(skill.getName())
-                    .percentage(skill.getPercentage())
                     .build());
 
             jsonSkills.add(rawValue);

@@ -1,12 +1,14 @@
 package ru.saidgadjiev.aboutme.storage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.saidgadjiev.aboutme.properties.StorageProperties;
 
+import java.net.URL;
 import java.nio.file.Path;
 
 @Service

@@ -1,7 +1,6 @@
 package ru.saidgadjiev.aboutme.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +40,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 /**
@@ -69,15 +67,15 @@ public class CommentControllerWebSocketIntegrationTest {
     @Autowired
     private SessionManager sessionManager;
 
-    private static final UserProfile USER_PROFILE = new UserProfile();
+    private static final Userprofile USER_PROFILE = new Userprofile();
 
     private static final Category CATEGORY = new Category();
 
     private static final Post POST = new Post();
 
     static {
-        USER_PROFILE.setNickName("test");
-        USER_PROFILE.setUserName("test");
+        USER_PROFILE.setNickname("test");
+        USER_PROFILE.setUsername("test");
         USER_PROFILE.setPassword(new BCryptPasswordEncoder().encode("1"));
 
         CATEGORY.setName("Test");
@@ -91,7 +89,7 @@ public class CommentControllerWebSocketIntegrationTest {
     @Before
     public void setup() throws Exception {
         try (Session session = sessionManager.createSession()) {
-            session.clearTables(Comment.class, UserProfile.class, Post.class, Category.class);
+            session.clearTables(Comment.class, Userprofile.class, Post.class, Category.class);
             session.statementBuilder().createQuery("ALTER TABLE userprofile ALTER COLUMN id RESTART WITH 1").executeUpdate();
             session.statementBuilder().createQuery("ALTER TABLE post ALTER COLUMN id RESTART WITH 1").executeUpdate();
             session.statementBuilder().createQuery("ALTER TABLE category ALTER COLUMN id RESTART WITH 1").executeUpdate();
@@ -105,7 +103,7 @@ public class CommentControllerWebSocketIntegrationTest {
         blockingQueue = new LinkedBlockingDeque<>();
         stompClient = new WebSocketStompClient(new SockJsClient(
                 Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()))));
-        webSocketUrl = "ws://localhost:" + port + "/aboutMe";
+        webSocketUrl = "ws://localhost:" + port + "/aboutme";
     }
 
     @Test
@@ -155,7 +153,7 @@ public class CommentControllerWebSocketIntegrationTest {
         Assert.assertEquals(objectNode.get("status").asInt(), 201);
         Assert.assertEquals(objectNode.get("content").get("commentId").asInt(), 1);
         Assert.assertEquals(objectNode.get("content").get("content").asText(), "Test");
-        Assert.assertEquals(objectNode.get("content").get("nickName").asText(), "test");
+        Assert.assertEquals(objectNode.get("content").get("nickname").asText(), "test");
         Assert.assertEquals(objectNode.get("content").get("commentsCount").asInt(), 1);
     }
 

@@ -5,14 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.saidgadjiev.aboutme.domain.Role;
 import ru.saidgadjiev.aboutme.model.UserRequest;
 import ru.saidgadjiev.aboutme.service.SecurityService;
 import ru.saidgadjiev.aboutme.service.UserService;
 
 import javax.validation.Valid;
 import java.sql.SQLException;
-import java.util.stream.Collectors;
 
 /**
  * Created by said on 18.03.2018.
@@ -38,10 +36,11 @@ public class AuthController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        if (userService.isExistUserName(userRequest.getUserName())) {
+        if (userService.isExistUserName(userRequest.getUsername())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-        securityService.login(userRequest.getUserName(), userRequest.getPassword());
+        userService.create(userRequest);
+        securityService.login(userRequest.getUsername(), userRequest.getPassword());
 
         return ResponseEntity.ok(securityService.findLoggedInUser());
     }

@@ -2,7 +2,7 @@ var as = angular.module('AboutMeApp.services', []);
 
 as.service('Session', function () {
     this.create = function (profile) {
-        this.nickName = profile.nickName;
+        this.nickname = profile.nickname;
         this.userRoles = [];
         angular.forEach(profile.authorities, function (value, key) {
             this.push(value.authority);
@@ -10,7 +10,7 @@ as.service('Session', function () {
     };
 
     this.invalidate = function () {
-        this.nickName = null;
+        this.nickname = null;
         this.userRoles = [];
     }
 });
@@ -359,7 +359,7 @@ as.service('AboutMeService', function ($http) {
     var service = {};
 
     service.getAboutMe = function (callback) {
-        return $http.get('/api/aboutMe').then(callback);
+        return $http.get('/api/aboutme').then(callback);
     };
 
     service.update = function (post, placeOfResidence, callback) {
@@ -368,7 +368,7 @@ as.service('AboutMeService', function ($http) {
             placeOfResidence: placeOfResidence
         };
 
-        return $http.patch('/api/aboutMe/update', json).then(callback);
+        return $http.patch('/api/aboutme/update', json).then(callback);
     };
 
     return service;
@@ -377,19 +377,17 @@ as.service('AboutMeService', function ($http) {
 as.service('SkillService', function ($http) {
     var service = {};
 
-    service.create = function (name, percentage, callback) {
+    service.create = function (name, callback) {
         var json = {
-            name: name,
-            percentage: percentage
+            name: name
         };
 
         return $http.post('/api/skill/create', json).then(callback);
     };
 
-    service.update = function (id, name, percentage, callback) {
+    service.update = function (id, name, callback) {
         var json = {
-            name: name,
-            percentage: percentage
+            name: name
         };
 
         $http.patch('/api/skill/update/' + id, json).then(callback);
@@ -409,10 +407,11 @@ as.service('CategoryService', function ($http) {
         $http.get('api/category?page=' + (page - 1) + '&size=' + size).then(callback);
     };
 
-    service.create = function (name, description, callback) {
+    service.create = function (name, description, index, callback) {
         var json = {
             name: name,
-            description: description
+            description: description,
+            index: index
         };
 
         $http.post('api/category/create', json).then(callback);
@@ -422,10 +421,11 @@ as.service('CategoryService', function ($http) {
         $http.get('api/category/' + id).then(callback);
     };
 
-    service.update = function (id, name, description, callback) {
+    service.update = function (id, name, description, index, callback) {
         var json = {
             name: name,
-            description: description
+            description: description,
+            index: index
         };
 
         $http.patch('api/category/update/' + id, json).then(callback);
@@ -458,13 +458,13 @@ as.service('PostService', function ($http) {
         $http.get('api/post/' + id).then(callback);
     };
 
-    service.update = function (categoryId, id, title, content, callback) {
+    service.update = function (id, title, content, callback) {
         var json = {
             title: title,
             content: content
         };
 
-        $http.patch('api/post/' + categoryId + '/update/' + id, json).then(callback);
+        $http.patch('api/post/update/' + id, json).then(callback);
     };
 
     service.delete = function (id, callback) {
@@ -511,35 +511,28 @@ as.service('ProjectService', function ($http) {
         $http.get('api/project').then(callback);
     };
 
-    service.create = function (logo, name, description, projectLink, callback) {
+    service.create = function (name, description, projectLink, technologies, features, callback) {
         var json = {
             name: name,
             description: description,
-            projectLink: projectLink
+            projectLink: projectLink,
+            technologies: technologies,
+            features: features
         };
-        var fd = new FormData();
-
-        fd.append('file', logo);
-        fd.append('data', angular.toJson(json));
 
         $http.post('api/project/create', json).then(callback);
     };
 
-    service.update = function (id, logo, name, description, projectLink, callback) {
+    service.update = function (id, name, description, projectLink, technologies, features, callback) {
         var json = {
             name: name,
             description: description,
-            projectLink: projectLink
+            projectLink: projectLink,
+            technologies: technologies,
+            features: features
         };
-        var fd = new FormData();
 
-        fd.append('file', logo);
-        fd.append('data', angular.toJson(json));
-
-        $http.patch('api/project/update/' + id, fd, {
-            transformRequest: angular.identity,
-            headers: {'Content-Type': undefined}
-        }).then(callback);
+        $http.patch('api/project/update/' + id, json).then(callback);
     };
 
     return service;
@@ -555,27 +548,39 @@ as.service('UserService', function ($http) {
     return service;
 });
 
-
 as.service('WebSocket', function ($rootScope, SETTINGS, WEB_SOCKET_EVENTS) {
     var service = {}, socket = {
         client: null,
         stomp: null
     };
 
-    var startListener = function() {
-        socket.stomp.subscribe(SETTINGS.likeTopic, function(data) {
+    var startListener = function () {
+        socket.stomp.subscribe(SETTINGS.likeTopic, function (data) {
             $rootScope.$broadcast(WEB_SOCKET_EVENTS.likeEvent, angular.fromJson(data.body));
         });
 
-        socket.stomp.subscribe(SETTINGS.commentTopic, function(data) {
+        socket.stomp.subscribe(SETTINGS.commentTopic, function (data) {
             $rootScope.$broadcast(WEB_SOCKET_EVENTS.commentEvent, angular.fromJson(data.body));
         });
     };
 
-    service.initialize = function() {
+    service.initialize = function () {
         socket.client = new SockJS(SETTINGS.webSocketUrl);
         socket.stomp = Stomp.over(socket.client);
         socket.stomp.connect({}, startListener);
+    };
+
+    return service;
+});
+
+as.service('TruncateService', function () {
+    var service = {};
+
+    service.truncate = function (value, length) {
+        if (value.length > length)
+            return value.substring(0, length) + '...';
+        else
+            return value;
     };
 
     return service;

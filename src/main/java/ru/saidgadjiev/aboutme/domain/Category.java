@@ -59,6 +59,14 @@ public class Category {
         this.posts = posts;
     }
 
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     @Override
     public String toString() {
         return "Category{" +

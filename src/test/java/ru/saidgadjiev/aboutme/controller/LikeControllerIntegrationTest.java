@@ -11,8 +11,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.socket.messaging.WebSocketStompClient;
-import org.springframework.web.socket.sockjs.client.SockJsClient;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
 import ru.saidgadjiev.aboutme.domain.*;
 import ru.saidgadjiev.ormnext.core.dao.Session;
@@ -44,21 +42,21 @@ public class LikeControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private static final UserProfile TEST_USER_PROFILE_1 = new UserProfile();
+    private static final Userprofile TEST_USER_PROFILE_1 = new Userprofile();
 
-    private static final UserProfile TEST_USER_PROFILE_2 = new UserProfile();
+    private static final Userprofile TEST_USER_PROFILE_2 = new Userprofile();
 
     private static final Category CATEGORY = new Category();
 
     private static final Post POST = new Post();
 
     static {
-        TEST_USER_PROFILE_1.setNickName("test");
-        TEST_USER_PROFILE_1.setUserName("test");
+        TEST_USER_PROFILE_1.setNickname("test");
+        TEST_USER_PROFILE_1.setUsername("test");
         TEST_USER_PROFILE_1.setPassword(new BCryptPasswordEncoder().encode("1"));
 
-        TEST_USER_PROFILE_2.setNickName("test1");
-        TEST_USER_PROFILE_2.setUserName("test1");
+        TEST_USER_PROFILE_2.setNickname("test1");
+        TEST_USER_PROFILE_2.setUsername("test1");
         TEST_USER_PROFILE_2.setPassword(new BCryptPasswordEncoder().encode("1"));
 
         CATEGORY.setName("Test");
@@ -72,7 +70,7 @@ public class LikeControllerIntegrationTest {
     @Before
     public void before() throws SQLException {
         try (Session session = sessionManager.createSession()) {
-            session.clearTables(Like.class, Comment.class, UserProfile.class, Post.class, Category.class);
+            session.clearTables(Like.class, Comment.class, Userprofile.class, Post.class, Category.class);
             session.statementBuilder().createQuery("ALTER TABLE `like` ALTER COLUMN id RESTART WITH 1").executeUpdate();
             session.statementBuilder().createQuery("ALTER TABLE userprofile ALTER COLUMN id RESTART WITH 1").executeUpdate();
             session.statementBuilder().createQuery("ALTER TABLE post ALTER COLUMN id RESTART WITH 1").executeUpdate();
@@ -102,7 +100,7 @@ public class LikeControllerIntegrationTest {
             Like like1 = all.get(0);
 
             Assert.assertEquals((int) like1.getPost().getId(), 1);
-            Assert.assertEquals(like1.getUser().getUserName(), "test");
+            Assert.assertEquals(like1.getUser().getUsername(), "test");
         }
     }
 
@@ -126,12 +124,12 @@ public class LikeControllerIntegrationTest {
         }
     }
 
-    private void createLike(UserProfile userProfile) throws SQLException {
+    private void createLike(Userprofile userprofile) throws SQLException {
         try (Session session = sessionManager.createSession()) {
             Like like = new Like();
             like.setPost(POST);
 
-            like.setUser(userProfile);
+            like.setUser(userprofile);
 
             session.create(like);
         }

@@ -1,30 +1,36 @@
-<form class="mt-2" ng-submit="signIn(signInForm.$valid)" name="signInForm" novalidate>
-    <p class="help-block has-error" ng-show="userNameOrPasswordError">Логин или пароль введены неправильно!</p>
-    <div class="form-group">
-        <label for="userName">Логин:</label>
-        <input type="text" class="form-control" id="userName" name="userName" ng-model="user.userName" ng-required="true">
-        <div ng-messages="signInForm.userName.$error"
-             ng-if="signInForm.userName.$touched || submitted" style="color:red">
-            <p class="help-block" ng-message="required">Введите логин!</p>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="password">Пароль:</label>
-        <div class="input-group">
-            <input class="form-control" type="{{inputPasswordType}}" id="password" name="password" ng-model="user.password" ng-required="true">
-            <div class="input-group-append">
+<div class="row w-100 justify-content-around">
+    <div class="col col-lg-8 col-sm-12">
+        <form class="mt-2" ng-submit="signIn(signInForm.$valid)" name="signInForm" novalidate>
+            <p class="help-block has-error" ng-show="userNameOrPasswordError">Логин или пароль введены неправильно!</p>
+            <div class="form-group">
+                <label for="username">Логин:</label>
+                <input type="text" class="form-control" id="username" name="username" ng-model="user.username"
+                       ng-required="true">
+                <div ng-messages="signInForm.username.$error"
+                     ng-if="signInForm.username.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Введите логин!</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <div class="input-group">
+                    <input class="form-control" type="{{inputPasswordType}}" id="password" name="password"
+                           ng-model="user.password" ng-required="true">
+                    <div class="input-group-append">
                 <span class="input-group-text" style="cursor: pointer;" ng-click="hideShowPassword()">
                 <i ng-if="inputPasswordType == 'password'" class="fa fa-eye"></i>
                 <i ng-if="inputPasswordType == 'text'" class="fa fa-eye-slash"></i>
                 </span>
+                    </div>
+                </div>
+                <div ng-messages="signInForm.password.$error"
+                     ng-if="signInForm.password.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Введите пароль!</p>
+                </div>
             </div>
-        </div>
-        <div ng-messages="signInForm.password.$error"
-             ng-if="signInForm.password.$touched || submitted" style="color:red">
-            <p class="help-block" ng-message="required">Введите пароль!</p>
-        </div>
-    </div>
 
-    <button type="submit" class="btn btn-success">Войти</button>
-    <button type="button" class="btn btn-primary" ng-click="gotoSignUp()">Регистрация</button>
-</form>
+            <button type="submit" class="btn btn-success">Войти</button>
+            <button type="button" class="btn btn-primary" ng-click="gotoSignUp()">Регистрация</button>
+        </form>
+    </div>
+</div>

@@ -40,9 +40,9 @@ public final class DTOUtils {
                 using(new Converter<Comment, String>() {
                     @Override
                     public String convert(MappingContext<Comment, String> context) {
-                        return context.getSource().getUser().getNickName();
+                        return context.getSource().getUser().getNickname();
                     }
-                }).map(source, destination.getNickName());
+                }).map(source, destination.getNickname());
             }
         });
 

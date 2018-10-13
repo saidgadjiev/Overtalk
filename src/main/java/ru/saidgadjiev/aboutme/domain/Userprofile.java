@@ -4,28 +4,26 @@ import ru.saidgadjiev.aboutme.dao.SerialTypeDataPersister;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgadjiev.ormnext.core.field.FetchType;
 import ru.saidgadjiev.ormnext.core.field.ForeignCollectionField;
-import ru.saidgadjiev.ormnext.core.table.DatabaseEntity;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@DatabaseEntity(name = "userprofile")
-public class UserProfile {
+public class Userprofile {
 
     @DatabaseColumn(id = true, generated = true, persisterClass = SerialTypeDataPersister.class)
     private Integer id;
 
     @DatabaseColumn(notNull = true, unique = true)
-    private String userName;
+    private String username;
 
     @DatabaseColumn(notNull = true, unique = true)
-    private String nickName;
+    private String nickname;
 
     @DatabaseColumn(notNull = true)
     private String password;
 
     @ForeignCollectionField(foreignFieldName = "user", fetchType = FetchType.LAZY)
-    private Set<UserRole> userRoles = new HashSet<>();
+    private Set<UserprofileRole> userprofileRoles = new HashSet<>();
 
     public Integer getId() {
         return id;
@@ -35,12 +33,12 @@ public class UserProfile {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -51,28 +49,28 @@ public class UserProfile {
         this.password = password;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
-    public Set<UserRole> getUserRoles() {
-        return userRoles;
+    public Set<UserprofileRole> getUserprofileRoles() {
+        return userprofileRoles;
     }
 
-    public void setUserRoles(Set<UserRole> userRoles) {
-        this.userRoles = userRoles;
+    public void setUserprofileRoles(Set<UserprofileRole> userprofileRoles) {
+        this.userprofileRoles = userprofileRoles;
     }
 
     @Override
     public String toString() {
-        return "UserProfile{" +
+        return "Userprofile{" +
                 "id=" + id +
-                ", userName='" + userName + '\'' +
-                ", nickName='" + nickName + '\'' +
+                ", username='" + username + '\'' +
+                ", nickname='" + nickname + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }

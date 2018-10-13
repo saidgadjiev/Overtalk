@@ -41,13 +41,13 @@ public class PostControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private static final UserProfile USER_PROFILE = new UserProfile();
+    private static final Userprofile USER_PROFILE = new Userprofile();
 
     private static final Category CATEGORY = new Category();
 
     static {
-        USER_PROFILE.setNickName("Test");
-        USER_PROFILE.setUserName("Test");
+        USER_PROFILE.setNickname("Test");
+        USER_PROFILE.setUsername("Test");
         USER_PROFILE.setPassword(new BCryptPasswordEncoder().encode("1"));
 
         CATEGORY.setName("Test");

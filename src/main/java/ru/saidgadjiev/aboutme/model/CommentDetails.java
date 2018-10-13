@@ -28,7 +28,7 @@ public class CommentDetails {
     private LocalDateTime createdDate;
 
     @JsonView(JsonViews.Ui.class)
-    private String nickName;
+    private String nickname;
 
     public Integer getId() {
         return id;
@@ -54,12 +54,12 @@ public class CommentDetails {
         this.createdDate = createdDate;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class CommentDetails {
                 "id=" + id +
                 ", content='" + content + '\'' +
                 ", createdDate=" + createdDate +
-                ", nickName='" + nickName + '\'' +
+                ", nickname='" + nickname + '\'' +
                 '}';
     }
 }

@@ -45,15 +45,15 @@ public class OrmNextConfiguration {
                 .tableOperation(TableOperation.CREATE)
                 .dialect(dialect())
                 .entities(
-                        UserProfile.class,
+                        Userprofile.class,
                         Category.class,
                         Post.class,
                         Comment.class,
                         Role.class,
-                        UserRole.class,
+                        UserprofileRole.class,
                         Project.class,
                         Like.class,
-                        AboutMe.class,
+                        Aboutme.class,
                         Skill.class
                 )
                 .build();
@@ -74,8 +74,6 @@ public class OrmNextConfiguration {
         dataSource.setDatabaseName(dataSourceProperties.getDatabaseName());
         dataSource.setUser(dataSourceProperties.getUsername());
         dataSource.setPassword(dataSourceProperties.getPassword());
-        dataSource.setSsl(true);
-        dataSource.setSslfactory("org.postgresql.ssl.NonValidatingFactory");
 
         return dataSource;
     }

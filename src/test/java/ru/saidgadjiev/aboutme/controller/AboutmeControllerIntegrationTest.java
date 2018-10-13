@@ -11,9 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.saidgadjiev.aboutme.domain.Aboutme;
 import ru.saidgadjiev.aboutme.utils.JsonUtils;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
-import ru.saidgadjiev.aboutme.domain.AboutMe;
 import ru.saidgadjiev.aboutme.domain.Role;
 import ru.saidgadjiev.aboutme.domain.Skill;
 import ru.saidgadjiev.ormnext.core.dao.Session;
@@ -21,8 +21,6 @@ import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -30,7 +28,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfiguration.class)
 @AutoConfigureMockMvc
-public class AboutMeControllerIntegrationTest {
+public class AboutmeControllerIntegrationTest {
 
     @Autowired
     private SessionManager sessionManager;
@@ -51,19 +48,19 @@ public class AboutMeControllerIntegrationTest {
     @Before
     public void before() throws SQLException {
         try (Session session = sessionManager.createSession()) {
-            session.clearTables(Skill.class, AboutMe.class);
+            session.clearTables(Skill.class, Aboutme.class);
             session.statementBuilder().createQuery("ALTER TABLE skill ALTER COLUMN id RESTART WITH 1").executeUpdate();
         }
     }
 
     @Test
     public void getAboutMe() throws Exception {
-        AboutMe aboutMe = createAboutMe();
+        Aboutme aboutme = createAboutMe();
 
-        createSkill(aboutMe);
+        createSkill(aboutme);
 
         mockMvc
-                .perform(get("/api/aboutMe").contentType(MediaType.APPLICATION_JSON))
+                .perform(get("/api/aboutme").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.fio", is("Гаджиев Саид Алиевич")))
                 .andExpect(jsonPath("$.placeOfResidence", is("Москва")))
@@ -71,15 +68,14 @@ public class AboutMeControllerIntegrationTest {
                 .andExpect(jsonPath("$.post", is("Java разработчик")))
                 .andExpect(jsonPath("$.skills", hasSize(1)))
                 .andExpect(jsonPath("$.skills[0].id", is(1)))
-                .andExpect(jsonPath("$.skills[0].name", is("Java")))
-                .andExpect(jsonPath("$.skills[0].percentage", is(90)));
+                .andExpect(jsonPath("$.skills[0].name", is("Java")));
     }
 
     @Test
     public void update() throws Exception {
         createAboutMe();
 
-        mockMvc.perform(patch("/api/aboutMe/update")
+        mockMvc.perform(patch("/api/aboutme/update")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content("{\"post\":\"Test2\",\"placeOfResidence\":\"Test1\"}")
                 .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
@@ -89,8 +85,8 @@ public class AboutMeControllerIntegrationTest {
                 .andExpect(jsonPath("$.placeOfResidence", is("Test1")));
 
         try (Session session = sessionManager.createSession()) {
-            AboutMe result = session.statementBuilder().createSelectStatement(AboutMe.class).uniqueResult();
-            AboutMe expect = getTestAboutMe();
+            Aboutme result = session.statementBuilder().createSelectStatement(Aboutme.class).uniqueResult();
+            Aboutme expect = getTestAboutMe();
 
             expect.setPlaceOfResidence("Test1");
             expect.setPost("Test2");
@@ -101,52 +97,51 @@ public class AboutMeControllerIntegrationTest {
 
     @Test
     public void updateWithUnauthorized() throws Exception {
-        mockMvc.perform(patch("/api/aboutMe/update")
+        mockMvc.perform(patch("/api/aboutme/update")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtils.toJson(getTestAboutMe()))
         )
                 .andExpect(status().isUnauthorized());
     }
 
-    private void createSkill(AboutMe aboutMe) throws SQLException {
+    private void createSkill(Aboutme aboutme) throws SQLException {
         try (Session session = sessionManager.createSession()) {
             Skill skill = getTestSkill();
 
-            skill.setAboutMe(aboutMe);
+            skill.setAboutme(aboutme);
 
             session.create(skill);
-            aboutMe.getSkills().add(skill);
+            aboutme.getSkills().add(skill);
         }
     }
 
-    private AboutMe createAboutMe() throws SQLException {
+    private Aboutme createAboutMe() throws SQLException {
         try (Session session = sessionManager.createSession()) {
-            AboutMe aboutMe = getTestAboutMe();
+            Aboutme aboutme = getTestAboutMe();
 
-            session.create(aboutMe);
+            session.create(aboutme);
 
-            return aboutMe;
+            return aboutme;
         }
     }
 
-    private AboutMe getTestAboutMe() {
-        AboutMe aboutMe = new AboutMe();
+    private Aboutme getTestAboutMe() {
+        Aboutme aboutme = new Aboutme();
 
-        aboutMe.setId(1);
-        aboutMe.setFio("Гаджиев Саид Алиевич");
-        aboutMe.setDateOfBirth(LocalDate.of(1995, 7, 1));
-        aboutMe.setPlaceOfResidence("Москва");
-        aboutMe.setPost("Java разработчик");
-        aboutMe.setEducationLevel("Бакалавр");
+        aboutme.setId(1);
+        aboutme.setFio("Гаджиев Саид Алиевич");
+        aboutme.setDateOfBirth(LocalDate.of(1995, 7, 1));
+        aboutme.setPlaceOfResidence("Москва");
+        aboutme.setPost("Java разработчик");
+        aboutme.setEducationLevel("Бакалавр");
 
-        return aboutMe;
+        return aboutme;
     }
 
     private Skill getTestSkill() {
         Skill skill = new Skill();
 
         skill.setName("Java");
-        skill.setPercentage(90);
 
         return skill;
     }

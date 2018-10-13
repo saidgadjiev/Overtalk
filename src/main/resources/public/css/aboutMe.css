@@ -4,7 +4,7 @@ html {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .mt-5-5 {
@@ -47,13 +47,6 @@ i {
         margin-left: 0;
         width: 100%;
     }
-}
-
-.text-ellipsis {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
 }
 
 .text-lg {

@@ -25,9 +25,9 @@ public class Comment {
     @DatabaseColumn(notNull = true, dataType = DataType.TIMESTAMP)
     private LocalDateTime createdDate = LocalDateTime.now();
 
-    @DatabaseColumn(notNull = true)
-    @ForeignColumn(foreignFieldName = "userName")
-    private UserProfile user;
+    @DatabaseColumn(columnName = "userprofile_username", notNull = true)
+    @ForeignColumn(foreignFieldName = "username")
+    private Userprofile user;
 
     public Integer getId() {
         return id;
@@ -57,11 +57,11 @@ public class Comment {
         return createdDate;
     }
 
-    public UserProfile getUser() {
+    public Userprofile getUser() {
         return user;
     }
 
-    public void setUser(UserProfile user) {
+    public void setUser(Userprofile user) {
         this.user = user;
     }
 
@@ -71,7 +71,7 @@ public class Comment {
                 "id=" + id +
                 ", content='" + content + '\'' +
                 ", createdDate=" + createdDate +
-                ", user=" + (user == null ? null : user.getUserName()) +
+                ", user=" + (user == null ? null : user.getUsername()) +
                 '}';
     }
 }

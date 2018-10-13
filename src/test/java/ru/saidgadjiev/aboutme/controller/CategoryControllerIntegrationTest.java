@@ -64,7 +64,7 @@ public class CategoryControllerIntegrationTest {
             List<Category> categories = session.queryForAll(Category.class);
 
             Assert.assertEquals(categories.size(), 1);
-            Assert.assertEquals(JsonUtils.toJson(categories.get(0)), "{\"id\":1,\"name\":\"Test2\",\"description\":\"Test1\",\"posts\":[]}");
+            Assert.assertEquals(JsonUtils.toJson(categories.get(0)), "{\"id\":1,\"name\":\"Test2\",\"description\":\"Test1\",\"index\":0,\"posts\":[]}");
         }
     }
 
@@ -85,7 +85,7 @@ public class CategoryControllerIntegrationTest {
             List<Category> categories = session.queryForAll(Category.class);
 
             Assert.assertEquals(categories.size(), 1);
-            Assert.assertEquals(JsonUtils.toJson(categories.get(0)), "{\"id\":1,\"name\":\"Test2\",\"description\":\"Test1\",\"posts\":[]}");
+            Assert.assertEquals(JsonUtils.toJson(categories.get(0)), "{\"id\":1,\"name\":\"Test2\",\"description\":\"Test1\",\"index\":0,\"posts\":[]}");
         }
     }
 

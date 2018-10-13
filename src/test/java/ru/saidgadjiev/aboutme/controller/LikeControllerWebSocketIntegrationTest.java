@@ -1,16 +1,13 @@
 package ru.saidgadjiev.aboutme.controller;
 
-import jdk.nashorn.internal.ir.ObjectNode;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -22,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
-import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
 import ru.saidgadjiev.aboutme.domain.*;
@@ -31,11 +27,8 @@ import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 
 import java.lang.reflect.Type;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -71,15 +64,15 @@ public class LikeControllerWebSocketIntegrationTest {
     @Autowired
     private SessionManager sessionManager;
 
-    private static final UserProfile TEST_USER_PROFILE_1 = new UserProfile();
+    private static final Userprofile TEST_USER_PROFILE_1 = new Userprofile();
 
     private static final Category CATEGORY = new Category();
 
     private static final Post POST = new Post();
 
     static {
-        TEST_USER_PROFILE_1.setNickName("test");
-        TEST_USER_PROFILE_1.setUserName("test");
+        TEST_USER_PROFILE_1.setNickname("test");
+        TEST_USER_PROFILE_1.setUsername("test");
         TEST_USER_PROFILE_1.setPassword(new BCryptPasswordEncoder().encode("1"));
 
         CATEGORY.setName("Test");
@@ -93,7 +86,7 @@ public class LikeControllerWebSocketIntegrationTest {
     @Before
     public void setup() throws Exception {
         try (Session session = sessionManager.createSession()) {
-            session.clearTables(Like.class, UserProfile.class, Post.class, Category.class);
+            session.clearTables(Like.class, Userprofile.class, Post.class, Category.class);
             session.statementBuilder().createQuery("ALTER TABLE `like` ALTER COLUMN id RESTART WITH 1").executeUpdate();
             session.statementBuilder().createQuery("ALTER TABLE userprofile ALTER COLUMN id RESTART WITH 1").executeUpdate();
             session.statementBuilder().createQuery("ALTER TABLE post ALTER COLUMN id RESTART WITH 1").executeUpdate();
@@ -107,7 +100,7 @@ public class LikeControllerWebSocketIntegrationTest {
         blockingQueue = new LinkedBlockingDeque<>();
         stompClient = new WebSocketStompClient(new SockJsClient(
                 Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient()))));
-        webSocketUrl = "ws://localhost:" + port + "/aboutMe";
+        webSocketUrl = "ws://localhost:" + port + "/aboutme";
     }
 
     @Test
@@ -144,12 +137,12 @@ public class LikeControllerWebSocketIntegrationTest {
         Assert.assertEquals("{\"postId\":1,\"likesCount\":0}", blockingQueue.poll(1, SECONDS));
     }
 
-    private void createLike(UserProfile userProfile) throws SQLException {
+    private void createLike(Userprofile userprofile) throws SQLException {
         try (Session session = sessionManager.createSession()) {
             Like like = new Like();
             like.setPost(POST);
 
-            like.setUser(userProfile);
+            like.setUser(userprofile);
 
             session.create(like);
         }

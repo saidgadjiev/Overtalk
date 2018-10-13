@@ -1,28 +1,32 @@
-<div class="font-weight-bold text-center mt-3">
-    <h1>Пост</h1>
-</div>
-<form ng-submit="doSave(postForm.$valid)" name="postForm" novalidate>
-    <div class="form-group">
-        <label for="title">Заголовок:</label>
-        <input id="title" name="title" class="form-control" type="text"
-               ng-model="newPost.title" ng-required="true"/>
-        <div ng-messages="postForm.title.$error"
-             ng-if="postForm.title.$touched || submitted" style="color:red">
-            <p class="help-block" ng-message="required">Введите заголовок!</p>
+<div class="row w-100 justify-content-around">
+    <div class="col col-lg-8 col-sm-12">
+        <div class="font-weight-bold text-center mt-3">
+            <h1>Пост</h1>
         </div>
-    </div>
-    <div class="form-group">
-        <label for="content">Контент:</label>
-        <textarea id="content" name="content" class="form-control" type="text"
-                  ng-model="newPost.content" ng-required="true" rows="8"></textarea>
-        <div class="has-error" ng-messages="postForm.content.$error"
-             ng-if="postForm.content.$touched || submitted">
-            <p class="help-block" ng-message="required">Введите контент!</p>
-        </div>
-    </div>
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Сохранить</button>
-        <button type="button" ng-click="doCancel()" class="btn btn-default">Отменить</button>
-    </div>
+        <form ng-submit="doSave(postForm.$valid)" name="postForm" novalidate>
+            <div class="form-group">
+                <label for="title">Заголовок:</label>
+                <input id="title" name="title" class="form-control" type="text"
+                       ng-model="newPost.title" ng-required="true"/>
+                <div ng-messages="postForm.title.$error"
+                     ng-if="postForm.title.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Введите заголовок!</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="content">Контент:</label>
+                <textarea id="content" name="content" class="form-control" type="text"
+                          ng-model="newPost.content" ng-required="true" rows="8"></textarea>
+                <div class="has-error" ng-messages="postForm.content.$error"
+                     ng-if="postForm.content.$touched || submitted">
+                    <p class="help-block" ng-message="required">Введите контент!</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <button type="button" ng-click="doCancel()" class="btn btn-default">Отменить</button>
+            </div>
 
-</form>
+        </form>
+    </div>
+</div>

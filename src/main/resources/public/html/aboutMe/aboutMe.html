@@ -1,41 +1,44 @@
-<div class="animate-right">
-    <button type="button" access="ROLE_ADMIN" ng-click="editAboutMe(aboutMe)" class="mt-3 btn btn-outline-primary btn-block">
-        Редактировать
-    </button>
-    <p class="h4 font-weight-bold mt-3">ФИО</p>
-    <p ng-cloak class="h5 animate-right mb-0">{{aboutMe.fio}}</p>
+<div class="row w-100 justify-content-around">
+    <div class="col col-lg-8 col-sm-12">
+        <div class="animate-right">
+            <button type="button" access="ROLE_ADMIN" ng-click="editAboutMe(aboutme)"
+                    class="mt-3 btn btn-outline-primary btn-block">
+                Редактировать
+            </button>
+            <p class="h4 font-weight-bold mt-3">ФИО</p>
+            <p ng-cloak class="h5 mb-0">{{aboutme.fio}}</p>
 
-    <p class="h4 font-weight-bold mt-3">Дата рождения</p>
-    <p ng-cloak class="h5 animate-right mb-0">{{aboutMe.dateOfBirth|date:'longDate'}}</p>
+            <p class="h4 font-weight-bold mt-3">Дата рождения</p>
+            <p ng-cloak class="h5 mb-0">{{aboutme.dateOfBirth|date:'longDate'}}</p>
 
-    <p class="h4 font-weight-bold mt-3">Место проживания</p>
-    <p ng-cloak class="h5 mb-0 animate-right ">{{aboutMe.placeOfResidence}}</p>
+            <p class="h4 font-weight-bold mt-3">Место проживания</p>
+            <p ng-cloak class="h5 mb-0">{{aboutme.placeOfResidence}}</p>
 
-    <p class="h4 font-weight-bold mt-3">Должность</p>
-    <p ng-cloak class="h5 animate-right mb-0">{{aboutMe.post}}</p>
-</div>
-
-<div class="mt-5 animate-right">
-    <button type="button" access="ROLE_ADMIN" ng-click="addSkill(aboutMe)" class="btn btn-outline-primary btn-block">
-        Добавить навык
-    </button>
-    <p class="h4 font-weight-bold mt-3">Что я знаю</p>
-    <div>
-        <div ng-repeat="skill in aboutMe.skills">
-            <div class="animate-right skillbar">
-                <strong ng-cloak class="skillbar-title">{{skill.name}}</strong>
-                <strong ng-cloak class="skill-bar-percent">{{skill.percentage}}%</strong>
-                <div class="skillbar-bar bg-primary" style="width: {{skill.percentage}}%;"></div>
-            </div>
-            <ul class="mt-2 list-inline d-inline-flex">
-                <li access="ROLE_ADMIN" class="list-inline-item">
-                    <i ng-click="deleteSkill(skill)" class="text-primary fa fa-times"></i>
-                </li>
-                <li access="ROLE_ADMIN" class="list-inline-item pl-3">
-                    <i ng-click="editSkill(skill)" class="text-primary fa fa-edit"></i>
-                </li>
-            </ul>
+            <p class="h4 font-weight-bold mt-3">Должность</p>
+            <p ng-cloak class="h5 mb-0">{{aboutme.post}}</p>
         </div>
+
+        <div class="mt-5 animate-right">
+            <button type="button" access="ROLE_ADMIN" ng-click="addSkill(aboutme)"
+                    class="btn btn-outline-primary btn-block">
+                Добавить навык
+            </button>
+            <p class="h4 font-weight-bold mt-3">Что я знаю</p>
+            <div>
+                <div ng-repeat="skill in aboutme.skills">
+                    <h5 class="bg-light">{{skill.name}}</h5>
+                    <ul access="ROLE_ADMIN" class="mt-2 list-inline d-inline-flex">
+                        <li class="list-inline-item">
+                            <i ng-click="deleteSkill(skill)" class="text-primary fa fa-times"></i>
+                        </li>
+                        <li class="list-inline-item pl-3">
+                            <i ng-click="editSkill(skill)" class="text-primary fa fa-edit"></i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -53,12 +56,12 @@
             <div class="form-group">
                 <label for="placeOfResidence">Место проживания:</label>
                 <input id="placeOfResidence" class="form-control" type="text" name="placeOfResidence"
-                       ng-model="aboutMe.placeOfResidence" ng-required="true"/>
+                       ng-model="aboutme.placeOfResidence" ng-required="true"/>
             </div>
             <div class="form-group">
                 <label for="post">Должность:</label>
                 <input id="post" class="form-control" type="text" name="post"
-                       ng-model="aboutMe.post" ng-required="true"/>
+                       ng-model="aboutme.post" ng-required="true"/>
             </div>
         </form>
     </div>
@@ -90,15 +93,6 @@
                 <div ng-messages="skillForm.name.$error"
                      ng-if="skillForm.name.$touched || submitted" style="color:red">
                     <p class="help-block" ng-message="required">Введите название!</p>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="percentage">Процент владения:</label>
-                <input id="percentage" class="form-control" type="text" name="name"
-                       ng-model="skill.percentage" ng-required="true"/>
-                <div ng-messages="skillForm.percentage.$error"
-                     ng-if="skillForm.percentage.$touched || submitted" style="color:red">
-                    <p class="help-block" ng-message="required">Введите процент владения!</p>
                 </div>
             </div>
         </form>

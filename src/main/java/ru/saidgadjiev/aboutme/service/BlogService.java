@@ -179,7 +179,7 @@ public class BlogService {
         if (userDetails != null) {
             List<String> likedUsers = post.getLikes()
                     .stream()
-                    .map(like -> like.getUser().getUserName())
+                    .map(like -> like.getUser().getUsername())
                     .collect(Collectors.toList());
 
             return likedUsers.contains(userDetails.getUsername());

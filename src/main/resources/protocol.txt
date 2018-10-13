@@ -1,4 +1,4 @@
-AboutMe ('/api/aboutMe')
+AboutMe ('/api/aboutme')
 
 1. ('')
 request: {}

@@ -35,7 +35,6 @@ public class SkillController {
         return ResponseEntity.ok(new SkillJsonBuilder()
                 .id(skill.getId())
                 .name(skill.getName())
-                .percentage(skill.getPercentage())
                 .build());
     }
 
@@ -69,7 +68,6 @@ public class SkillController {
 
         return ResponseEntity.ok(new SkillJsonBuilder()
                 .name(updated.getName())
-                .percentage(updated.getPercentage())
                 .build());
     }
 }

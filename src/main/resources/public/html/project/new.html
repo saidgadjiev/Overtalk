@@ -1,36 +1,43 @@
-<h1 class="font-weight-bold text-center mt-3">Новый проект</h1>
-<form ng-submit="doSave(projectForm.$valid)" name="projectForm" novalidate>
-    <div class="form-group">
-        <label for="name">Название:</label>
-        <input id="name" class="form-control" type="text" name="name"
-               ng-model="project.name" ng-required="true"/>
-        <div ng-messages="projectForm.name.$error"
-             ng-if="projectForm.name.$touched || submitted" style="color:red">
-            <p class="help-block" ng-message="required">Введите название!</p>
-        </div>
+<div class="row w-100 justify-content-around">
+    <div class="col col-lg-8 col-sm-12">
+        <h1 class="font-weight-bold text-center mt-3">Новый проект</h1>
+        <form ng-submit="doSave(projectForm.$valid)" name="projectForm" novalidate>
+            <div class="form-group">
+                <label for="name">Название:</label>
+                <input id="name" class="form-control" type="text" name="name"
+                       ng-model="project.name" ng-required="true"/>
+                <div ng-messages="projectForm.name.$error"
+                     ng-if="projectForm.name.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Введите название!</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <textarea id="description" class="form-control" type="text" name="description"
+                          ng-model="project.description" ng-required="true" rows="8"></textarea>
+                <div ng-messages="projectForm.description.$error"
+                     ng-if="projectForm.description.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Введите описание!</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="projectLink">Ссылка на проект:</label>
+                <input class="form-control" ng-model="project.projectLink" type="text" id="projectLink"
+                       name="projectLink">
+            </div>
+            <div class="form-group">
+                <label for="technologies">Технологии:</label>
+                <input class="form-control" ng-model="project.technologies" type="text" id="technologies"
+                       name="technologies">
+            </div>
+            <div class="form-group">
+                <label for="technologies">Фичи:</label>
+                <input class="form-control" ng-model="project.features" type="text" id="features" name="features">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <button type="button" ng-click="doCancel()" class="btn btn-default">Отменить</button>
+            </div>
+        </form>
     </div>
-    <div class="form-group">
-        <label for="description">Описание:</label>
-        <textarea id="description" class="form-control" type="text" name="description"
-                  ng-model="project.description" ng-required="true" rows="8"></textarea>
-        <div ng-messages="projectForm.description.$error"
-             ng-if="projectForm.description.$touched || submitted" style="color:red">
-            <p class="help-block" ng-message="required">Введите описание!</p>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="projectLink">Ссылка на проект:</label>
-        <input class="form-control" ng-model="project.projectLink" type="text" id="projectLink" name="projectLink">
-    </div>
-    <div class="form-group">
-        <label for="logo">Выберите логотип</label>
-        <input type="file" class="form-control-file" id="logo" file-model="logo">
-    </div>
-    <div class="form-group">
-        <img class="w-25" ng-src="{{logoPath}}" err-src="{{defaultUrl}}"/>
-    </div>
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Сохранить</button>
-        <button type="button" ng-click="doCancel()" class="btn btn-default">Отменить</button>
-    </div>
-</form>
+</div>

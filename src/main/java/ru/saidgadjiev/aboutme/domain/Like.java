@@ -23,8 +23,9 @@ public class Like {
     @ForeignColumn(fetchType = FetchType.LAZY)
     private Comment comment;
 
-    @ForeignColumn(foreignFieldName = "userName", fetchType = FetchType.LAZY)
-    private UserProfile user;
+    @DatabaseColumn(columnName = "userprofile_username", notNull = true)
+    @ForeignColumn(foreignFieldName = "username", fetchType = FetchType.LAZY)
+    private Userprofile user;
 
     public Integer getId() {
         return id;
@@ -50,11 +51,11 @@ public class Like {
         this.comment = comment;
     }
 
-    public UserProfile getUser() {
+    public Userprofile getUser() {
         return user;
     }
 
-    public void setUser(UserProfile user) {
+    public void setUser(Userprofile user) {
         this.user = user;
     }
 

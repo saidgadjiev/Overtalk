@@ -156,7 +156,7 @@ as.controller('NewPostController', function ($scope,
                     $location.path(backUrl);
                 });
             } else {
-                PostService.update($routeParams.id, $scope.newPost.title, $scope.newPost.content, function (response) {
+                PostService.update($scope.newPost.id, $scope.newPost.title, $scope.newPost.content, function (response) {
                     $location.path(backUrl);
                 });
             }
@@ -239,7 +239,8 @@ as.controller('PostController', function ($scope,
                                           DataService,
                                           PostService,
                                           CategoryService,
-                                          WEB_SOCKET_EVENTS) {
+                                          WEB_SOCKET_EVENTS,
+                                          TruncateService) {
     $scope.category = DataService.get('PostController');
 
     $scope.currentPage = 1;
@@ -254,6 +255,11 @@ as.controller('PostController', function ($scope,
                 $log.log(response.data);
                 $scope.totalItems = response.data.totalElements;
                 $scope.posts = response.data.content;
+
+                $scope.posts.forEach(function (element) {
+                    element.eliptedContent = TruncateService.truncate(element.content, 300);
+                });
+
                 if (!$scope.category) {
                     CategoryService.getById($routeParams.id, function (value) {
                         $scope.category = value.data;
@@ -383,7 +389,15 @@ as.controller('DetailsController', function ($scope,
         if (AuthService.isAuthorized('ROLE_ADMIN')) {
             return true;
         }
-        if (Session.nickName === comment.nickName) {
+
+        return this.isMyComment(comment);
+    };
+
+    $scope.isMyComment = function(comment) {
+        if (!AuthService.isAuthenticated()) {
+            return false;
+        }
+        if (Session.nickname === comment.nickname) {
             return true;
         }
 
@@ -486,7 +500,7 @@ as.controller('DetailsController', function ($scope,
                 comment.id = data.content.commentId;
                 comment.content = data.content.content;
                 comment.createdDate = data.content.createdDate;
-                comment.nickName = data.content.nickName;
+                comment.nickname = data.content.nickname;
 
                 $scope.comments.push(comment);
             });
@@ -559,6 +573,8 @@ as.controller('NewProjectController', function ($scope,
         $scope.project.name = $scope.data.name;
         $scope.project.description = $scope.data.description;
         $scope.project.projectLink = $scope.data.projectLink;
+        $scope.project.technologies = $scope.data.technologies;
+        $scope.project.features = $scope.data.features;
     }
 
     $scope.doSave = function (isValid) {
@@ -572,6 +588,8 @@ as.controller('NewProjectController', function ($scope,
                     $scope.project.name,
                     $scope.project.description,
                     $scope.project.projectLink,
+                    $scope.project.technologies,
+                    $scope.project.features,
                     function (response) {
                         $location.path('/projects');
                     });
@@ -581,6 +599,8 @@ as.controller('NewProjectController', function ($scope,
                     $scope.project.name,
                     $scope.project.description,
                     $scope.project.projectLink,
+                    $scope.project.technologies,
+                    $scope.project.features,
                     function (response) {
                         $location.path('/projects');
                     });
@@ -641,24 +661,24 @@ as.controller('AboutMeController', function ($scope,
                                              AboutMeService,
                                              SkillService) {
     AboutMeService.getAboutMe(function (response) {
-        $scope.aboutMe = response.data;
+        $scope.aboutme = response.data;
     });
 
-    $scope.editAboutMe = function (aboutMe) {
+    $scope.editAboutMe = function (aboutme) {
         var editAboutMeModal = $uibModal.open({
             templateUrl: 'editAboutMe.html',
             controller: function ($scope, $uibModalInstance) {
-                $scope.aboutMe = {};
+                $scope.aboutme = {};
 
-                $scope.aboutMe.placeOfResidence = aboutMe.placeOfResidence;
-                $scope.aboutMe.post = aboutMe.post;
+                $scope.aboutme.placeOfResidence = aboutme.placeOfResidence;
+                $scope.aboutme.post = aboutme.post;
 
                 $scope.ok = function () {
                     $scope.submitted = true;
 
                     if ($scope.editAboutMeForm.$valid) {
                         $scope.submitted = false;
-                        $uibModalInstance.close($scope.aboutMe);
+                        $uibModalInstance.close($scope.aboutme);
                     }
                 };
 
@@ -677,14 +697,14 @@ as.controller('AboutMeController', function ($scope,
                 value.post,
                 value.placeOfResidence,
                 function () {
-                    aboutMe.placeOfResidence = value.placeOfResidence;
-                    aboutMe.post = value.post;
+                    aboutme.placeOfResidence = value.placeOfResidence;
+                    aboutme.post = value.post;
                 }
             );
         });
     };
 
-    $scope.addSkill = function (aboutMe) {
+    $scope.addSkill = function (aboutme) {
         var addSkillModal = $uibModal.open({
             templateUrl: 'createOrEditSkill.html',
             controller: function ($scope, $uibModalInstance) {
@@ -712,9 +732,8 @@ as.controller('AboutMeController', function ($scope,
         addSkillModal.result.then(function (value) {
             SkillService.create(
                 value.name,
-                value.percentage,
                 function (response) {
-                    aboutMe.skills.push(response.data);
+                    aboutme.skills.push(response.data);
                 }
             );
         });
@@ -725,7 +744,7 @@ as.controller('AboutMeController', function ($scope,
             skill.id,
             function () {
                 $log.log('delete skill ' + skill);
-                $scope.aboutMe.skills.splice($scope.aboutMe.skills.indexOf(skill), 1);
+                $scope.aboutme.skills.splice($scope.aboutme.skills.indexOf(skill), 1);
             }
         );
     };
@@ -742,7 +761,6 @@ as.controller('AboutMeController', function ($scope,
 
                 $scope.skill.id = skill.id;
                 $scope.skill.name = skill.name;
-                $scope.skill.percentage = skill.percentage;
 
                 $scope.ok = function () {
                     $scope.submitted = true;
@@ -763,12 +781,10 @@ as.controller('AboutMeController', function ($scope,
             SkillService.update(
                 value.id,
                 value.name,
-                value.percentage,
                 function (response) {
                     $log.log(response);
 
                     skill.name = response.data.name;
-                    skill.percentage = response.data.percentage;
                 }
             );
         });
@@ -829,7 +845,7 @@ as.controller('CategoryController', function ($scope,
         });
 
         createCategoryModal.result.then(function (value) {
-            CategoryService.create(value.name, description, function () {
+            CategoryService.create(value.name, value.description, value.index, function () {
                 loadCategories();
             })
         });
@@ -844,6 +860,7 @@ as.controller('CategoryController', function ($scope,
                 $scope.category.id = category.id;
                 $scope.category.name = category.name;
                 $scope.category.description = category.description;
+                $scope.category.index = category.index;
 
                 $scope.ok = function () {
                     $scope.submitted = true;
@@ -865,9 +882,11 @@ as.controller('CategoryController', function ($scope,
                 category.id,
                 value.name,
                 value.description,
+                value.index,
                 function () {
                     category.name = value.name;
                     category.description = value.description;
+                    category.index = value.index;
                 }
             );
         });

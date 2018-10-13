@@ -7,6 +7,7 @@ import ru.saidgadjiev.ormnext.core.field.Converter;
 import ru.saidgadjiev.ormnext.core.field.DataType;
 import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgadjiev.ormnext.core.field.ForeignCollectionField;
+import ru.saidgadjiev.ormnext.core.table.DatabaseEntity;
 import ru.saidgajiev.ormnext.cache.Cacheable;
 
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Cacheable
-public class AboutMe {
+public class Aboutme {
 
     @DatabaseColumn(id = true)
     private int id;
@@ -39,7 +40,7 @@ public class AboutMe {
     @DatabaseColumn
     private String additionalInformation;
 
-    @ForeignCollectionField(foreignFieldName = "aboutMe")
+    @ForeignCollectionField(foreignFieldName = "aboutme")
     private List<Skill> skills = new ArrayList<>();
 
     public int getId() {
@@ -108,7 +109,7 @@ public class AboutMe {
 
     @Override
     public String toString() {
-        return "AboutMe{" +
+        return "Aboutme{" +
                 "id=" + id +
                 ", fio='" + fio + '\'' +
                 ", dateOfBirth=" + dateOfBirth +

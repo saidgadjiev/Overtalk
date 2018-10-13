@@ -1,5 +1,6 @@
 package ru.saidgadjiev.aboutme;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,11 +21,15 @@ import ru.saidgadjiev.aboutme.storage.StorageService;
 public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        try {
+            SpringApplication.run(Application.class, args);
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Bean
-    CommandLineRunner init(StorageService storageService) {
+    CommandLineRunner init(@Qualifier("resourceStorageService") StorageService storageService) {
         return (args) -> {
             storageService.init();
         };

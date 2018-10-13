@@ -10,6 +10,7 @@ import ru.saidgajiev.ormnext.cache.Cacheable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Cacheable
 public class Project {
@@ -32,6 +33,12 @@ public class Project {
 
     @DatabaseColumn(length = 1024)
     private String projectLink;
+
+    @DatabaseColumn(persisterClass = TextTypeDataPersister.class)
+    private String technologies;
+
+    @DatabaseColumn(persisterClass = TextTypeDataPersister.class)
+    private String features;
 
     public Integer getId() {
         return id;
@@ -71,6 +78,22 @@ public class Project {
 
     public void setProjectLink(String projectLink) {
         this.projectLink = projectLink;
+    }
+
+    public String getTechnologies() {
+        return technologies;
+    }
+
+    public void setTechnologies(String technologies) {
+        this.technologies = technologies;
+    }
+
+    public String getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(String features) {
+        this.features = features;
     }
 
     @Override

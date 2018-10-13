@@ -29,14 +29,14 @@ public class LikeDao {
         session.create(like);
     }
 
-    public int delete(Integer postId, String userName) throws SQLException {
+    public int delete(Integer postId, String username) throws SQLException {
         Session session = sessionManager.currentSession();
         DeleteStatement deleteStatement = session.statementBuilder().createDeleteStatement(Like.class);
 
         deleteStatement
                 .where(new Criteria()
                         .add(eq("post", postId))
-                        .add(eq("user", userName)));
+                        .add(eq("user", username)));
 
         return deleteStatement.delete();
     }

@@ -1,0 +1,39 @@
+<project name="post-build" basedir="." default="post-build">
+    <target name="post-build">
+        <Dc name="dc_1" description="Заливаем роли">
+            <SqlFile file="env/scripts/roles.sql"/>
+        </Dc>
+
+        <Dc name="dc_2" description="Заливаем пользователей">
+            <SqlFile file="env/scripts/users.sql"/>
+        </Dc>
+
+        <Dc name="dc_3" description="Создаем информацию о себе">
+            <SqlFile file="env/scripts/aboutme.sql"/>
+        </Dc>
+
+        <Dc name="dc_4" description="Заливаем скилы">
+            <SqlFile file="env/scripts/skills.sql"/>
+        </Dc>
+
+        <Dc name="dc_5" description="Создаем тип категорий">
+            <SqlFile file="env/scripts/category.sql"/>
+        </Dc>
+
+        <Dc name="dc_6" description="Создаем тип постов">
+            <SqlFile file="env/scripts/post.sql"/>
+        </Dc>
+
+        <Dc name="dc_7" description="Создаем тип комментариев">
+            <SqlFile file="env/scripts/comment.sql"/>
+        </Dc>
+
+        <Dc name="dc_8" description="Создаем тип лайков">
+            <SqlFile file="env/scripts/like.sql"/>
+        </Dc>
+
+        <Dc name="dc_9" description="Заливаем проекты">
+            <SqlFile file="env/scripts/projects.sql"/>
+        </Dc>
+    </target>
+</project>

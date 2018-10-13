@@ -35,8 +35,8 @@ public class CommentJsonBuilder {
         return this;
     }
 
-    public CommentJsonBuilder nickName(String nickName) {
-        jsonBuilder.add("nickName", nickName);
+    public CommentJsonBuilder nickname(String nickname) {
+        jsonBuilder.add("nickname", nickname);
 
         return this;
     }

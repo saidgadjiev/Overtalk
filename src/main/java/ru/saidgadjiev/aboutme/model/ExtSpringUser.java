@@ -7,23 +7,23 @@ import java.util.Collection;
 
 public class ExtSpringUser extends User {
 
-    private String nickName;
+    private String nickname;
 
-    public ExtSpringUser(String nickName, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    public ExtSpringUser(String nickname, String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
-        this.nickName = nickName;
+        this.nickname = nickname;
     }
 
-    public ExtSpringUser(String nickName, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public ExtSpringUser(String nickname, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-        this.nickName = nickName;
+        this.nickname = nickname;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

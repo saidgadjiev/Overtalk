@@ -29,7 +29,7 @@
     <link href="https://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet">
 
     <link rel="stylesheet" href="css/animation.css">
-    <link rel="stylesheet" href="css/aboutMe.css">
+    <link rel="stylesheet" href="css/aboutme.css">
     <link rel="stylesheet" href="css/skillbar.css">
 </head>
 
@@ -43,8 +43,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item" ng-class="{active: isActiveNavItem('/aboutMe')}">
-                    <a class="nav-link h3" href="#/aboutMe">Обо мне</a>
+                <li class="nav-item" ng-class="{active: isActiveNavItem('/aboutme')}">
+                    <a class="nav-link h3" href="#/aboutme">Обо мне</a>
                 </li>
                 <li class="nav-item" ng-class="{active: isActiveNavItem('/categories')}">
                     <a class="nav-link h3" href="#/categories">Блог</a>
@@ -59,7 +59,7 @@
             <ul class="navbar-nav">
                 <li ng-cloak class="nav-item" ng-if="authenticated">
                     <div class="d-flex w-100 justify-content-start">
-                        <p ng-cloak class="h4 navbar-text text-light mr-2">{{nickName}}</p>
+                        <p ng-cloak class="h4 navbar-text text-light mr-2">{{nickname}}</p>
                         <a ng-cloak class="nav-link h3 cursor-pointer" ng-click="signOut()"><i
                                 class="fa fa-sign-out"></i> Выйти</a>
                     </div>
@@ -80,7 +80,7 @@
     </div>
 </main>
 <footer class="footer">
-    <div class="container-fluid p-3">
+    <div class="container-fluid pt-3">
         <div class="row justify-content-center">
             <p class="h4 font-weight-bold">Контакты</p>
         </div>
@@ -99,6 +99,11 @@
                 <li class="list-inline-item pl-3">
                     <a href="https://vk.com/said1995" target="_blank">
                         <strong class="h5">Vkontakte</strong>
+                    </a>
+                </li>
+                <li class="list-inline-item pl-3">
+                    <a href="/api/file/resume.pdf">
+                        <strong class="h5">Резюме</strong>
                     </a>
                 </li>
             </ul>

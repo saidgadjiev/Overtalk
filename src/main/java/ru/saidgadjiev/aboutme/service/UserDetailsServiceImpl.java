@@ -7,8 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.saidgadjiev.aboutme.domain.UserProfile;
-import ru.saidgadjiev.aboutme.domain.UserRole;
+import ru.saidgadjiev.aboutme.domain.Userprofile;
+import ru.saidgadjiev.aboutme.domain.UserprofileRole;
 import ru.saidgadjiev.aboutme.model.ExtSpringUser;
 
 import java.sql.SQLException;
@@ -32,17 +32,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         try {
-            UserProfile userProfile = userService.getByUserName(s);
+            Userprofile userprofile = userService.getByUserName(s);
             Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
-            for (UserRole userRole : userProfile.getUserRoles()) {
-                grantedAuthorities.add(new SimpleGrantedAuthority(userRole.getRole().getName()));
+            for (UserprofileRole userprofileRole : userprofile.getUserprofileRoles()) {
+                grantedAuthorities.add(new SimpleGrantedAuthority(userprofileRole.getRole().getName()));
             }
 
             return new ExtSpringUser(
-                    userProfile.getNickName(),
-                    userProfile.getUserName(),
-                    userProfile.getPassword(),
+                    userprofile.getNickname(),
+                    userprofile.getUsername(),
+                    userprofile.getPassword(),
                     grantedAuthorities
             );
         } catch (SQLException ex) {

@@ -6,10 +6,10 @@ as.directive('uniqueUserName', function ($http, $q) {
         require: 'ngModel',
         link: function ($scope, $elem, $attr, ctrl) {
             ctrl.$asyncValidators.uniqueUserName = function (modelValue, viewValue) {
-                var userName = viewValue;
+                var username = viewValue;
                 var deferred = $q.defer();
 
-                $http.get('api/userName/exist/' + userName).catch(function (response) {
+                $http.get('api/username/exist/' + username).catch(function (response) {
                     if (response.status === 302) {
                         deferred.reject();
                     } else {
@@ -29,10 +29,10 @@ as.directive('uniqueNickName', function ($http, $q) {
         require: 'ngModel',
         link: function ($scope, $elem, $attr, ctrl) {
             ctrl.$asyncValidators.uniqueNickName = function (modelValue, viewValue) {
-                var nickName = viewValue;
+                var nickname = viewValue;
                 var deferred = $q.defer();
 
-                $http.get('api/nickName/exist/' + nickName).catch(function (response) {
+                $http.get('api/nickname/exist/' + nickname).catch(function (response) {
                     if (response.status === 302) {
                         deferred.reject();
                     } else {
@@ -106,7 +106,7 @@ as.directive('ellipsis', function () {
     };
 });
 
-as.directive('compile', function ($compile, HtmlEncoder) {
+as.directive('compile', function ($compile) {
     return function (scope, element, attrs) {
         scope.$watch(
             function (scope) {
@@ -116,7 +116,6 @@ as.directive('compile', function ($compile, HtmlEncoder) {
             function (value) {
                 // when the 'compile' expression changes
                 // assign it into the current DOM
-                value = HtmlEncoder.encode(value);
                 element.html(value);
 
                 // compile the new DOM and link it to the current

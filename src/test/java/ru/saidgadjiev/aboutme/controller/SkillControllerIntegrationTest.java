@@ -11,9 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.saidgadjiev.aboutme.domain.Aboutme;
 import ru.saidgadjiev.aboutme.utils.JsonUtils;
 import ru.saidgadjiev.aboutme.configuration.TestConfiguration;
-import ru.saidgadjiev.aboutme.domain.AboutMe;
 import ru.saidgadjiev.aboutme.domain.Role;
 import ru.saidgadjiev.aboutme.domain.Skill;
 import ru.saidgadjiev.ormnext.core.dao.Session;
@@ -49,7 +49,7 @@ public class SkillControllerIntegrationTest {
     @Before
     public void before() throws SQLException {
         try (Session session = sessionManager.createSession()) {
-            session.clearTables(Skill.class, AboutMe.class);
+            session.clearTables(Skill.class, Aboutme.class);
             session.statementBuilder().createQuery("ALTER TABLE skill ALTER COLUMN id RESTART WITH 1").executeUpdate();
             createAboutMe();
         }
@@ -64,13 +64,13 @@ public class SkillControllerIntegrationTest {
                 .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
         )
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"id\":1,\"name\":\"Test2\",\"percentage\":90}"));
+                .andExpect(content().json("{\"id\":1,\"name\":\"Test2\"}"));
 
         try (Session session = sessionManager.createSession()) {
             List<Skill> skills = session.queryForAll(Skill.class);
 
             Assert.assertEquals(skills.size(), 1);
-            Assert.assertEquals(JsonUtils.toJson(skills.get(0)), "{\"id\":1,\"name\":\"Test2\",\"percentage\":90}");
+            Assert.assertEquals(JsonUtils.toJson(skills.get(0)), "{\"id\":1,\"name\":\"Test2\"}");
         }
     }
 
@@ -127,16 +127,16 @@ public class SkillControllerIntegrationTest {
         mockMvc
                 .perform(patch("/api/skill/update/" + created.getId())
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content("{\"name\":\"Test2\",\"percentage\":100}")
+                        .content("{\"name\":\"Test2\"}")
                         .with(user("test").authorities(new SimpleGrantedAuthority(Role.ROLE_ADMIN)))
                 )
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"name\":\"Test2\",\"percentage\":100}"));
+                .andExpect(content().json("{\"name\":\"Test2\"}"));
 
         try (Session session = sessionManager.createSession()) {
             Skill result = session.queryForId(Skill.class, created.getId());
 
-            Assert.assertEquals("{\"id\":1,\"name\":\"Test2\",\"percentage\":100}", JsonUtils.toJson(result));
+            Assert.assertEquals("{\"id\":1,\"name\":\"Test2\"}", JsonUtils.toJson(result));
         }
     }
 
@@ -144,34 +144,33 @@ public class SkillControllerIntegrationTest {
         Skill skill = new Skill();
 
         skill.setName("Java");
-        skill.setPercentage(90);
 
         return skill;
     }
 
-    private AboutMe testAboutMe() {
-        AboutMe aboutMe = new AboutMe();
+    private Aboutme testAboutMe() {
+        Aboutme aboutme = new Aboutme();
 
-        aboutMe.setId(1);
-        aboutMe.setFio("Гаджиев Саид Алиевич");
+        aboutme.setId(1);
+        aboutme.setFio("Гаджиев Саид Алиевич");
         Calendar dateOfBirthCalendar = new GregorianCalendar(1995, 7, 1);
 
-        aboutMe.setDateOfBirth(LocalDate.of(1995, 7, 1));
-        aboutMe.setPlaceOfResidence("Москва");
-        aboutMe.setPost("Java разработчик");
-        aboutMe.setEducationLevel("Бакалавр");
+        aboutme.setDateOfBirth(LocalDate.of(1995, 7, 1));
+        aboutme.setPlaceOfResidence("Москва");
+        aboutme.setPost("Java разработчик");
+        aboutme.setEducationLevel("Бакалавр");
 
 
-        return aboutMe;
+        return aboutme;
     }
 
-    private AboutMe createAboutMe() throws SQLException {
+    private Aboutme createAboutMe() throws SQLException {
         try (Session session = sessionManager.createSession()) {
-            AboutMe aboutMe = testAboutMe();
+            Aboutme aboutme = testAboutMe();
 
-            session.create(aboutMe);
+            session.create(aboutme);
 
-            return aboutMe;
+            return aboutme;
         }
     }
 
@@ -179,10 +178,10 @@ public class SkillControllerIntegrationTest {
         try (Session session = sessionManager.createSession()) {
             Skill skill = getTestSkill();
 
-            AboutMe aboutMe = new AboutMe();
+            Aboutme aboutme = new Aboutme();
 
-            aboutMe.setId(1);
-            skill.setAboutMe(aboutMe);
+            aboutme.setId(1);
+            skill.setAboutme(aboutme);
 
             session.create(skill);
 

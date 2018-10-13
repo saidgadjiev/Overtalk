@@ -2,9 +2,8 @@ package ru.saidgadjiev.aboutme.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import ru.saidgadjiev.aboutme.domain.Comment;
-import ru.saidgadjiev.aboutme.domain.UserProfile;
-import ru.saidgadjiev.aboutme.domain.UserRole;
+import ru.saidgadjiev.aboutme.domain.Userprofile;
+import ru.saidgadjiev.aboutme.domain.UserprofileRole;
 import ru.saidgadjiev.ormnext.core.dao.Session;
 import ru.saidgadjiev.ormnext.core.dao.SessionManager;
 import ru.saidgadjiev.ormnext.core.query.criteria.impl.Criteria;
@@ -27,30 +26,30 @@ public class UserProfileDao {
         this.sessionManager = sessionManager;
     }
 
-    public UserProfile getByUserName(String userName) throws SQLException {
+    public Userprofile getByUserName(String username) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<UserProfile> selectStatement = session.statementBuilder().createSelectStatement(UserProfile.class);
+        SelectStatement<Userprofile> selectStatement = session.statementBuilder().createSelectStatement(Userprofile.class);
 
-        selectStatement.where(new Criteria().add(Restrictions.eq("userName", userName)));
+        selectStatement.where(new Criteria().add(Restrictions.eq("username", username)));
 
-        List<UserProfile> userProfiles = selectStatement.list();
+        List<Userprofile> userprofiles = selectStatement.list();
 
-        if (userProfiles.isEmpty()) {
+        if (userprofiles.isEmpty()) {
             return null;
         }
 
-        return userProfiles.iterator().next();
+        return userprofiles.iterator().next();
     }
 
-    public void create(UserProfile userProfile) throws SQLException {
+    public void create(Userprofile userprofile) throws SQLException {
         Session session = sessionManager.currentSession();
         session.beginTransaction();
 
         try {
-            session.create(userProfile);
+            session.create(userprofile);
 
-            for (UserRole userRole : userProfile.getUserRoles()) {
-                session.create(userRole);
+            for (UserprofileRole userprofileRole : userprofile.getUserprofileRoles()) {
+                session.create(userprofileRole);
             }
             session.commit();
         } catch (SQLException ex) {
@@ -59,31 +58,31 @@ public class UserProfileDao {
         }
     }
 
-    public boolean isExistUserName(String userName) throws SQLException {
+    public boolean isExistUsername(String username) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<UserProfile> selectStatement = session.statementBuilder().createSelectStatement(UserProfile.class);
+        SelectStatement<Userprofile> selectStatement = session.statementBuilder().createSelectStatement(Userprofile.class);
 
         selectStatement
-                .where(new Criteria().add(Restrictions.eq("userName", userName)))
+                .where(new Criteria().add(Restrictions.eq("username", username)))
                 .countOff();
 
         return selectStatement.queryForLong() > 0;
     }
 
-    public boolean isExistNickName(String nickName) throws SQLException {
+    public boolean isExistNickName(String nickname) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<UserProfile> selectStatement = session.statementBuilder().createSelectStatement(UserProfile.class);
+        SelectStatement<Userprofile> selectStatement = session.statementBuilder().createSelectStatement(Userprofile.class);
 
         selectStatement
-                .where(new Criteria().add(Restrictions.eq("nickName", nickName)))
+                .where(new Criteria().add(Restrictions.eq("nickname", nickname)))
                 .countOff();
 
         return selectStatement.queryForLong() > 0;
     }
 
-    public List<UserProfile> getList(int limit, long offset) throws SQLException {
+    public List<Userprofile> getList(int limit, long offset) throws SQLException {
         Session session = sessionManager.currentSession();
-        SelectStatement<UserProfile> selectStatement = session.statementBuilder().createSelectStatement(UserProfile.class);
+        SelectStatement<Userprofile> selectStatement = session.statementBuilder().createSelectStatement(Userprofile.class);
 
         selectStatement.limit(limit).offset((int) offset);
 
@@ -92,6 +91,6 @@ public class UserProfileDao {
 
     public long countOff() throws SQLException {
         Session session = sessionManager.currentSession();
-        return session.countOff(UserProfile.class);
+        return session.countOff(Userprofile.class);
     }
 }

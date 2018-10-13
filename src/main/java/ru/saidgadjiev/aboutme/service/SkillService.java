@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.saidgadjiev.aboutme.dao.AboutMeDao;
 import ru.saidgadjiev.aboutme.dao.SkillDao;
-import ru.saidgadjiev.aboutme.domain.AboutMe;
 import ru.saidgadjiev.aboutme.domain.Skill;
 import ru.saidgadjiev.aboutme.model.SkillDetails;
 
@@ -15,7 +14,7 @@ import java.sql.SQLException;
 public class SkillService {
 
     @Autowired
-    private AboutMeDao aboutMe;
+    private AboutMeDao aboutme;
 
     @Autowired
     private SkillDao skillDao;
@@ -24,8 +23,7 @@ public class SkillService {
         Skill skill = new Skill();
 
         skill.setName(skillDetails.getName());
-        skill.setPercentage(skillDetails.getPercentage());
-        skill.setAboutMe(aboutMe.getAboutMe());
+        skill.setAboutme(aboutme.getAboutMe());
 
         skillDao.create(skill);
 
@@ -41,7 +39,6 @@ public class SkillService {
         }
 
         skill.setName(skillDetails.getName());
-        skill.setPercentage(skillDetails.getPercentage());
 
         skillDao.update(skill);
 

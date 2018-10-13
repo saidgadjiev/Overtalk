@@ -6,7 +6,6 @@ import ru.saidgadjiev.ormnext.core.field.DatabaseColumn;
 import ru.saidgadjiev.ormnext.core.field.ForeignColumn;
 import ru.saidgajiev.ormnext.cache.Cacheable;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -21,13 +20,10 @@ public class Skill {
     @DatabaseColumn(notNull = true)
     private String name;
 
-    @DatabaseColumn(defaultDefinition = "0", notNull = true)
-    private int percentage;
-
     @JsonIgnore
     @DatabaseColumn(notNull = true)
     @ForeignColumn
-    private AboutMe aboutMe;
+    private Aboutme aboutme;
 
     public Integer getId() {
         return id;
@@ -45,20 +41,12 @@ public class Skill {
         this.name = name;
     }
 
-    public AboutMe getAboutMe() {
-        return aboutMe;
+    public Aboutme getAboutme() {
+        return aboutme;
     }
 
-    public void setAboutMe(AboutMe aboutMe) {
-        this.aboutMe = aboutMe;
-    }
-
-    public int getPercentage() {
-        return percentage;
-    }
-
-    public void setPercentage(int percentage) {
-        this.percentage = percentage;
+    public void setAboutme(Aboutme aboutme) {
+        this.aboutme = aboutme;
     }
 
     @Override
@@ -66,8 +54,7 @@ public class Skill {
         return "Skill{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", percentage=" + percentage +
-                ", aboutMe=" + aboutMe +
+                ", aboutme=" + aboutme +
                 '}';
     }
 }

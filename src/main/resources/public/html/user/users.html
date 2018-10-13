@@ -3,13 +3,15 @@
     <tr>
         <th scope="col">#</th>
         <th scope="col">Логин</th>
+        <th scope="col">Ник</th>
         <th scope="col">Роли</th>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="user in users|orderBy:userName">
+    <tr ng-repeat="user in users|orderBy:username">
         <th scope="row">{{$index + 1}}</th>
-        <td>{{user.userName}}</td>
+        <td>{{user.username}}</td>
+        <td>{{user.nickname}}</td>
         <td>{{user.roles}}</td>
     </tr>
     </tbody>

@@ -7,7 +7,7 @@ as.constant('USER_ROLES', {
 });
 
 as.constant('SETTINGS', {
-    webSocketUrl: '/aboutMe',
+    webSocketUrl: '/aboutme',
     likeTopic: '/topic/likes',
     commentTopic: '/topic/comments'
 });
@@ -59,8 +59,8 @@ as.config(function ($routeProvider, $httpProvider, $locationProvider, USER_ROLES
             loginRequired: false,
             authorizedRoles: [USER_ROLES.all]
         }
-    }).when('/aboutMe', {
-        templateUrl: 'html/aboutMe/aboutMe.html',
+    }).when('/aboutme', {
+        templateUrl: 'html/aboutme/aboutme.html',
         controller: 'AboutMeController',
         publicAccess: true,
         access: {
@@ -214,7 +214,7 @@ as.run(function ($rootScope,
     });
 
     $rootScope.$on(AUTH_EVENTS.signInSuccess, function () {
-        $rootScope.nickName = Session.nickName;
+        $rootScope.nickname = Session.nickname;
         $rootScope.authenticated = true;
 
         LocationService.gotoLast();
@@ -222,7 +222,7 @@ as.run(function ($rootScope,
 
     $rootScope.$on(AUTH_EVENTS.signOutSuccess, function () {
         $rootScope.authenticated = false;
-        $rootScope.nickName = null;
+        $rootScope.nickname = null;
 
         $location.path('/signIn');
     });
@@ -234,7 +234,7 @@ as.run(function ($rootScope,
             if (path !== '/signIn' && path !== 'signUp' && path !== '/loading') {
                 LocationService.saveLocation(path, previous.pathParams);
             } else {
-                LocationService.saveLocation('/aboutMe', {});
+                LocationService.saveLocation('/aboutme', {});
             }
         }
     });

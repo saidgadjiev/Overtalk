@@ -1,72 +1,81 @@
-<div class="d-flex w-100 justify-content-start mt-3">
-    <strong ng-cloak>{{post.createdDate|date:'dd.MM.yyyy в hh:mm'}}</strong>
-    <ul class="pl-3 list-inline">
-        <li access="ROLE_ADMIN" class="list-inline-item">
-            <i ng-click="doEditPost(post)" class="text-primary fa fa-edit"></i>
-        </li>
-        <li access="ROLE_ADMIN" class="list-inline-item">
-            <i ng-click="doDeletePost(post)" class="text-primary fa fa-times"></i>
-        </li>
-    </ul>
-</div>
-<h1 ng-cloak class="font-weight-bold">{{post.title}}</h1>
-<p compile="post.content" class="post-content mt-3"></p>
-<ul class="blog-icon d-inline-flex list-inline">
-    <li ng-if="post.liked" class="list-inline-item">
-        <i ng-click="doDislike(post)" class="text-primary fa fa-thumbs-down"></i>
-    </li>
-    <li class="list-inline-item">
-        <i ng-if="!post.liked" ng-click="doLike(post)" class="text-primary fa fa-thumbs-up"></i>
-        <strong ng-cloak>{{post.likesCount}}</strong>
-    </li>
-    <li class="list-inline-item pl-3">
-        <i class="text-primary fa fa-comment"></i>
-        <strong ng-cloak>{{comments.length}}</strong>
-    </li>
-</ul>
-<div class="mt-3">
-    <h3 ng-cloak class="font-weight-bold">Комментарии {{comments.length}}</h3>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item pl-0" ng-repeat="comment in comments|orderBy:'-createdDate'">
-            <div class="d-flex w-100 justify-content-start mb-3">
-                <strong ng-cloak class="text-info">{{comment.nickName}}</strong>
-                <strong ng-cloak class="pl-3">{{comment.createdDate|date:'dd.MM.yyyy в hh:mm'}}</strong>
-                <ul class="pl-3 list-inline">
-                    <li class="list-inline-item">
-                        <i ng-if="canEdit(comment)" ng-click="doEditComment(comment)"
-                           class="text-primary fa fa-edit"></i>
-                    </li>
-                    <li class="list-inline-item">
-                        <i ng-if="canEdit(comment)" ng-click="doDeleteComment(comment)"
-                           class="text-primary fa fa-times"></i>
-                    </li>
-                </ul>
-            </div>
-            <p compile="comment.content" class="comment-content mb-1"></p>
-        </li>
-    </ul>
-</div>
-<ul ng-if="totalItems > itemsPerPage" uib-pagination boundary-link-numbers="true" total-items="totalItems"
-    ng-change="pageChanged()"
-    ng-model="currentPage" max-size="5" class="pagination-sm mt-2" direction-links="false"
-    items-per-page="itemsPerPage"></ul>
-
-<form name="mt-3 commentForm">
-    <div class="form-group">
-        <label class="h3 font-weight-bold" for="commentTextarea">Написать комментарий</label>
-        <textarea ng-model="newComment.content" class="form-control w-75" id="commentTextarea" rows="3"></textarea>
-        <div class="btn-toolbar mt-2 mb-3">
-            <button type="button" ng-if="authenticated" class="btn btn-primary"
-                    ng-click="doCreateComment(commentForm.$valid)">Опубликовать
-            </button>
-            <button type="button" ng-if="!authenticated" data-toggle="tooltip"
-                    title="Войдите, чтобы оставлять комментарии" data-placement="top"
-                    class="btn btn-primary" disabled>Опубликовать
-            </button>
+<div class="row w-100 justify-content-around">
+    <div class="col col-lg-8 col-sm-12">
+        <div class="d-flex w-100 justify-content-start mt-3">
+            <strong ng-cloak>{{post.createdDate|date:'dd.MM.yyyy в hh:mm'}}</strong>
+            <ul class="pl-3 list-inline">
+                <li access="ROLE_ADMIN" class="list-inline-item">
+                    <i ng-click="doEditPost(post)" class="text-primary fa fa-edit"></i>
+                </li>
+                <li access="ROLE_ADMIN" class="list-inline-item">
+                    <i ng-click="doDeletePost(post)" class="text-primary fa fa-times"></i>
+                </li>
+            </ul>
         </div>
-    </div>
-</form>
+        <h1 ng-cloak class="font-weight-bold">{{post.title}}</h1>
+        <p compile="post.content" class="post-content mt-3"></p>
+        <ul class="blog-icon d-inline-flex list-inline">
+            <li ng-if="post.liked" class="list-inline-item">
+                <i ng-click="doDislike(post)" class="text-primary fa fa-thumbs-down"></i>
+            </li>
+            <li class="list-inline-item">
+                <i ng-if="!post.liked" ng-click="doLike(post)" class="text-primary fa fa-thumbs-up"></i>
+                <strong ng-cloak>{{post.likesCount}}</strong>
+            </li>
+            <li class="list-inline-item pl-3">
+                <i class="text-primary fa fa-comment"></i>
+                <strong ng-cloak>{{comments.length}}</strong>
+            </li>
+        </ul>
+        <div class="mt-3">
+            <h3 ng-cloak class="font-weight-bold">Комментарии {{comments.length}}</h3>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item pl-0"
+                    ng-repeat="comment in comments|orderBy:'-createdDate'">
+                    <div class="d-flex w-100 mb-3"
+                         ng-class="isMyComment(comment) ? 'justify-content-end' : 'justify-content-start'">
+                        <strong ng-cloak class="text-info">{{comment.nickname}}</strong>
+                        <strong ng-cloak class="pl-3">{{comment.createdDate|date:'dd.MM.yyyy в hh:mm'}}</strong>
+                        <ul class="pl-3 list-inline">
+                            <li class="list-inline-item">
+                                <i ng-if="canEdit(comment)" ng-click="doEditComment(comment)"
+                                   class="text-primary fa fa-edit"></i>
+                            </li>
+                            <li class="list-inline-item">
+                                <i ng-if="canEdit(comment)" ng-click="doDeleteComment(comment)"
+                                   class="text-primary fa fa-times"></i>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="d-flex w-100"
+                         ng-class="isMyComment(comment) ? 'justify-content-end' : 'justify-content-start'">
+                        <p compile="comment.content" class="comment-content mb-1"></p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <ul ng-if="totalItems > itemsPerPage" uib-pagination boundary-link-numbers="true" total-items="totalItems"
+            ng-change="pageChanged()"
+            ng-model="currentPage" max-size="5" class="pagination-sm mt-2" direction-links="false"
+            items-per-page="itemsPerPage"></ul>
 
+        <form class="mt-3" name="commentForm">
+            <div class="form-group">
+                <label class="h3 font-weight-bold" for="commentTextarea">Написать комментарий</label>
+                <textarea ng-model="newComment.content" class="form-control w-75" id="commentTextarea"
+                          rows="3"></textarea>
+                <div class="btn-toolbar mt-2 mb-3">
+                    <button type="button" ng-if="authenticated" class="btn btn-primary"
+                            ng-click="doCreateComment(commentForm.$valid)">Опубликовать
+                    </button>
+                    <button type="button" ng-if="!authenticated" data-toggle="tooltip"
+                            title="Войдите, чтобы оставлять комментарии" data-placement="top"
+                            class="btn btn-primary" disabled>Опубликовать
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <script type="text/ng-template" id="editComment.html">
     <div class="modal-header">
         <p class="h4 modal-title" id="editCommentModalLabel">

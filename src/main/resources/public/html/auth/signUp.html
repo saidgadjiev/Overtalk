@@ -1,61 +1,67 @@
-<form class="mt-2" ng-submit="signUp(signUpForm.$valid)" name="signUpForm" novalidate>
-    <p class="help-block has-error" ng-show="somethingWentWrong">Что то пошло не так!</p>
-    <div class="form-group">
-        <label for="nickName">Ник:</label>
-        <input type="text" class="form-control" id="nickName" name="nickName" ng-model="newUser.nickName" required
-               ng-model-options='{ debounce: 500 }' unique-nick-name>
-        <div ng-messages="signUpForm.nickName.$error"
-             ng-if="signUpForm.nickName.$touched || submitted" style="color:red">
-            <p class="help-block" ng-message="required">Введите ник!</p>
-            <p class="help-block" ng-message="uniqueNickName">Такой ник уже существует!</p>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="userName">Логин:</label>
-        <input type="text" class="form-control" id="userName" name="userName" ng-model="newUser.userName"
-               ng-model-options='{ debounce: 500 }' required unique-user-name>
-        <div ng-messages="signUpForm.userName.$error"
-             ng-if="signUpForm.userName.$touched || submitted" style="color:red">
-            <p class="help-block" ng-message="required">Введите логин!</p>
-            <p class="help-block" ng-message="uniqueUserName">Такой логин уже существует!</p>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="password">Пароль:</label>
-        <div class="input-group">
-            <input type="{{inputPasswordType}}" class="form-control" id="password" name="password"
-                   ng-model="newUser.password" ng-required="true">
-            <div class="input-group-append">
+<div class="row w-100 justify-content-around">
+    <div class="col col-lg-8 col-sm-12">
+        <form class="mt-2" ng-submit="signUp(signUpForm.$valid)" name="signUpForm" novalidate>
+            <p class="help-block has-error" ng-show="somethingWentWrong">Что то пошло не так!</p>
+            <div class="form-group">
+                <label for="nickname">Ник:</label>
+                <input type="text" class="form-control" id="nickname" name="nickname" ng-model="newUser.nickname"
+                       required
+                       ng-model-options='{ debounce: 500 }' unique-nick-name>
+                <div ng-messages="signUpForm.nickname.$error"
+                     ng-if="signUpForm.nickname.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Введите ник!</p>
+                    <p class="help-block" ng-message="uniqueNickName">Такой ник уже существует!</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="username">Логин:</label>
+                <input type="text" class="form-control" id="username" name="username" ng-model="newUser.username"
+                       ng-model-options='{ debounce: 500 }' required unique-user-name>
+                <div ng-messages="signUpForm.username.$error"
+                     ng-if="signUpForm.username.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Введите логин!</p>
+                    <p class="help-block" ng-message="uniqueUserName">Такой логин уже существует!</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <div class="input-group">
+                    <input type="{{inputPasswordType}}" class="form-control" id="password" name="password"
+                           ng-model="newUser.password" ng-required="true">
+                    <div class="input-group-append">
             <span class="input-group-text" style="cursor: pointer;" ng-click="hideShowPassword()">
                 <i ng-if="inputPasswordType == 'password'" class="fa fa-eye"></i>
                 <i ng-if="inputPasswordType == 'text'" class="fa fa-eye-slash"></i>
             </span>
+                    </div>
+                </div>
+                <div ng-messages="signUpForm.password.$error"
+                     ng-if="signUpForm.password.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Введите пароль!</p>
+                </div>
             </div>
-        </div>
-        <div ng-messages="signUpForm.password.$error"
-             ng-if="signUpForm.password.$touched || submitted" style="color:red">
-            <p class="help-block" ng-message="required">Введите пароль!</p>
-        </div>
-    </div>
 
-    <div class="form-group">
-        <label for="confirmPassword">Повторите пароль:</label>
-        <div class="input-group">
-            <input type="{{inputConfirmPasswordType}}" class="form-control" id="confirmPassword" name="confirmPassword"
-                   ng-model="newUser.confirmPassword" ng-required="true">
-            <div class="input-group-append">
+            <div class="form-group">
+                <label for="confirmPassword">Повторите пароль:</label>
+                <div class="input-group">
+                    <input type="{{inputConfirmPasswordType}}" class="form-control" id="confirmPassword"
+                           name="confirmPassword"
+                           ng-model="newUser.confirmPassword" ng-required="true">
+                    <div class="input-group-append">
             <span class="input-group-text" style="cursor: pointer;" ng-click="hideShowConfirmPassword()">
                 <i ng-if="inputConfirmPasswordType == 'password'" class="fa fa-eye"></i>
                 <i ng-if="inputConfirmPasswordType == 'text'" class="fa fa-eye-slash"></i>
             </span>
+                    </div>
+                </div>
+                <div ng-messages="signUpForm.confirmPassword.$error"
+                     ng-if="signUpForm.confirmPassword.$touched || submitted" style="color:red">
+                    <p class="help-block" ng-message="required">Подтвердите пароль!</p>
+                    <p class="help-block" ng-if="newUser.password != newUser.confirmPassword">Пароли не совпадают!</p>
+                </div>
             </div>
-        </div>
-        <div ng-messages="signUpForm.confirmPassword.$error"
-             ng-if="signUpForm.confirmPassword.$touched || submitted" style="color:red">
-            <p class="help-block" ng-message="required">Подтвердите пароль!</p>
-            <p class="help-block" ng-if="newUser.password != newUser.confirmPassword">Пароли не совпадают!</p>
-        </div>
-    </div>
 
-    <button type="submit" class="btn btn-success">Зарегистрироваться и Войти</button>
-</form>
+            <button type="submit" class="btn btn-success">Зарегистрироваться и Войти</button>
+        </form>
+    </div>
+</div>

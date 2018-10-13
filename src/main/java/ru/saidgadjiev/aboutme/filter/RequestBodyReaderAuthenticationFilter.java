@@ -36,7 +36,7 @@ public class RequestBodyReaderAuthenticationFilter extends UsernamePasswordAuthe
             requestBody = IOUtils.toString(request.getReader());
             UserRequest userRequest = objectMapper.readValue(requestBody, UserRequest.class);
             UsernamePasswordAuthenticationToken token
-                    = new UsernamePasswordAuthenticationToken(userRequest.getUserName(), userRequest.getPassword());
+                    = new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword());
 
             setDetails(request, token);
 

@@ -2,10 +2,8 @@ package ru.saidgadjiev.aboutme.json;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.util.RawValue;
-import ru.saidgadjiev.aboutme.domain.Role;
-import ru.saidgadjiev.aboutme.domain.UserRole;
+import ru.saidgadjiev.aboutme.domain.UserprofileRole;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,16 +15,16 @@ public class UserJsonBuilder {
 
     private final JsonBuilder jsonBuilder = new JsonBuilder();
 
-    public UserJsonBuilder userName(String userName) {
-        jsonBuilder.add("userName", userName);
+    public UserJsonBuilder username(String username) {
+        jsonBuilder.add("username", username);
 
         return this;
     }
 
-    public UserJsonBuilder roles(Collection<UserRole> roles) {
+    public UserJsonBuilder roles(Collection<UserprofileRole> roles) {
         List<RawValue> values = new ArrayList<>();
 
-        for (UserRole role: roles) {
+        for (UserprofileRole role: roles) {
             values.add(new RawValue(new RoleJsonBuilder().name(role.getRole().getName()).build()));
         }
 
@@ -35,8 +33,8 @@ public class UserJsonBuilder {
         return this;
     }
 
-    public UserJsonBuilder nickName(String nickName) {
-        jsonBuilder.add("nickName", nickName);
+    public UserJsonBuilder nickname(String nickname) {
+        jsonBuilder.add("nickname", nickname);
 
         return this;
     }
